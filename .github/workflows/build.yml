@@ -1,0 +1,78 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Locate Android project
+        id: locate
+        run: |
+          MATCH=$(find "$GITHUB_WORKSPACE" \
+            -path '*/.git' -prune -o \
+            -path '*/__MACOSX' -prune -o \
+            -path '*/node_modules' -prune -o \
+            \( -name settings.gradle -o -name settings.gradle.kts \) -print | head -n 1)
+          if [ -z "$MATCH" ]; then
+            echo "::error::No settings.gradle or settings.gradle.kts found anywhere in the uploaded project."
+            exit 1
+          fi
+          PROJECT_DIR=$(dirname "$MATCH")
+          echo "Using Gradle project at: $PROJECT_DIR"
+          echo "dir=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
+
+      - name: Normalize the project for CI
+        working-directory: ${{ steps.locate.outputs.dir }}
+        run: |
+          # A committed local.properties almost always points at a developer's
+          # own machine (sdk.dir=/Users/xxx/Library/Android/sdk) and will make
+          # the build fail to find the SDK on the runner even though the
+          # project itself is fine. setup-android already exports ANDROID_HOME,
+          # so it's safe to drop.
+          rm -f local.properties
+
+          # If a wrapper script exists, make sure it will actually run:
+          # strip Windows CRLF line endings (breaks the '#!/usr/bin/env sh'
+          # shebang on Linux) and set the executable bit, which zip uploads
+          # frequently lose.
+          if [ -f "./gradlew" ]; then
+            sed -i 's/\r$//' ./gradlew
+            chmod +x ./gradlew
+          fi
+
+      - name: Build debug APK
+        working-directory: ${{ steps.locate.outputs.dir }}
+        run: |
+          if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
+            echo "Building with the project's own Gradle wrapper"
+            ./gradlew assembleDebug --no-daemon
+          else
+            echo "No usable Gradle wrapper found — building with the runner's Gradle instead"
+            gradle assembleDebug --no-daemon
+          fi
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk-${{ github.run_id }}
+          path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
