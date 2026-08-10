@@ -62,13 +62,7 @@ jobs:
       - name: Build debug APK
         working-directory: ${{ steps.locate.outputs.dir }}
         run: |
-          if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
-            echo "Building with the project's own Gradle wrapper"
-            ./gradlew assembleDebug --no-daemon
-          else
-            echo "No usable Gradle wrapper found — building with the runner's Gradle instead"
-            gradle assembleDebug --no-daemon
-          fi
+          gradle assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
