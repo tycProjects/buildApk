@@ -1,0 +1,2 @@
+rootProject.name = "Zip To Apk"
+include ':app'
