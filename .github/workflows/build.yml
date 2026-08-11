@@ -1,3 +1,7 @@
+# apk-builder fallback workflow — version: 2
+# Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
+# file directly — direct edits get overwritten the next time the version
+# above is bumped and this gets re-synced to the base branch.
 name: Build APK
 
 on:
@@ -23,6 +27,16 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          # Pinned rather than left to the runner default: AGP 8.4.0 (used by
+          # both the auto-detected fallback and our generated WebView-wrapper
+          # projects) relies on Gradle APIs that get removed in newer Gradle
+          # releases (e.g. DependencyHandler.module(...)), and GitHub's
+          # runner-default Gradle version drifts forward over time. Pinning
+          # here is what actually fixes "...DependencyHandler.module(...)"
+          # style failures, since they're a version-compatibility issue, not
+          # a problem with the project itself.
+          gradle-version: '8.7'
 
       - name: Locate Android project
         id: locate
@@ -62,7 +76,13 @@ jobs:
       - name: Build debug APK
         working-directory: ${{ steps.locate.outputs.dir }}
         run: |
-          gradle assembleDebug --no-daemon
+          if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
+            echo "Building with the project's own Gradle wrapper"
+            ./gradlew assembleDebug --no-daemon
+          else
+            echo "No usable Gradle wrapper found — building with the runner's Gradle instead"
+            gradle assembleDebug --no-daemon
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -70,3 +90,4 @@ jobs:
           name: debug-apk-${{ github.run_id }}
           path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+
