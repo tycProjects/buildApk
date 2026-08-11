@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#050505">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>APK Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050505;
+    --surface: #0c0c0c;
+    --line: rgba(255,255,255,0.16);
+    --line-strong: rgba(255,255,255,0.4);
+    --text: #f2f2ee;
+    --muted: #85857e;
+    --dim: #4a4a45;
+    --step-off: rgba(255,255,255,0.14);
+    --accent: #5eead4;
+    --accent-dim: rgba(94,234,212,0.16);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overscroll-behavior: none; }
+  body {
+    margin: 0;
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  /* faint scanline texture — the only "atmosphere" this design allows itself */
+  .scan {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px,
+      transparent 1px, transparent 3px
+    );
+    mix-blend-mode: overlay;
+  }
+
+  /* ---- reusable corner-bracket frame: the signature device ---- */
+  .frame { position: relative; }
+  .frame .corner { position: absolute; width: 13px; height: 13px; pointer-events: none; transition: width .2s ease, height .2s ease; }
+  .frame .corner.tl { top: -1px; left: -1px; border-top: 2px solid var(--line-strong); border-left: 2px solid var(--line-strong); }
+  .frame .corner.tr { top: -1px; right: -1px; border-top: 2px solid var(--line-strong); border-right: 2px solid var(--line-strong); }
+  .frame .corner.bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--line-strong); border-left: 2px solid var(--line-strong); }
+  .frame .corner.br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--line-strong); border-right: 2px solid var(--line-strong); }
+  .frame.active .corner { width: 18px; height: 18px; border-color: var(--accent); }
+
+  /* ---- top bar ---- */
+  .topbar {
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: calc(env(safe-area-inset-top, 0px) + 14px) 18px 14px;
+    background: rgba(5,5,5,0.85);
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .topbar .logo {
+    width: 30px; height: 30px;
+    border: 1.5px solid var(--text);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+  .topbar .titles { display: flex; flex-direction: column; gap: 1px; }
+  .topbar h1 {
+    font-size: 15px; margin: 0; font-weight: 700; letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+  .topbar .tagline {
+    font-size: 10px; letter-spacing: 0.04em; color: var(--dim);
+  }
+  .topbar .tagline .arrow { color: var(--accent); }
+  .topbar .live {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+    padding: 5px 9px;
+    border: 1px solid var(--line);
+  }
+  .topbar .live .pip {
+    width: 6px; height: 6px; background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+    animation: blink 1.4s steps(1) infinite;
+  }
+  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.15; } }
+  .topbar .spacer { flex: 1; }
+  .infoBtn {
+    width: 28px; height: 28px;
+    border: 1px solid var(--line);
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .12s ease, color .12s ease, transform .1s ease;
+  }
+  .infoBtn:active { transform: scale(0.9); background: var(--text); color: var(--bg); }
+
+  /* ---- scroll area ---- */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 2;
+    padding: 20px 18px calc(env(safe-area-inset-bottom, 0px) + 128px);
+  }
+  .subtitle {
+    font-family: 'Inter', sans-serif;
+    color: var(--muted); font-size: 13px; line-height: 1.6; margin: 2px 0 22px;
+  }
+  .subtitle .linklike { color: var(--text); font-weight: 600; cursor: pointer; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 18px;
+    animation: rise .4s cubic-bezier(.16,1,.3,1) both;
+  }
+  .panel + .panel { margin-top: 14px; }
+  .panel.delay1 { animation-delay: .05s; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  #dropzone {
+    border: 1px dashed var(--line);
+    padding: 34px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  #dropzone:active { transform: scale(0.99); }
+  #dropzone.drag { border-color: var(--accent); background: var(--accent-dim); }
+  #dropzone .icon { width: 34px; height: 34px; margin: 0 auto 14px; color: var(--muted); transition: color .2s ease; }
+  #dropzone.drag .icon, #dropzone.has-file .icon { color: var(--accent); }
+  #dropzone .primary { font-size: 13.5px; font-weight: 700; letter-spacing: 0.01em; }
+  #dropzone .secondary { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--muted); margin-top: 5px; }
+  #dropzone .hint {
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px; color: var(--muted);
+    margin-top: 14px; padding-top: 12px;
+    border-top: 1px solid var(--line);
+    line-height: 1.55;
+  }
+
+  #fileRow {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 11px 13px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    font-size: 12.5px;
+    animation: rise .3s cubic-bezier(.16,1,.3,1) both;
+  }
+  #fileRow .fname { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  #fileRow .fsize { color: var(--muted); flex-shrink: 0; }
+  #fileRow .clear {
+    color: var(--muted); cursor: pointer; flex-shrink: 0; font-size: 14px; line-height: 1;
+    width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line);
+    transition: background .15s ease, color .15s ease;
+  }
+  #fileRow .clear:active { background: var(--text); color: var(--bg); }
+
+  .section-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--muted); font-weight: 700; margin: 24px 2px 10px;
+  }
+  .section-label::before { content: '// '; color: var(--dim); }
+
+  #progressWrap { display: none; }
+  .steps { display: flex; justify-content: space-between; margin-bottom: 16px; }
+  .step { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; position: relative; }
+  .step .dot {
+    width: 24px; height: 24px;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 700; color: var(--muted);
+    transition: background .3s ease, color .3s ease, border-color .3s ease;
+    z-index: 1;
+    border: 1px solid var(--line);
+  }
+  .step .label { font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: center; transition: color .3s ease; }
+  .step::after {
+    content: '';
+    position: absolute;
+    top: 12px; left: 50%; width: 100%; height: 1px;
+    background: var(--step-off);
+    z-index: 0;
+    transition: background .3s ease;
+  }
+  .step:last-child::after { display: none; }
+  .step.active .dot { background: var(--accent); color: var(--bg); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+  .step.active .label { color: var(--text); }
+  .step.done .dot { background: var(--bg); color: var(--accent); border-color: var(--accent); }
+  .step.done .dot .num { display: none; }
+  .step.done .dot::after { content: '✓'; }
+  .step.error .dot .num { display: none; }
+  .step.done .label { color: var(--text); }
+  .step.done::after { background: var(--accent); }
+  .step.error .dot { background: repeating-linear-gradient(45deg, var(--text) 0 3px, var(--bg) 3px 6px); border-color: var(--text); color: var(--bg); }
+  .step.error .dot::after { content: '!'; font-weight: 800; }
+
+  #statusBox {
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  #statusBox .prefix { color: var(--dim); flex-shrink: 0; }
+  #statusBox #statusText { flex: 1; }
+  #statusBox #statusText::after { content: '▍'; margin-left: 2px; animation: blink 1s steps(1) infinite; color: var(--text); }
+  #statusBox.success { color: var(--text); border-color: var(--accent); }
+  #statusBox.error { color: var(--text); border-color: var(--line-strong); }
+  #statusBox.success #statusText::after, #statusBox.error #statusText::after { display: none; }
+  .tag {
+    flex-shrink: 0;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
+    padding: 3px 7px;
+    display: none;
+  }
+  #statusBox.success .tag.ok { display: inline-block; background: var(--accent); color: var(--bg); }
+  #statusBox.error .tag.err {
+    display: inline-block; color: var(--bg);
+    background: repeating-linear-gradient(45deg, var(--text) 0 4px, #dcdcd4 4px 8px);
+  }
+  .dot-pulse { display: none; }
+
+  .successBurst {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin: 4px 0 2px;
+  }
+  .successBurst.show { display: flex; animation: pop .4s cubic-bezier(.34,1.56,.64,1) both; }
+  .successBurst .ring {
+    width: 48px; height: 48px;
+    border: 1.5px solid var(--accent);
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 0 22px var(--accent-dim);
+    display: flex; align-items: center; justify-content: center;
+  }
+  @keyframes pop {
+    0% { opacity: 0; transform: scale(.5); }
+    60% { opacity: 1; transform: scale(1.06); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* ---- pinned bottom action bar ---- */
+  .bottombar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 3;
+    padding: 14px 18px calc(env(safe-area-inset-bottom, 0px) + 14px);
+    background: rgba(5,5,5,0.9);
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  button#buildBtn {
+    width: 100%;
+    padding: 16px 20px;
+    border: 1.5px solid var(--text);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--text);
+    cursor: pointer;
+    transition: opacity .15s ease, transform .1s ease;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+  }
+  button#buildBtn:disabled { opacity: 0.25; cursor: default; background: transparent; color: var(--muted); border-color: var(--line); }
+  button#buildBtn:not(:disabled):active { transform: scale(0.98); }
+
+  .spinner {
+    width: 13px; height: 13px;
+    border: 2px solid rgba(5,5,5,0.3);
+    border-top-color: var(--bg);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  a#downloadLink {
+    display: none;
+    width: 100%;
+    padding: 16px 20px;
+    border: 1.5px solid var(--accent);
+    background: var(--accent);
+    color: var(--bg);
+    text-align: center;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    transition: transform .1s ease, opacity .15s ease;
+  }
+  a#downloadLink:active { transform: scale(0.98); opacity: 0.85; }
+  a#downloadLink.show { animation: rise .3s cubic-bezier(.16,1,.3,1) both; }
+
+  button#resetBtn {
+    display: none;
+    width: 100%;
+    padding: 14px 20px;
+    border: 1px solid var(--line);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: transparent;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease, transform .1s ease;
+    align-items: center; justify-content: center; gap: 8px;
+  }
+  button#resetBtn.show { display: flex; animation: rise .3s cubic-bezier(.16,1,.3,1) both; animation-delay: .05s; }
+  button#resetBtn:active { transform: scale(0.98); background: var(--text); color: var(--bg); }
+
+  input[type=file] { display: none; }
+
+  /* ---- universal tap ripple for clickable elements ---- */
+  .tapfx { position: relative; overflow: hidden; }
+  .ripple {
+    position: absolute;
+    top: var(--ry, 50%); left: var(--rx, 50%);
+    width: 10px; height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.35;
+    transform: scale(0);
+    pointer-events: none;
+    animation: rippleOut .55s ease-out forwards;
+  }
+  @keyframes rippleOut {
+    to { transform: scale(22); opacity: 0; }
+  }
+
+  /* ---- download button "preparing" state: the APK isn't ready the
+     instant this is tapped -- the server still has to fetch the build
+     artifact from GitHub and unzip it, which takes a few seconds. This
+     gives immediate feedback so the tap doesn't look like it did nothing. */
+  a#downloadLink.preparing {
+    pointer-events: none;
+    opacity: 0.85;
+  }
+  a#downloadLink .dlSpinner {
+    width: 13px; height: 13px;
+    border: 2px solid rgba(5,5,5,0.3);
+    border-top-color: var(--bg);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+    flex-shrink: 0;
+  }
+  a#downloadLink.preparing .dlSpinner { display: inline-block; }
+  a#downloadLink.preparing .dlIcon { display: none; }
+  a#downloadLink.ready { animation: pop .4s cubic-bezier(.34,1.56,.64,1) both; }
+
+  /* ---- instructions modal ---- */
+  .modalOverlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 10;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .2s ease;
+  }
+  .modalOverlay.open { display: flex; opacity: 1; }
+  .modalSheet {
+    width: 100%;
+    max-width: 480px;
+    max-height: 82vh;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-bottom: none;
+    padding: 10px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
+    transform: translateY(100%);
+    transition: transform .28s cubic-bezier(.16,1,.3,1);
+    position: relative;
+  }
+  .modalOverlay.open .modalSheet { transform: translateY(0); }
+  .modalSheet .grabber {
+    width: 32px; height: 3px;
+    background: var(--line-strong);
+    margin: 10px auto 16px;
+  }
+  .modalSheet h2 {
+    font-size: 15px; margin: 0 0 6px; font-weight: 700; letter-spacing: 0.02em;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .modalSheet .modalSub { font-family: 'Inter', sans-serif; color: var(--muted); font-size: 12.5px; margin: 0 0 20px; line-height: 1.55; }
+  .stepList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 15px; }
+  .stepList li { display: flex; gap: 12px; align-items: flex-start; }
+  .stepList .num {
+    width: 22px; height: 22px;
+    background: transparent; border: 1px solid var(--line-strong);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 700; color: var(--text);
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .stepList .txt { font-family: 'Inter', sans-serif; font-size: 13.5px; line-height: 1.55; color: var(--muted); }
+  .stepList .txt b { color: var(--text); }
+  .stepList code, .modalSub code, .hint code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 1px 5px;
+    font-size: 11px;
+    color: var(--text);
+  }
+  .modalDivider { height: 1px; background: var(--line); margin: 20px 0; }
+  .doDont { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .doDont .card { font-family: 'Inter', sans-serif; padding: 12px; font-size: 12px; line-height: 1.5; border: 1px solid var(--line); color: var(--muted); }
+  .doDont .good { border-color: var(--line-strong); }
+  .doDont .bad { background: repeating-linear-gradient(135deg, transparent 0 8px, rgba(255,255,255,0.03) 8px 16px); }
+  .doDont .tag { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 8px; color: var(--text); }
+  button#closeModal {
+    width: 100%;
+    margin-top: 22px;
+    padding: 15px;
+    border: 1.5px solid var(--text);
+    background: transparent;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .12s ease, color .12s ease;
+  }
+  button#closeModal:active { background: var(--text); color: var(--bg); }
+</style>
+</head>
+<body>
+  <div class="scan"></div>
+
+  <div class="topbar">
+    <div class="logo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <rect x="4" y="2.5" width="16" height="19" rx="3.5" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M12 2.5v3M12 8v2M12 12.5v2M12 17v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M10.4 5h3.2M10.4 9.5h3.2M10.4 14h3.2M10.4 18.5h3.2" stroke="currentColor" stroke-width="1.1"/>
+      </svg>
+    </div>
+    <div class="titles">
+      <h1>APK Builder</h1>
+      <div class="tagline">.zip<span class="arrow"> → </span>.apk</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="live"><span class="pip"></span>Live</div>
+    <div class="infoBtn tapfx" id="infoBtn" title="How this works">?</div>
+  </div>
+
+  <div class="content">
+    <p class="subtitle">Upload an Android project as a .zip. Every build runs in its own isolated branch — safe to use alongside anyone else, at the same time. Not sure your zip is set up right? <span class="linklike tapfx" id="howToLink">See how to prep it</span>.</p>
+
+    <div class="panel frame" id="dropFrame">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div id="dropzone" class="tapfx">
+        <svg class="icon" viewBox="0 0 24 24" fill="none">
+          <path d="M12 16V4m0 0L7 9m5-5l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="primary">TAP TO SELECT PROJECT.ZIP</div>
+        <div class="secondary">or drag and drop it here</div>
+        <div class="hint">Any Android/Gradle project zip works — even if it's never been set up for CI before. It's auto-detected and converted.</div>
+      </div>
+      <input type="file" id="fileInput" accept=".zip,application/zip,application/x-zip-compressed">
+
+      <div id="fileRow">
+        <span class="fname" id="fname"></span>
+        <span class="fsize" id="fsize"></span>
+        <span class="clear tapfx" id="clearFile" title="Remove">✕</span>
+      </div>
+    </div>
+
+    <div class="section-label" id="progressLabel" style="display:none;">Build progress</div>
+    <div class="panel delay1" id="progressWrap">
+      <div class="steps" id="steps">
+        <div class="step" data-step="pushing"><div class="dot"><span class="num">1</span></div><div class="label">Push</div></div>
+        <div class="step" data-step="queued"><div class="dot"><span class="num">2</span></div><div class="label">Queue</div></div>
+        <div class="step" data-step="building"><div class="dot"><span class="num">3</span></div><div class="label">Build</div></div>
+        <div class="step" data-step="done"><div class="dot"><span class="num">4</span></div><div class="label">Ready</div></div>
+      </div>
+      <div class="successBurst" id="successBurst">
+        <div class="ring">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+      <div id="statusBox">
+        <span class="prefix">&gt;</span>
+        <span class="dot-pulse"></span>
+        <span class="tag ok">OK</span>
+        <span class="tag err">ERR</span>
+        <span id="statusText">Preparing…</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottombar">
+    <button id="buildBtn" class="tapfx" disabled>
+      <span class="spinner" id="spinner"></span>
+      <span id="buildBtnLabel">Build APK</span>
+    </button>
+    <a id="downloadLink" class="tapfx" href="#">
+      <span class="dlSpinner"></span>
+      <span class="dlIcon">⬇</span>
+      <span id="downloadLabel">Download APK</span>
+    </a>
+    <button id="resetBtn" class="tapfx">↻ Build another APK</button>
+  </div>
+
+  <!-- ---- how-to-zip instructions modal ---- -->
+  <div class="modalOverlay" id="modalOverlay">
+    <div class="modalSheet">
+      <span class="corner tl" style="position:absolute;top:-1px;left:-1px;width:13px;height:13px;border-top:2px solid var(--line-strong);border-left:2px solid var(--line-strong);"></span>
+      <span class="corner tr" style="position:absolute;top:-1px;right:-1px;width:13px;height:13px;border-top:2px solid var(--line-strong);border-right:2px solid var(--line-strong);"></span>
+      <div class="grabber"></div>
+      <h2>📦 How to zip your project</h2>
+      <p class="modalSub">Almost any Gradle/Android project zip works now — this is auto-detected and fixed up, not just checked. Here's what happens automatically, and the one thing to actually avoid.</p>
+      <ul class="stepList">
+        <li>
+          <div class="num">1</div>
+          <div class="txt"><b>Any nesting depth is fine.</b> The zip's <code>settings.gradle</code> (or <code>settings.gradle.kts</code>) is found wherever it is — one top-level folder, a few levels deep, doesn't matter.</div>
+        </li>
+        <li>
+          <div class="num">2</div>
+          <div class="txt">No Gradle wrapper? No problem — a runner-installed Gradle is used instead. Have one? It's used as-is, and common issues (missing <b>execute permission</b>, Windows <b>CRLF line endings</b> in <code>gradlew</code>) are fixed automatically.</div>
+        </li>
+        <li>
+          <div class="num">3</div>
+          <div class="txt">A leftover <code>local.properties</code> pointing at your own machine's SDK path is removed automatically — it would otherwise break the build on the CI runner even though your project is fine.</div>
+        </li>
+        <li>
+          <div class="num">4</div>
+          <div class="txt">Have a custom CI workflow? Include your own <code>.github/workflows/*.yml</code> with a <code>workflow_dispatch</code> trigger and it'll be used automatically. Otherwise a workflow that adapts to whatever your zip contains is generated for you.</div>
+        </li>
+        <li>
+          <div class="num">5</div>
+          <div class="txt">Leave out <b>build output</b> — <code>build/</code>, <code>.gradle/</code>, <code>*.apk</code> — it's regenerated fresh and skipped automatically if included.</div>
+        </li>
+      </ul>
+
+      <div class="modalDivider"></div>
+
+      <div class="doDont">
+        <div class="card good">
+          <span class="tag">Works fine</span>
+          MyApp.zip<br>└ MyApp/<br>&nbsp;&nbsp;├ settings.gradle<br>&nbsp;&nbsp;├ build.gradle<br>&nbsp;&nbsp;└ app/<br><span style="opacity:.7">…nested further, wrapper or no wrapper.</span>
+        </div>
+        <div class="card bad">
+          <span class="tag">Avoid</span>
+          A zip with <b>no</b> <code>settings.gradle</code> anywhere in it — that's the one thing that can't be auto-detected.
+        </div>
+      </div>
+
+      <button id="closeModal" class="tapfx">Got it</button>
+    </div>
+  </div>
+
+<script>
+  const dropzone = document.getElementById('dropzone');
+  const dropFrame = document.getElementById('dropFrame');
+  const fileInput = document.getElementById('fileInput');
+  const fileRow = document.getElementById('fileRow');
+  const fname = document.getElementById('fname');
+  const fsize = document.getElementById('fsize');
+  const clearFile = document.getElementById('clearFile');
+  const buildBtn = document.getElementById('buildBtn');
+  const buildBtnLabel = document.getElementById('buildBtnLabel');
+  const spinner = document.getElementById('spinner');
+  const progressWrap = document.getElementById('progressWrap');
+  const progressLabel = document.getElementById('progressLabel');
+  const statusBox = document.getElementById('statusBox');
+  const statusText = document.getElementById('statusText');
+  const downloadLink = document.getElementById('downloadLink');
+  const downloadLabel = document.getElementById('downloadLabel');
+  const resetBtn = document.getElementById('resetBtn');
+  const successBurst = document.getElementById('successBurst');
+  const infoBtn = document.getElementById('infoBtn');
+  const howToLink = document.getElementById('howToLink');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const closeModal = document.getElementById('closeModal');
+  const stepOrder = ['pushing', 'queued', 'building', 'done'];
+
+  // Loaded from file:///android_asset/ inside the packaged app, so there is
+  // no server origin to resolve a relative "/api/..." path against — it
+  // must be absolute.
+  const API_BASE = 'https://zip-to-apk-ce53.onrender.com';
+
+  let selectedFile = null;
+  let currentJobId = null;
+  let pollTimer = null;
+  let lastSeenStatus = null;
+
+  // ---- keep tracking a build across app restarts ----
+  // The build itself already runs entirely server-side (pushed to GitHub,
+  // built by Tycept Actions) — closing this app/tab was never able to stop
+  // it. What closing DID break is this page's polling loop: reopening used
+  // to land back on a blank "Build APK" screen with no way to tell the
+  // build had kept going. Stashing the jobId lets a fresh page load notice
+  // there's still a build in flight and resume watching it instead of
+  // losing track of it.
+  const JOB_STORAGE_KEY = 'tycept_active_build_job';
+  function saveActiveJob(jobId) {
+    try { localStorage.setItem(JOB_STORAGE_KEY, JSON.stringify({ jobId, savedAt: Date.now() })); } catch (e) {}
+  }
+  function clearActiveJob() {
+    try { localStorage.removeItem(JOB_STORAGE_KEY); } catch (e) {}
+  }
+  function loadActiveJob() {
+    try {
+      const raw = localStorage.getItem(JOB_STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      // Ignore anything absurdly old (server jobs get cleaned up after
+      // JOB_TTL_MINUTES anyway) so a stale key can't resurrect a dead job.
+      if (!parsed.jobId || Date.now() - parsed.savedAt > 3 * 60 * 60 * 1000) return null;
+      return parsed.jobId;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // ---- chime sounds (synthesized, no audio file needed — works fine
+  // packaged into the WebView app since nothing has to load from disk).
+  // Gain is set to 1 (max) on every note, i.e. full volume.
+  let audioCtx = null;
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  function playTone(freq, startTime, duration, peakGain = 1) {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(peakGain, startTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(startTime);
+    osc.stop(startTime + duration + 0.05);
+  }
+  function playStartChime() {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    playTone(587.33, now, 0.18, 1);        // D5
+    playTone(880.00, now + 0.12, 0.28, 1); // A5
+  }
+  function playDoneChime() {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    playTone(783.99, now, 0.16, 1);         // G5
+    playTone(987.77, now + 0.10, 0.16, 1);  // B5
+    playTone(1318.51, now + 0.20, 0.35, 1); // E6
+  }
+  // Short single tick, played on every intermediate step change
+  // (pushing -> queued -> building) so progress is audible even when the
+  // screen isn't being watched, without being as attention-grabbing as the
+  // start/done chimes.
+  function playStepTick() {
+    const ctx = getAudioCtx();
+    playTone(659.25, ctx.currentTime, 0.09, 0.6); // E5, short + quieter
+  }
+
+  // ---- universal tap ripple, applied to every button-like element ----
+  function spawnRipple(el, x, y) {
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty('--rx', (x - rect.left) + 'px');
+    el.style.setProperty('--ry', (y - rect.top) + 'px');
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    el.appendChild(r);
+    r.addEventListener('animationend', () => r.remove());
+  }
+  document.querySelectorAll('.tapfx').forEach((el) => {
+    el.addEventListener('pointerdown', (e) => {
+      if (el.disabled) return;
+      spawnRipple(el, e.clientX, e.clientY);
+    });
+  });
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  function setFile(file) {
+    selectedFile = file;
+    if (file) {
+      fname.textContent = file.name;
+      fsize.textContent = formatSize(file.size);
+      fileRow.style.display = 'flex';
+      dropzone.classList.add('has-file');
+      dropFrame.classList.add('active');
+      buildBtn.disabled = false;
+    } else {
+      fileRow.style.display = 'none';
+      dropzone.classList.remove('has-file');
+      dropFrame.classList.remove('active');
+      buildBtn.disabled = true;
+    }
+  }
+
+  dropzone.onclick = () => fileInput.click();
+  fileInput.onchange = () => {
+    const file = fileInput.files[0] || null;
+    if (file && !file.name.toLowerCase().endsWith('.zip')) {
+      openModal();
+      fileInput.value = '';
+      return;
+    }
+    setFile(file);
+  };
+
+  clearFile.onclick = (e) => {
+    e.stopPropagation();
+    fileInput.value = '';
+    setFile(null);
+  };
+
+  ['dragenter', 'dragover'].forEach(evt =>
+    dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.add('drag'); dropFrame.classList.add('active'); })
+  );
+  ['dragleave', 'drop'].forEach(evt =>
+    dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.remove('drag'); if (!selectedFile) dropFrame.classList.remove('active'); })
+  );
+  dropzone.addEventListener('drop', (e) => {
+    const file = e.dataTransfer.files[0];
+    if (file && file.name.toLowerCase().endsWith('.zip')) setFile(file);
+  });
+
+  // ---- instructions modal ----
+  function openModal() { modalOverlay.classList.add('open'); }
+  function hideModal() { modalOverlay.classList.remove('open'); }
+  infoBtn.onclick = openModal;
+  howToLink.onclick = openModal;
+  closeModal.onclick = hideModal;
+  modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) hideModal(); });
+
+  function resetSteps() {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active', 'done', 'error'));
+  }
+
+  function updateSteps(status) {
+    const idx = stepOrder.indexOf(status);
+    document.querySelectorAll('.step').forEach((el) => {
+      const stepIdx = stepOrder.indexOf(el.dataset.step);
+      el.classList.remove('active', 'done', 'error');
+      if (status === 'error') {
+        if (stepIdx <= Math.max(idx, 0)) el.classList.add(stepIdx < idx ? 'done' : 'error');
+      } else if (stepIdx < idx) {
+        el.classList.add('done');
+      } else if (stepIdx === idx) {
+        el.classList.add('active');
+      }
+    });
+  }
+
+  // The tap navigates immediately (real navigation, not fetch+blob --
+  // that's what lets Android's WebView DownloadListener pick up the
+  // Content-Disposition header; see the comment where downloadLink.href
+  // is set below). But the server still has to fetch the artifact from
+  // GitHub and unzip it before the file actually starts arriving, which
+  // is where the few seconds of apparent "nothing happening" come from.
+  // Swap to a spinner + label the instant it's tapped so it's obvious
+  // the app registered the tap and is working on it, then revert once
+  // the download has had time to actually kick off.
+  let downloadRevertTimer = null;
+  downloadLink.addEventListener('click', () => {
+    if (downloadLink.classList.contains('preparing')) return;
+    downloadLink.classList.add('preparing');
+    downloadLabel.textContent = 'Preparing your APK…';
+    clearTimeout(downloadRevertTimer);
+    downloadRevertTimer = setTimeout(() => {
+      downloadLink.classList.remove('preparing');
+      downloadLabel.textContent = 'Download APK';
+      downloadLink.classList.add('ready');
+      setTimeout(() => downloadLink.classList.remove('ready'), 450);
+    }, 6000);
+  });
+
+  buildBtn.onclick = async () => {
+    if (!selectedFile) return;
+    buildBtn.disabled = true;
+    spinner.style.display = 'inline-block';
+    buildBtnLabel.textContent = 'Uploading…';
+    downloadLink.classList.remove('show');
+    downloadLink.style.display = 'none';
+    resetBtn.classList.remove('show');
+    resetBtn.style.display = 'none';
+    successBurst.classList.remove('show');
+    progressWrap.style.display = 'block';
+    progressLabel.style.display = 'block';
+    statusBox.className = '';
+    statusText.textContent = 'Uploading your project…';
+    resetSteps();
+    playStartChime();
+
+    const formData = new FormData();
+    formData.append('projectZip', selectedFile);
+
+    let jobId, error;
+    try {
+      const res = await fetch(API_BASE + '/api/build', { method: 'POST', body: formData });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        error = body.error || `Server error (${res.status})`;
+      } else {
+        ({ jobId, error } = await res.json());
+      }
+    } catch (e) {
+      error = 'Could not reach the server';
+    }
+
+    if (error) {
+      showError(error);
+      return;
+    }
+    currentJobId = jobId;
+    lastSeenStatus = null;
+    saveActiveJob(jobId);
+    spinner.style.display = 'none';
+    buildBtnLabel.textContent = 'Building…';
+    poll(jobId);
+  };
+
+  function showError(message) {
+    statusBox.className = 'error';
+    statusText.textContent = message;
+    updateSteps('error');
+    spinner.style.display = 'none';
+    buildBtn.disabled = false;
+    buildBtn.style.display = 'flex';
+    buildBtnLabel.textContent = 'Build APK';
+    resetBtn.classList.add('show');
+    resetBtn.style.display = 'flex';
+    clearActiveJob();
+  }
+
+  async function poll(jobId) {
+    if (jobId !== currentJobId) return; // a stale poll from a previous build
+    let job;
+    try {
+      const res = await fetch(API_BASE + '/api/status/' + jobId);
+      if (res.status === 404) {
+        // Job is gone server-side (finished + cleaned up while we weren't
+        // watching, or never existed). Nothing to resume.
+        clearActiveJob();
+        if (jobId === currentJobId) resetFlow();
+        return;
+      }
+      job = await res.json();
+    } catch (e) {
+      pollTimer = setTimeout(() => poll(jobId), 3000);
+      return;
+    }
+
+    if (jobId !== currentJobId) return;
+
+    if (job.status === 'error') {
+      showError(job.message || 'Build failed');
+      return;
+    }
+
+    // Sound cue on every real step change (pushing/queued/building), not
+    // just at the very start and very end, so progress is audible even if
+    // you're not looking at the screen. Guarded so it fires once per
+    // transition, not once per 3s poll.
+    if (job.status !== lastSeenStatus) {
+      if (lastSeenStatus !== null && job.status !== 'done') playStepTick();
+      lastSeenStatus = job.status;
+    }
+
+    updateSteps(job.status);
+    statusText.textContent = job.message || job.status;
+
+    if (job.status === 'done') {
+      clearActiveJob();
+      statusBox.className = 'success';
+      successBurst.classList.add('show');
+      playDoneChime();
+      downloadLink.href = API_BASE + '/api/download/' + jobId;
+      // NOTE: intentionally no download="" attribute here. Android's
+      // WebView doesn't implement the HTML5 download attribute -- it tries
+      // to handle the save internally, fails silently, and never reaches
+      // MainActivity's setDownloadListener callback, so the button appears
+      // to do nothing when this page runs inside the wrapped app. Leaving
+      // this as a plain navigation lets WebView's DownloadListener pick up
+      // the Content-Disposition: attachment header the server sends and
+      // hand it off to Android's real DownloadManager instead.
+      downloadLink.style.display = 'flex';
+      downloadLink.classList.add('show');
+      buildBtn.style.display = 'none';
+      resetBtn.style.display = 'flex';
+      resetBtn.classList.add('show');
+      return;
+    }
+
+    pollTimer = setTimeout(() => poll(jobId), 3000);
+  }
+
+  // ---- start a fresh build without reloading the page ----
+  function resetFlow() {
+    if (pollTimer) clearTimeout(pollTimer);
+    currentJobId = null;
+    lastSeenStatus = null;
+    clearActiveJob();
+    fileInput.value = '';
+    setFile(null);
+    progressWrap.style.display = 'none';
+    progressLabel.style.display = 'none';
+    statusBox.className = '';
+    statusText.textContent = 'Preparing…';
+    successBurst.classList.remove('show');
+    resetSteps();
+    downloadLink.classList.remove('show', 'preparing', 'ready');
+    downloadLink.style.display = 'none';
+    downloadLabel.textContent = 'Download APK';
+    clearTimeout(downloadRevertTimer);
+    resetBtn.classList.remove('show');
+    resetBtn.style.display = 'none';
+    buildBtn.style.display = 'flex';
+    buildBtn.disabled = true;
+    buildBtnLabel.textContent = 'Build APK';
+  }
+  resetBtn.onclick = resetFlow;
+
+  // ---- resume a build that was still running when the app was closed ----
+  (function resumeIfActiveJob() {
+    const jobId = loadActiveJob();
+    if (!jobId) return;
+    currentJobId = jobId;
+    lastSeenStatus = null;
+    buildBtn.disabled = true;
+    buildBtn.style.display = 'none';
+    progressWrap.style.display = 'block';
+    progressLabel.style.display = 'block';
+    statusBox.className = '';
+    statusText.textContent = 'Reconnecting to your build…';
+    resetSteps();
+    poll(jobId);
+  })();
+</script>
+</body>
+</html>

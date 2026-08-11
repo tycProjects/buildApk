@@ -1,0 +1,17 @@
+{
+  "name": "zip-to-apk",
+  "version": "1.0.0",
+  "description": "Upload an Android/web project as a zip, build it into an APK via Tycept Actions, and download the result.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.10",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^2.7.0",
+    "simple-git": "^3.25.0"
+  }
+}
