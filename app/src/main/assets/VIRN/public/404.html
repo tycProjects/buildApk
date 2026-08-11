@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0B0D12">
+<title>404 — VIRN · Virtual Notebook</title>
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<style>
+  :root{
+    --bg:#0B0D12; --bg-soft:#10131A; --surface:#161A23; --surface-2:#1D222D;
+    --surface-hover:#242A38; --border:#262C3A; --border-strong:#363E50;
+    --text:#E8EAF0; --text-dim:#98A0B3; --text-faint:#666E82;
+    --accent:#4F7BFF; --accent-hover:#6B90FF; --accent-soft:rgba(79,123,255,0.14);
+    --success:#2FBF8F; --success-soft:rgba(47,191,143,0.14);
+    --warning:#F2A93B; --danger:#EF5B5B;
+    --font-display:'Space Grotesk','Segoe UI',sans-serif;
+    --font-body:'Inter','Segoe UI',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','Consolas',monospace;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ height:100%; }
+  body{
+    font-family:var(--font-body); color:var(--text); background:var(--bg);
+    display:flex; align-items:center; justify-content:center; padding:24px;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(79,123,255,0.10), transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(47,191,143,0.08), transparent 45%),
+      var(--bg);
+  }
+  .card{
+    width:100%; max-width:420px; text-align:center;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; padding:44px 32px 34px; position:relative; overflow:hidden;
+    box-shadow:0 30px 70px -20px rgba(0,0,0,0.65);
+  }
+  /* notebook paper edge accent */
+  .card::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg, var(--accent), var(--success));
+  }
+  .brand{ font-family:var(--font-display); font-weight:700; font-size:1.4rem; letter-spacing:0.5px; }
+  .brand span{ color:var(--accent); }
+  .tagline{ color:var(--text-dim); font-size:0.84rem; margin-top:4px; }
+  .code-wrap{ margin:28px 0 18px; }
+  .code{
+    font-family:var(--font-display); font-weight:700; font-size:4.6rem; line-height:1;
+    background:linear-gradient(135deg, var(--accent) 0%, var(--success) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    letter-spacing:2px;
+  }
+  .code-sub{ font-family:var(--font-mono); font-size:0.72rem; color:var(--text-faint); letter-spacing:3px; text-transform:uppercase; margin-top:6px; }
+  h1{ font-family:var(--font-display); font-size:1.15rem; font-weight:600; margin-bottom:8px; }
+  p{ color:var(--text-dim); font-size:0.86rem; line-height:1.6; margin-bottom:24px; }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--accent); color:#fff; text-decoration:none; font-weight:600;
+    font-size:0.88rem; padding:12px 26px; border-radius:10px;
+    transition:background .15s ease, transform .12s ease;
+  }
+  .btn:hover{ background:var(--accent-hover); }
+  .btn:active{ transform:scale(.96); }
+  .btn svg{ width:16px; height:16px; }
+  /* little notebook decorative holes */
+  .holes{ position:absolute; left:14px; top:18px; display:flex; flex-direction:column; gap:22px; }
+  .holes span{ width:6px; height:6px; border-radius:50%; background:var(--border-strong); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="holes" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <div class="brand">VIR<span>N</span></div>
+    <div class="tagline">Virtual Notebook</div>
+    <div class="code-wrap">
+      <div class="code">404</div>
+      <div class="code-sub">Page not found</div>
+    </div>
+    <h1>This page went missing from your notebook.</h1>
+    <p>The page you're looking for doesn't exist or has been moved. Double-check the link, or head back to your notes.</p>
+    <a class="btn" href="./">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/></svg>
+      Back to VIRN
+    </a>
+  </div>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a27baa6c6937bdab',t:'MTc4NjE2MjE2Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

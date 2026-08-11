@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.web.virn_80a3c.twa",
+        "sha256_cert_fingerprints": ["94:4A:0E:D8:FD:AB:4B:F6:E8:E6:C2:C3:76:18:61:45:A2:41:BD:E8:0B:C3:D4:CA:FD:F1:8A:45:E7:7E:87:31"]
+      }
+    }]
