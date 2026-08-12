@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 3
+# apk-builder fallback workflow — version: 4
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -76,7 +76,7 @@ jobs:
           # gradlew and gradle-wrapper.properties can exist while the actual
           # gradle-wrapper.jar (a binary file, easy to lose in a zip or via
           # .gitignore) is missing. That's the "Could not find or load main
-          # class org.gradle.wrapper.GradleWrapperMain" failure — gradlew has
+          # class org.gradle.wrapper.GradleWrapperMain" failure -- gradlew has
           # nothing to run. Regenerate the missing jar with the Gradle we
           # already set up above (pinned to the same version), so the
           # project's own wrapper becomes usable again instead of just being
@@ -87,10 +87,20 @@ jobs:
             chmod +x ./gradlew
           fi
 
+          # XML comments containing "--" anywhere inside them (e.g. a comment
+          # like "<!-- fix -- update later -->") are invalid XML and make the
+          # resource merger fail with "The string '--' is not permitted
+          # within comments." Rather than trying to detect/repair just the
+          # bad ones, strip ALL comments from res/*.xml files -- comments
+          # have no effect on the build, so this is always safe and removes
+          # the whole class of failure.
+          find . -path '*/res/*' -name '*.xml' -print0 \
+            | xargs -0 -r perl -0777 -pi -e 's/<!--.*?-->//gs'
+
       - name: Build debug APK
         working-directory: ${{ steps.locate.outputs.dir }}
         run: |
-          if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.jar" ]; then
+          if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
             echo "Building with the project's own Gradle wrapper"
             ./gradlew assembleDebug --no-daemon
           else
