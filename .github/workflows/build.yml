@@ -2,7 +2,7 @@
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
-name: Build APK
+name: Build AAB
 
 on:
   push:
@@ -97,20 +97,20 @@ jobs:
           find . -path '*/res/*' -name '*.xml' -print0 \
             | xargs -0 -r perl -0777 -pi -e 's/<!--.*?-->//gs'
 
-      - name: Build debug APK
+      - name: Build release AAB (Play Store bundle)
         working-directory: ${{ steps.locate.outputs.dir }}
         run: |
           if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
             echo "Building with the project's own Gradle wrapper"
-            ./gradlew assembleDebug --no-daemon
+            ./gradlew bundleRelease --no-daemon
           else
             echo "No usable Gradle wrapper found — building with the runner's Gradle instead"
-            gradle assembleDebug --no-daemon
+            gradle bundleRelease --no-daemon
           fi
 
-      - name: Upload APK
+      - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk-${{ github.run_id }}
-          path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/debug/*.apk
+          name: release-aab-${{ github.run_id }}
+          path: ${{ steps.locate.outputs.dir }}/**/build/outputs/bundle/release/*.aab
           if-no-files-found: error
