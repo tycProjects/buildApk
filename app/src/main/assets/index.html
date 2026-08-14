@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#050505">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ZIP to APK — Tycept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090b;
+    --surface: #131417;
+    --line: rgba(255,255,255,0.14);
+    --line-strong: rgba(255,255,255,0.42);
+    --text: #f4f3ef;
+    --muted: #9a978d;
+    --dim: #55524a;
+    --step-off: rgba(255,255,255,0.14);
+    --accent: #5eead4;
+    --accent-dim: rgba(94,234,212,0.16);
+    --accent2: #a78bfa;
+    --accent2-dim: rgba(167,139,250,0.16);
+    --danger: #fb7185;
+    --danger-dim: rgba(251,113,133,0.14);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overscroll-behavior: none; }
+  body {
+    margin: 0;
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  /* faint scanline texture — the only "atmosphere" this design allows itself */
+  .scan {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px,
+      transparent 1px, transparent 3px
+    );
+    mix-blend-mode: overlay;
+  }
+
+  /* ---- reusable corner-bracket frame: the signature device ---- */
+  .frame { position: relative; }
+  .frame .corner { position: absolute; width: 13px; height: 13px; pointer-events: none; transition: width .2s ease, height .2s ease; }
+  .frame .corner.tl { top: -1px; left: -1px; border-top: 2px solid var(--line-strong); border-left: 2px solid var(--line-strong); }
+  .frame .corner.tr { top: -1px; right: -1px; border-top: 2px solid var(--line-strong); border-right: 2px solid var(--line-strong); }
+  .frame .corner.bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--line-strong); border-left: 2px solid var(--line-strong); }
+  .frame .corner.br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--line-strong); border-right: 2px solid var(--line-strong); }
+  .frame.active .corner { width: 18px; height: 18px; border-color: var(--accent); }
+
+  /* ---- top bar ---- */
+  .topbar {
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: calc(env(safe-area-inset-top, 0px) + 14px) 18px 14px;
+    background: rgba(5,5,5,0.85);
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .topbar .logo {
+    width: 30px; height: 30px;
+    border: 1.5px solid var(--text);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+  .topbar .titles { display: flex; flex-direction: column; gap: 1px; }
+  .topbar h1 {
+    font-size: 15px; margin: 0; font-weight: 700; letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+  .topbar .tagline {
+    font-size: 10px; letter-spacing: 0.04em; color: var(--dim);
+  }
+  .topbar .tagline .arrow { color: var(--accent); }
+  .topbar .live {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+    padding: 5px 9px;
+    border: 1px solid var(--line);
+  }
+  .topbar .live .pip {
+    width: 6px; height: 6px; background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+    animation: blink 1.4s steps(1) infinite;
+  }
+  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.15; } }
+  .topbar .spacer { flex: 1; }
+  .infoBtn {
+    width: 28px; height: 28px;
+    border: 1px solid var(--line);
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .12s ease, color .12s ease, transform .1s ease;
+  }
+  .infoBtn:active { transform: scale(0.9); background: var(--text); color: var(--bg); }
+
+  /* ---- scroll area ---- */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 2;
+    padding: 14px 18px calc(env(safe-area-inset-bottom, 0px) + 118px);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* ---- compact/no-scroll mode: while a build is running, the upload
+     box and tabs aren't needed, so they're hidden to give the progress
+     steps + status box the whole screen without requiring a scroll.
+     Scrolling itself is only locked down during this state — the rest of
+     the app (Options tab fields, History) needs to scroll normally, e.g.
+     so a focused text input isn't stuck behind the keyboard. ---- */
+  body.is-building .content {
+    overflow-y: hidden;
+  }
+  body.is-building .subtitle,
+  body.is-building .tabbar,
+  body.is-building #dropFrame {
+    display: none !important;
+  }
+  body.is-building .content {
+    justify-content: center;
+  }
+  .subtitle {
+    font-family: 'Inter', sans-serif;
+    color: var(--muted); font-size: 12.5px; line-height: 1.5; margin: 2px 0 14px;
+  }
+  .subtitle .linklike { color: var(--text); font-weight: 600; cursor: pointer; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 18px;
+    animation: rise .4s cubic-bezier(.16,1,.3,1) both;
+  }
+  .panel + .panel { margin-top: 14px; }
+  .panel.delay1 { animation-delay: .05s; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  #dropzone {
+    border: 1px dashed var(--line);
+    padding: 26px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  #dropzone:active { transform: scale(0.99); }
+  #dropzone.drag { border-color: var(--accent); background: var(--accent-dim); }
+  #dropzone .icon { width: 32px; height: 32px; margin: 0 auto 10px; color: var(--muted); transition: color .2s ease; }
+  #dropzone.drag .icon, #dropzone.has-file .icon { color: var(--accent); }
+  #dropzone .primary { font-size: 13.5px; font-weight: 700; letter-spacing: 0.01em; }
+  #dropzone .secondary { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--muted); margin-top: 5px; }
+  #dropzone .hint {
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px; color: var(--muted);
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid var(--line);
+    line-height: 1.5;
+  }
+
+  #fileRow {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 11px 13px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    font-size: 12.5px;
+    animation: rise .3s cubic-bezier(.16,1,.3,1) both;
+  }
+  #fileRow .fname { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  #fileRow .fsize { color: var(--muted); flex-shrink: 0; }
+  #fileRow .clear {
+    color: var(--muted); cursor: pointer; flex-shrink: 0; font-size: 14px; line-height: 1;
+    width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line);
+    transition: background .15s ease, color .15s ease;
+  }
+  #fileRow .clear:active { background: var(--text); color: var(--bg); }
+
+  .section-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--muted); font-weight: 700; margin: 16px 2px 8px;
+  }
+  .section-label::before { content: '// '; color: var(--dim); }
+
+  /* ---- tab bar (Build / History) ---- */
+  .tabbar {
+    display: flex; gap: 4px; margin-bottom: 18px;
+    border: 1px solid var(--line); border-radius: 8px; padding: 3px;
+    background: var(--surface);
+  }
+  .tabbtn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    background: transparent; border: none; border-radius: 6px;
+    color: var(--muted); font-family: inherit; font-size: 12.5px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 9px 6px; cursor: pointer; transition: background .15s ease, color .15s ease;
+  }
+  .tabbtn.active { background: var(--accent-dim); color: var(--accent); }
+  .tabBadge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px;
+    background: var(--dim); color: var(--text); font-size: 10px; font-weight: 700;
+  }
+  .tabbtn.active .tabBadge { background: var(--accent); color: #06231e; }
+  .tabPanel { display: block; }
+  .tabPanel[hidden] { display: none; }
+  .emptyState {
+    text-align: center; padding: 40px 12px; color: var(--muted); font-size: 12.5px;
+  }
+
+  /* ---- Options tab: pill selector, text fields, logo picker ---- */
+  .pillGroup { display: flex; gap: 10px; margin-bottom: 12px; }
+  .pill {
+    flex: 1; position: relative; display: flex; flex-direction: column; align-items: center;
+    gap: 3px; padding: 10px 8px; border: 1px solid var(--line); border-radius: 10px;
+    cursor: pointer; background: var(--surface);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .pill input { position: absolute; opacity: 0; pointer-events: none; }
+  .pill .pillIcon { display: flex; color: var(--muted); }
+  .pill .pillLabel { font-size: 12.5px; font-weight: 700; letter-spacing: .03em; color: var(--text); }
+  .pill .pillSub { font-size: 10px; color: var(--muted); }
+  .pill.active { border-color: var(--accent); background: var(--accent-dim); }
+  .pill.active .pillSub { color: var(--accent); }
+  .pill.active .pillIcon { color: var(--accent); }
+  #pillAab.active { border-color: var(--accent2); background: var(--accent2-dim); }
+  #pillAab.active .pillSub { color: var(--accent2); }
+  #pillAab.active .pillIcon { color: var(--accent2); }
+
+  /* Standalone status pill for the History list -- separate from .tag,
+     which is scoped to only show inside #statusBox (two pre-rendered
+     spans toggled by the box's success/error class). History renders one
+     span per row with its own class set dynamically, so it needs to be
+     visible unconditionally rather than relying on that ancestor toggle. */
+  .historyTag {
+    flex-shrink: 0; font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
+    padding: 3px 7px; display: inline-block;
+  }
+  .historyTag.ok { background: var(--accent); color: var(--bg); }
+  .historyTag.err { background: var(--danger); color: var(--bg); }
+  .historyTag.pending { background: var(--dim); color: var(--text); }
+  .historyRow {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 12px;
+  }
+  .historyRow:last-child { border-bottom: none; }
+  .historyLink { color: inherit; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 2px; }
+  .historyType { opacity: 0.55; }
+
+  .fieldLabel {
+    font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: .04em;
+    text-transform: uppercase; margin: 2px 2px 6px;
+  }
+  .textField {
+    width: 100%; box-sizing: border-box; padding: 10px 12px; margin-bottom: 10px;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+    color: var(--text); font-family: inherit; font-size: 13px;
+  }
+  .textField:focus { outline: none; border-color: var(--accent); }
+  .textField::placeholder { color: var(--dim); }
+
+  .logoRow { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
+  .logoPicker {
+    position: relative; width: 76px; height: 76px; flex-shrink: 0;
+    border: 1px dashed var(--line-strong); border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; overflow: hidden; background: var(--bg);
+  }
+  .logoPicker img { width: 100%; height: 100%; object-fit: cover; display: none; }
+  #logoPlaceholder {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    color: var(--muted); font-size: 9px; text-align: center; padding: 4px; letter-spacing: .02em;
+  }
+  .logoClear {
+    position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(0,0,0,0.75); color: var(--text); display: none;
+    align-items: center; justify-content: center; font-size: 10px; cursor: pointer;
+  }
+  .logoInfo { flex: 1; font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+
+  #progressWrap { display: none; }
+  #progressWrap.active {
+    border-color: var(--accent);
+    animation: panelGlow 2.2s ease-in-out infinite;
+  }
+  #progressWrap.success { border-color: var(--accent); box-shadow: 0 0 26px var(--accent-dim); }
+  #progressWrap.errored { border-color: var(--danger); box-shadow: 0 0 26px var(--danger-dim); }
+  @keyframes panelGlow {
+    0%, 100% { box-shadow: 0 0 0 rgba(94,234,212,0); }
+    50% { box-shadow: 0 0 20px var(--accent-dim); }
+  }
+
+  .progressHead { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+  #buildTimer {
+    font-size: 11px; color: var(--muted); letter-spacing: 0.05em;
+    display: flex; align-items: center; gap: 5px;
+  }
+  #buildTimer .tdot { width: 5px; height: 5px; background: var(--accent); box-shadow: 0 0 5px var(--accent); animation: blink 1s steps(1) infinite; }
+  #progressWrap.success #buildTimer .tdot { animation: none; opacity: 1; }
+  #progressWrap.errored #buildTimer .tdot { background: var(--danger); box-shadow: 0 0 5px var(--danger); animation: none; }
+
+  .steps { display: flex; justify-content: space-between; margin-bottom: 14px; }
+  .step { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; position: relative; }
+  .step .dot {
+    width: 26px; height: 26px;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 700; color: var(--muted);
+    transition: background .3s ease, color .3s ease, border-color .3s ease;
+    z-index: 1;
+    border: 1px solid var(--line);
+  }
+  .step .dot .gear { display: none; width: 13px; height: 13px; }
+  .step.active[data-step="building"] .dot .num { display: none; }
+  .step.active[data-step="building"] .dot .gear { display: block; animation: spin 1.1s linear infinite; }
+  @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+  .step .label { font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: center; transition: color .3s ease; }
+  .step::after {
+    content: '';
+    position: absolute;
+    top: 13px; left: 50%; width: 100%; height: 1px;
+    background: var(--step-off);
+    z-index: 0;
+    transition: background .3s ease;
+  }
+  .step:last-child::after { display: none; }
+  .step.active .dot {
+    background: var(--accent); color: var(--bg); border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+    position: relative;
+  }
+  .step.active .dot::before {
+    content: '';
+    position: absolute; inset: -5px;
+    border: 1px solid var(--accent);
+    animation: squarePing 1.6s cubic-bezier(0,0,.2,1) infinite;
+  }
+  @keyframes squarePing {
+    0% { transform: scale(0.85); opacity: 0.9; }
+    100% { transform: scale(1.7); opacity: 0; }
+  }
+  .step.active .label { color: var(--text); }
+  .step.done .dot { background: var(--bg); color: var(--accent); border-color: var(--accent); animation: dotPop .35s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes dotPop { 0% { transform: scale(.6); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+  .step.done .dot .num, .step.done .dot .gear { display: none; }
+  .step.done .dot::after { content: '✓'; }
+  .step.error .dot .num { display: none; }
+  .step.done .label { color: var(--text); }
+  .step.done::after { background: var(--accent); }
+  .step.active::after {
+    background: linear-gradient(90deg, var(--accent) 0%, var(--step-off) 50%, var(--accent) 100%);
+    background-size: 200% 100%;
+    animation: lineSweep 1.4s linear infinite;
+  }
+  @keyframes lineSweep { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+  .step.error .dot { background: var(--danger); border-color: var(--danger); color: var(--bg); }
+  .step.error .dot::after { content: '!'; font-weight: 800; }
+
+  /* ---- overall progress bar ---- */
+  .progressBarTrack {
+    height: 4px;
+    background: var(--step-off);
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .progressBarFill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    box-shadow: 0 0 8px var(--accent);
+    transition: width .5s cubic-bezier(.16,1,.3,1);
+    position: relative;
+  }
+  .progressBarFill::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    background-size: 60px 100%;
+    animation: barShine 1.3s linear infinite;
+  }
+  @keyframes barShine { from { background-position: -80px 0; } to { background-position: 220px 0; } }
+  #progressWrap.errored .progressBarFill { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+  #progressWrap.errored .progressBarFill::after { display: none; }
+
+  #statusBox {
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  /* subtle scanning shimmer while a build is actively running (no
+     success/error class yet) -- ties into the same "scan" motif used
+     for the page background, so it reads as "still working" at a glance */
+  #statusBox:not(.success):not(.error)::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(94,234,212,0.07), transparent);
+    background-size: 220% 100%;
+    animation: statusScan 2.4s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes statusScan { from { background-position: 220% 0; } to { background-position: -220% 0; } }
+  #statusBox .prefix { color: var(--dim); flex-shrink: 0; }
+  #statusBox #statusText {
+    flex: 1;
+    min-width: 0;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    position: relative;
+  }
+  #statusBox #statusText::after { content: '▍'; margin-left: 2px; animation: blink 1s steps(1) infinite; color: var(--text); }
+  #statusBox.success, #statusBox.error, #statusBox.cancelled {
+    color: var(--text); border-color: var(--accent);
+    animation: statusIn .3s ease both;
+  }
+  #statusBox.error { border-color: var(--danger); }
+  #statusBox.cancelled { border-color: var(--muted); }
+  @keyframes statusIn { from { opacity: .35; } to { opacity: 1; } }
+  #statusBox.success #statusText::after, #statusBox.error #statusText::after, #statusBox.cancelled #statusText::after { display: none; }
+  .tag {
+    flex-shrink: 0;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
+    padding: 3px 7px;
+    display: none;
+  }
+  #statusBox.success .tag.ok { display: inline-block; background: var(--accent); color: var(--bg); }
+  #statusBox.error .tag.err {
+    display: inline-block; color: var(--bg);
+    background: var(--danger);
+  }
+  #statusBox.cancelled .tag.cancelled {
+    display: inline-block; color: var(--bg);
+    background: var(--muted);
+  }
+  .dot-pulse { display: none; }
+
+  /* ---- cancel button: only visible while a build is actually running ---- */
+  #cancelBtn {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: border-color .2s ease, color .2s ease, background .2s ease;
+  }
+  body.is-building #progressWrap.active #cancelBtn { display: inline-flex; align-items: center; gap: 5px; }
+  #cancelBtn:active { transform: scale(0.97); }
+  #cancelBtn:not(:disabled):hover, #cancelBtn:not(:disabled):active {
+    border-color: var(--danger); color: var(--danger);
+  }
+  #cancelBtn:disabled { opacity: 0.5; cursor: default; }
+  #cancelBtn::before { content: '✕'; font-size: 9px; }
+  #progressWrap.cancelled { border-color: var(--muted); }
+
+  /* ---- live console feed: scrolling log lines under the status box ---- */
+  #buildLog {
+    display: none;
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: #050506;
+    border: 1px solid var(--line);
+    max-height: 108px;
+    overflow-y: auto;
+    font-size: 10.5px;
+    line-height: 1.7;
+  }
+  #buildLog.show { display: block; }
+  #buildLog .logLine {
+    color: var(--muted);
+    white-space: pre-wrap;
+    word-break: break-word;
+    animation: logIn .25s ease both;
+  }
+  #buildLog .logLine .ts { color: var(--dim); margin-right: 7px; }
+  #buildLog .logLine.tone-ok { color: var(--accent); }
+  #buildLog .logLine.tone-err { color: var(--danger); }
+  @keyframes logIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+
+  #progressWrap.errored .panel, #progressWrap.errored#progressWrap {
+    animation: shake .4s ease;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+  }
+
+  .successBurst {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin: 4px 0 2px;
+    position: relative;
+  }
+  .successBurst.show { display: flex; animation: pop .4s cubic-bezier(.34,1.56,.64,1) both; }
+  .successBurst .pingRing {
+    position: absolute;
+    width: 48px; height: 48px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    opacity: 0;
+  }
+  .successBurst.show .pingRing { animation: burstPing 1.1s cubic-bezier(0,0,.2,1) both; }
+  .successBurst.show .pingRing.r2 { animation-delay: .18s; }
+  .successBurst.show .pingRing.r3 { animation-delay: .34s; }
+  @keyframes burstPing {
+    0% { transform: scale(0.6); opacity: 0.9; }
+    100% { transform: scale(2.6); opacity: 0; }
+  }
+
+  .successBurst {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin: 4px 0 2px;
+  }
+  .successBurst.show { display: flex; animation: pop .4s cubic-bezier(.34,1.56,.64,1) both; }
+  .successBurst .ring {
+    width: 48px; height: 48px;
+    border: 1.5px solid var(--accent);
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 0 22px var(--accent-dim);
+    display: flex; align-items: center; justify-content: center;
+    animation: ringGlow 1.8s ease-in-out .4s infinite;
+  }
+  @keyframes ringGlow {
+    0%, 100% { box-shadow: 0 0 22px var(--accent-dim); }
+    50% { box-shadow: 0 0 32px var(--accent-dim); }
+  }
+  @keyframes pop {
+    0% { opacity: 0; transform: scale(.5); }
+    60% { opacity: 1; transform: scale(1.06); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* ---- pinned bottom action bar ---- */
+  .bottombar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 3;
+    padding: 14px 18px calc(env(safe-area-inset-bottom, 0px) + 14px);
+    background: rgba(5,5,5,0.9);
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  button#buildBtn {
+    width: 100%;
+    padding: 16px 20px;
+    border: 1.5px solid var(--text);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--text);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: opacity .15s ease, transform .1s ease, box-shadow .3s ease;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+  }
+  button#buildBtn:disabled { opacity: 0.25; cursor: default; background: transparent; color: var(--muted); border-color: var(--line); }
+  button#buildBtn:not(:disabled):active { transform: scale(0.98); }
+  button#buildBtn:not(:disabled) {
+    animation: btnGlow 2.6s ease-in-out infinite;
+  }
+  @keyframes btnGlow {
+    0%, 100% { box-shadow: 0 0 0 rgba(94,234,212,0); }
+    50% { box-shadow: 0 0 16px rgba(94,234,212,0.3); }
+  }
+  button#buildBtn:not(:disabled)::before {
+    content: '';
+    position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+    background: linear-gradient(115deg, transparent, rgba(5,5,5,0.16), transparent);
+    transform: skewX(-20deg);
+    animation: shine 3.4s ease-in-out infinite;
+  }
+  @keyframes shine {
+    0% { left: -60%; }
+    35% { left: 130%; }
+    100% { left: 130%; }
+  }
+  button#buildBtn span { position: relative; z-index: 1; }
+
+  .spinner {
+    width: 13px; height: 13px;
+    border: 2px solid rgba(5,5,5,0.3);
+    border-top-color: var(--bg);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  a#downloadLink {
+    display: none;
+    width: 100%;
+    padding: 16px 20px;
+    border: 1.5px solid var(--accent);
+    background: var(--accent);
+    color: var(--bg);
+    text-align: center;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    transition: transform .1s ease, opacity .15s ease;
+  }
+  a#downloadLink:active { transform: scale(0.98); opacity: 0.85; }
+  a#downloadLink.show { animation: rise .3s cubic-bezier(.16,1,.3,1) both; }
+  a#downloadLink.show:not(.preparing) {
+    animation: rise .3s cubic-bezier(.16,1,.3,1) both, dlGlow 2.4s ease-in-out .3s infinite;
+  }
+  @keyframes dlGlow {
+    0%, 100% { box-shadow: 0 0 0 rgba(94,234,212,0); }
+    50% { box-shadow: 0 0 18px rgba(94,234,212,0.4); }
+  }
+
+  button#resetBtn {
+    display: none;
+    width: 100%;
+    padding: 14px 20px;
+    border: 1px solid var(--line);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: transparent;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease, transform .1s ease, border-color .15s ease;
+    align-items: center; justify-content: center; gap: 8px;
+  }
+  button#resetBtn.show { display: flex; animation: rise .3s cubic-bezier(.16,1,.3,1) both; animation-delay: .05s; }
+  button#resetBtn:active { transform: scale(0.98) rotate(-0.5deg); background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  input[type=file] { display: none; }
+
+  /* ---- universal tap ripple for clickable elements ---- */
+  .tapfx { position: relative; overflow: hidden; }
+  .ripple {
+    position: absolute;
+    top: var(--ry, 50%); left: var(--rx, 50%);
+    width: 10px; height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.35;
+    transform: scale(0);
+    pointer-events: none;
+    animation: rippleOut .55s ease-out forwards;
+  }
+  @keyframes rippleOut {
+    to { transform: scale(22); opacity: 0; }
+  }
+
+  /* ---- download button "preparing" state: the APK isn't ready the
+     instant this is tapped -- the server still has to fetch the build
+     artifact from GitHub and unzip it, which takes a few seconds. This
+     gives immediate feedback so the tap doesn't look like it did nothing. */
+  a#downloadLink.preparing {
+    pointer-events: none;
+    opacity: 0.85;
+  }
+  a#downloadLink .dlSpinner {
+    width: 13px; height: 13px;
+    border: 2px solid rgba(5,5,5,0.3);
+    border-top-color: var(--bg);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+    flex-shrink: 0;
+  }
+  a#downloadLink.preparing .dlSpinner { display: inline-block; }
+  a#downloadLink.preparing .dlIcon { display: none; }
+  a#downloadLink.ready { animation: pop .4s cubic-bezier(.34,1.56,.64,1) both; }
+
+  /* ---- instructions modal ---- */
+  .modalOverlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 10;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .2s ease;
+  }
+  .modalOverlay.open { display: flex; opacity: 1; }
+  .modalSheet {
+    width: 100%;
+    max-width: 480px;
+    max-height: 82vh;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-bottom: none;
+    padding: 10px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
+    transform: translateY(100%);
+    transition: transform .28s cubic-bezier(.16,1,.3,1);
+    position: relative;
+  }
+  .modalOverlay.open .modalSheet { transform: translateY(0); }
+  .modalSheet .grabber {
+    width: 32px; height: 3px;
+    background: var(--line-strong);
+    margin: 10px auto 16px;
+  }
+  .modalSheet h2 {
+    font-size: 15px; margin: 0 0 6px; font-weight: 700; letter-spacing: 0.02em;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .modalSheet .modalSub { font-family: 'Inter', sans-serif; color: var(--muted); font-size: 12.5px; margin: 0 0 20px; line-height: 1.55; }
+  .stepList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 15px; }
+  .stepList li { display: flex; gap: 12px; align-items: flex-start; }
+  .stepList .num {
+    width: 22px; height: 22px;
+    background: transparent; border: 1px solid var(--line-strong);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 700; color: var(--text);
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .stepList .txt { font-family: 'Inter', sans-serif; font-size: 13.5px; line-height: 1.55; color: var(--muted); }
+  .stepList .txt b { color: var(--text); }
+  .stepList code, .modalSub code, .hint code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 1px 5px;
+    font-size: 11px;
+    color: var(--text);
+  }
+  .modalDivider { height: 1px; background: var(--line); margin: 20px 0; }
+  .doDont { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .doDont .card { font-family: 'Inter', sans-serif; padding: 12px; font-size: 12px; line-height: 1.5; border: 1px solid var(--line); color: var(--muted); }
+  .doDont .good { border-color: var(--line-strong); }
+  .doDont .bad { background: repeating-linear-gradient(135deg, transparent 0 8px, rgba(255,255,255,0.03) 8px 16px); }
+  .doDont .tag { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 8px; color: var(--text); }
+  button#closeModal {
+    width: 100%;
+    margin-top: 22px;
+    padding: 15px;
+    border: 1.5px solid var(--text);
+    background: transparent;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .12s ease, color .12s ease;
+  }
+  button#closeModal:active { background: var(--text); color: var(--bg); }
+
+  /* ---- update-available dialog: plain style, matching the how-to-zip modal ---- */
+  .updateSheet {
+    display: flex;
+    flex-direction: column;
+    max-height: 86vh;
+  }
+  .updateBody {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    margin: 0 -4px 4px;
+    padding: 0 4px;
+  }
+  .updateFooter {
+    flex-shrink: 0;
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .updateFooter button {
+    flex: 1;
+    padding: 15px;
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .12s ease, color .12s ease;
+  }
+  #laterBtn {
+    border: 1.5px solid var(--line-strong);
+    background: transparent;
+    color: var(--muted);
+  }
+  #laterBtn:active { background: rgba(255,255,255,0.06); color: var(--text); }
+  #closeWhatsNew {
+    border: 1.5px solid var(--text);
+    background: transparent;
+    color: var(--text);
+  }
+  #closeWhatsNew:active { background: var(--text); color: var(--bg); }
+</style>
+</head>
+<body>
+  <div class="scan"></div>
+
+  <div class="topbar">
+    <div class="logo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <rect x="2.5" y="2.5" width="19" height="19" rx="6" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M9 16.5L15.5 7.5M15.5 7.5H10M15.5 7.5V13.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="titles">
+      <h1>ZIP to APK</h1>
+      <div class="tagline">.zip<span class="arrow"> → </span>.apk<span style="opacity:.55;"> · by Tycept</span></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="live"><span class="pip"></span>Live</div>
+    <div class="infoBtn tapfx" id="infoBtn" title="How this works">?</div>
+  </div>
+
+  <div class="content">
+    <p class="subtitle">Upload an Android project as a .zip, or a single .html file. Not sure it's set up right? <span class="linklike tapfx" id="howToLink">See how to prep it</span>.</p>
+
+    <div class="tabbar">
+      <button class="tabbtn tapfx active" id="tabBtnBuild" data-tab="build">Build</button>
+      <button class="tabbtn tapfx" id="tabBtnOptions" data-tab="options">Options</button>
+      <button class="tabbtn tapfx" id="tabBtnHistory" data-tab="history">History <span class="tabBadge" id="historyBadge" style="display:none;"></span></button>
+    </div>
+
+    <div class="tabPanel" id="tabPanelBuild">
+      <div class="panel frame" id="dropFrame">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div id="dropzone" class="tapfx">
+          <svg class="icon" viewBox="0 0 24 24" fill="none">
+            <path d="M12 16V4m0 0L7 9m5-5l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="primary">TAP TO SELECT PROJECT.ZIP</div>
+          <div class="secondary">or a single .html file, or drag and drop it here</div>
+          <div class="hint">Any Android/Gradle project zip works — even if it's never been set up for CI before. It's auto-detected and converted.</div>
+        </div>
+        <input type="file" id="fileInput" accept=".zip,application/zip,application/x-zip-compressed,.html,.htm,text/html">
+
+        <div id="fileRow">
+          <span class="fname" id="fname"></span>
+          <span class="fsize" id="fsize"></span>
+          <span class="clear tapfx" id="clearFile" title="Remove"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+        </div>
+      </div>
+
+      <div class="section-label" id="progressLabel" style="display:none;">Build progress</div>
+      <div class="panel delay1" id="progressWrap">
+        <div class="progressHead">
+          <button id="cancelBtn" type="button">Cancel</button>
+          <span id="buildTimer"><span class="tdot"></span><span id="buildTimerText">00:00</span></span>
+        </div>
+        <div class="steps" id="steps">
+          <div class="step" data-step="pushing"><div class="dot"><span class="num">1</span></div><div class="label">Push</div></div>
+          <div class="step" data-step="queued"><div class="dot"><span class="num">2</span></div><div class="label">Queue</div></div>
+          <div class="step" data-step="building"><div class="dot"><span class="num">3</span><svg class="gear" viewBox="0 0 24 24" fill="none"><path d="M12 8a4 4 0 100 8 4 4 0 000-8z" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="label">Build</div></div>
+          <div class="step" data-step="done"><div class="dot"><span class="num">4</span></div><div class="label">Ready</div></div>
+        </div>
+        <div class="progressBarTrack"><div class="progressBarFill" id="progressBarFill"></div></div>
+        <div class="successBurst" id="successBurst">
+          <span class="pingRing"></span><span class="pingRing r2"></span><span class="pingRing r3"></span>
+          <div class="ring">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div id="statusBox">
+          <span class="prefix">&gt;</span>
+          <span class="dot-pulse"></span>
+          <span class="tag ok">OK</span>
+          <span class="tag err">ERR</span>
+          <span class="tag cancelled">STOPPED</span>
+          <span id="statusText">Preparing…</span>
+        </div>
+        <div id="buildLog"></div>
+        <pre id="logExcerpt" style="display:none; margin-top:10px; padding:10px; background:#0a0a0a; border:1px solid #333; border-radius:6px; font-size:11px; line-height:1.4; overflow-x:auto; white-space:pre-wrap; max-height:220px; overflow-y:auto;"></pre>
+      </div>
+    </div>
+
+    <div class="tabPanel" id="tabPanelOptions" hidden>
+      <div class="fieldLabel">Output type</div>
+      <div class="pillGroup">
+        <label class="pill tapfx active" id="pillApk">
+          <input type="radio" name="buildType" value="apk" id="buildTypeApk" checked>
+          <span class="pillIcon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4.5 7.5L12 12l7.5-4.5M12 12v9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+          <span class="pillLabel">APK</span>
+          <span class="pillSub">Installable</span>
+        </label>
+        <label class="pill tapfx" id="pillAab">
+          <input type="radio" name="buildType" value="aab" id="buildTypeAab">
+          <span class="pillIcon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l9 5-9 5-9-5 9-5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 12l9 5 9-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 16.5l9 5 9-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="pillLabel">AAB</span>
+          <span class="pillSub">Play Store</span>
+        </label>
+      </div>
+
+      <div class="fieldLabel">App icon</div>
+      <div class="logoRow">
+        <div class="logoPicker tapfx" id="logoPicker">
+          <img id="logoPreviewImg" alt="App icon preview">
+          <div id="logoPlaceholder">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7 9m5-5l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Tap to upload</span>
+          </div>
+          <span class="logoClear tapfx" id="logoClear" title="Remove"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+        </div>
+        <div class="logoInfo">Square PNG, JPG, or WEBP works best (e.g. 512×512). Only applies to zips with no Android project of their own.</div>
+      </div>
+      <input type="file" id="logoInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
+
+      <div class="fieldLabel" style="margin-top:6px;">App name</div>
+      <input type="text" id="appNameInput" class="textField" placeholder="Defaults to your zip's filename">
+
+      <div class="fieldLabel">Package suffix</div>
+      <input type="text" id="packageSuffixInput" class="textField" placeholder="Optional — keeps rebuilds updating the same app" style="margin-bottom:4px;">
+      <div class="hint">Name and package suffix only affect zips with no Android project of their own (the auto-generated WebView wrapper). AAB output is unsigned — you'll need to sign it yourself before uploading to Play Console.</div>
+    </div>
+
+    <div class="tabPanel" id="tabPanelHistory" hidden>
+      <div class="panel" id="historyPanel" style="padding:8px 14px; display:none;"></div>
+      <div class="emptyState" id="historyEmpty">No builds yet — anything you build will show up here.</div>
+    </div>
+  </div>
+
+  <div style="text-align:center; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); opacity:.6; padding:18px 0 90px;">Tycept · Zip to APK</div>
+
+  <div class="bottombar" id="bottombar">
+    <button id="buildBtn" class="tapfx" disabled>
+      <span class="spinner" id="spinner"></span>
+      <span id="buildBtnLabel">Build APK</span>
+    </button>
+    <a id="downloadLink" class="tapfx" href="#">
+      <span class="dlSpinner"></span>
+      <span class="dlIcon">⬇</span>
+      <span id="downloadLabel">Download APK</span>
+    </a>
+    <button id="resetBtn" class="tapfx">↻ Build another APK</button>
+  </div>
+
+  <!-- ---- how-to-zip instructions modal ---- -->
+  <div class="modalOverlay" id="modalOverlay">
+    <div class="modalSheet">
+      <span class="corner tl" style="position:absolute;top:-1px;left:-1px;width:13px;height:13px;border-top:2px solid var(--line-strong);border-left:2px solid var(--line-strong);"></span>
+      <span class="corner tr" style="position:absolute;top:-1px;right:-1px;width:13px;height:13px;border-top:2px solid var(--line-strong);border-right:2px solid var(--line-strong);"></span>
+      <div class="grabber"></div>
+      <h2><svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4.5 7.5L12 12l7.5-4.5M12 12v9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>How to zip your project</h2>
+      <p class="modalSub">Almost any Gradle/Android project zip works now — this is auto-detected and fixed up, not just checked. Here's what happens automatically, and the one thing to actually avoid.</p>
+      <ul class="stepList">
+        <li>
+          <div class="num">1</div>
+          <div class="txt"><b>Any nesting depth is fine.</b> The zip's <code>settings.gradle</code> (or <code>settings.gradle.kts</code>) is found wherever it is — one top-level folder, a few levels deep, doesn't matter.</div>
+        </li>
+        <li>
+          <div class="num">2</div>
+          <div class="txt">No Gradle wrapper? No problem — a runner-installed Gradle is used instead. Have one? It's used as-is, and common issues (missing <b>execute permission</b>, Windows <b>CRLF line endings</b> in <code>gradlew</code>) are fixed automatically.</div>
+        </li>
+        <li>
+          <div class="num">3</div>
+          <div class="txt">A leftover <code>local.properties</code> pointing at your own machine's SDK path is removed automatically — it would otherwise break the build on the CI runner even though your project is fine.</div>
+        </li>
+        <li>
+          <div class="num">4</div>
+          <div class="txt">Have a custom CI workflow? Include your own <code>.github/workflows/*.yml</code> with a <code>workflow_dispatch</code> trigger and it'll be used automatically. Otherwise a workflow that adapts to whatever your zip contains is generated for you.</div>
+        </li>
+        <li>
+          <div class="num">5</div>
+          <div class="txt">Leave out <b>build output</b> — <code>build/</code>, <code>.gradle/</code>, <code>*.apk</code> — it's regenerated fresh and skipped automatically if included.</div>
+        </li>
+      </ul>
+
+      <div class="modalDivider"></div>
+
+      <div class="doDont">
+        <div class="card good">
+          <span class="tag">Works fine</span>
+          MyApp.zip<br>└ MyApp/<br>&nbsp;&nbsp;├ settings.gradle<br>&nbsp;&nbsp;├ build.gradle<br>&nbsp;&nbsp;└ app/<br><span style="opacity:.7">…nested further, wrapper or no wrapper.</span>
+        </div>
+        <div class="card bad">
+          <span class="tag">Avoid</span>
+          A zip with <b>no</b> <code>settings.gradle</code> anywhere in it — that's the one thing that can't be auto-detected.
+        </div>
+      </div>
+
+      <button id="closeModal" class="tapfx">Got it</button>
+    </div>
+  </div>
+
+  <!-- ---- update-available dialog: shown when the deployed version changes;
+       the changelog is attached inside this same dialog, not a separate one ---- -->
+  <div class="modalOverlay updateOverlay" id="whatsNewOverlay">
+    <div class="modalSheet updateSheet">
+      <span class="corner tl" style="position:absolute;top:-1px;left:-1px;width:13px;height:13px;border-top:2px solid var(--line-strong);border-left:2px solid var(--line-strong);"></span>
+      <span class="corner tr" style="position:absolute;top:-1px;right:-1px;width:13px;height:13px;border-top:2px solid var(--line-strong);border-right:2px solid var(--line-strong);"></span>
+      <div class="grabber"></div>
+      <h2><svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M12 3v13M12 16l-4.5-4.5M12 16l4.5-4.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 19.5h15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg><span id="whatsNewTitle">Update available</span></h2>
+      <p class="modalSub" id="whatsNewVersion"></p>
+      <div class="updateBody">
+        <ul class="stepList" id="whatsNewList"></ul>
+      </div>
+      <div class="updateFooter">
+        <button id="laterBtn" class="tapfx">Later</button>
+        <button id="closeWhatsNew" class="tapfx">Update now</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const dropzone = document.getElementById('dropzone');
+  const dropFrame = document.getElementById('dropFrame');
+  const fileInput = document.getElementById('fileInput');
+  const fileRow = document.getElementById('fileRow');
+  const fname = document.getElementById('fname');
+  const fsize = document.getElementById('fsize');
+  const clearFile = document.getElementById('clearFile');
+  const buildBtn = document.getElementById('buildBtn');
+  const buildBtnLabel = document.getElementById('buildBtnLabel');
+  const spinner = document.getElementById('spinner');
+  const progressWrap = document.getElementById('progressWrap');
+  const progressLabel = document.getElementById('progressLabel');
+  const progressBarFill = document.getElementById('progressBarFill');
+  const buildTimerEl = document.getElementById('buildTimerText');
+  const buildLogEl = document.getElementById('buildLog');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const statusBox = document.getElementById('statusBox');
+  const statusText = document.getElementById('statusText');
+  const downloadLink = document.getElementById('downloadLink');
+  const downloadLabel = document.getElementById('downloadLabel');
+  const resetBtn = document.getElementById('resetBtn');
+  const successBurst = document.getElementById('successBurst');
+  const infoBtn = document.getElementById('infoBtn');
+  const howToLink = document.getElementById('howToLink');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const closeModal = document.getElementById('closeModal');
+  const whatsNewOverlay = document.getElementById('whatsNewOverlay');
+  const closeWhatsNew = document.getElementById('closeWhatsNew');
+  const laterBtn = document.getElementById('laterBtn');
+  const whatsNewTitle = document.getElementById('whatsNewTitle');
+  const whatsNewVersion = document.getElementById('whatsNewVersion');
+  const whatsNewList = document.getElementById('whatsNewList');
+  const stepOrder = ['pushing', 'queued', 'building', 'done'];
+  // Loaded from file:///android_asset/ inside the packaged app, so there is
+  // no server origin to resolve a relative "/api/..." path against — it
+  // must be absolute. Declared here (before loadHistory() is called below)
+  // rather than further down: loadHistory() used to reference API_BASE
+  // before this line ran, throwing a silent "used before initialization"
+  // error that was swallowed by its own try/catch -- history just never
+  // loaded, with no visible error.
+  const API_BASE = 'https://zip-to-apk-ce53.onrender.com';
+  const buildTypeApk = document.getElementById('buildTypeApk');
+  const buildTypeAab = document.getElementById('buildTypeAab');
+  const appNameInput = document.getElementById('appNameInput');
+  const packageSuffixInput = document.getElementById('packageSuffixInput');
+  // Safety net for mobile keyboards that don't reliably scroll a focused
+  // input into view on their own inside this flex layout.
+  [appNameInput, packageSuffixInput].forEach((el) => {
+    el.addEventListener('focus', () => {
+      setTimeout(() => el.scrollIntoView({ block: 'center', behavior: 'smooth' }), 250);
+    });
+  });
+  const historyPanel = document.getElementById('historyPanel');
+  const historyEmpty = document.getElementById('historyEmpty');
+  const historyBadge = document.getElementById('historyBadge');
+  const logExcerptEl = document.getElementById('logExcerpt');
+
+  // ---- Tabs: Build / Options / History ----
+  const tabBtnBuild = document.getElementById('tabBtnBuild');
+  const tabBtnOptions = document.getElementById('tabBtnOptions');
+  const tabBtnHistory = document.getElementById('tabBtnHistory');
+  const tabPanelBuild = document.getElementById('tabPanelBuild');
+  const tabPanelOptions = document.getElementById('tabPanelOptions');
+  const tabPanelHistory = document.getElementById('tabPanelHistory');
+  const bottombar = document.getElementById('bottombar');
+
+  const tabButtons = { build: tabBtnBuild, options: tabBtnOptions, history: tabBtnHistory };
+  const tabPanels = { build: tabPanelBuild, options: tabPanelOptions, history: tabPanelHistory };
+
+  function setActiveTab(tab) {
+    Object.keys(tabButtons).forEach((key) => {
+      tabButtons[key].classList.toggle('active', key === tab);
+      tabPanels[key].hidden = key !== tab;
+    });
+    // The build/download/reset bar stays available on Build and Options (you
+    // can kick off a build from either) but hides on History, which has its
+    // own "tap a build to download" affordance instead.
+    bottombar.style.display = tab === 'history' ? 'none' : 'flex';
+    if (tab === 'history') loadHistory();
+  }
+  tabBtnBuild.addEventListener('click', () => setActiveTab('build'));
+  tabBtnOptions.addEventListener('click', () => setActiveTab('options'));
+  tabBtnHistory.addEventListener('click', () => setActiveTab('history'));
+
+  // Opaque per-browser id, used only to filter /api/history to "your"
+  // builds on this device. Not authentication -- anyone with the id could
+  // see the same list, it just isn't guessable/shared across browsers.
+  function getClientId() {
+    let id = localStorage.getItem('apkBuilderClientId');
+    if (!id) {
+      id = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+      localStorage.setItem('apkBuilderClientId', id);
+    }
+    return id;
+  }
+  const clientId = getClientId();
+
+  function currentBuildType() {
+    return buildTypeAab.checked ? 'aab' : 'apk';
+  }
+
+  const pillApk = document.getElementById('pillApk');
+  const pillAab = document.getElementById('pillAab');
+
+  function updateBuildTypeLabels() {
+    const isAab = currentBuildType() === 'aab';
+    const label = isAab ? 'AAB' : 'APK';
+    buildBtnLabel.textContent = buildBtn.disabled === false && currentJobId ? 'Building…' : `Build ${label}`;
+    downloadLabel.textContent = `Download ${label}`;
+    pillApk.classList.toggle('active', !isAab);
+    pillAab.classList.toggle('active', isAab);
+  }
+  buildTypeApk.addEventListener('change', updateBuildTypeLabels);
+  buildTypeAab.addEventListener('change', updateBuildTypeLabels);
+
+  // ---- App icon picker ----
+  let selectedLogoFile = null;
+  const logoPicker = document.getElementById('logoPicker');
+  const logoInput = document.getElementById('logoInput');
+  const logoPreviewImg = document.getElementById('logoPreviewImg');
+  const logoPlaceholder = document.getElementById('logoPlaceholder');
+  const logoClear = document.getElementById('logoClear');
+  let logoPreviewUrl = null;
+
+  logoPicker.addEventListener('click', (e) => {
+    if (e.target === logoClear) return;
+    logoInput.click();
+  });
+  logoInput.addEventListener('change', () => {
+    const file = logoInput.files[0];
+    if (!file) return;
+    selectedLogoFile = file;
+    if (logoPreviewUrl) URL.revokeObjectURL(logoPreviewUrl);
+    logoPreviewUrl = URL.createObjectURL(file);
+    logoPreviewImg.src = logoPreviewUrl;
+    logoPreviewImg.style.display = 'block';
+    logoPlaceholder.style.display = 'none';
+    logoClear.style.display = 'flex';
+  });
+  logoClear.addEventListener('click', (e) => {
+    e.stopPropagation();
+    selectedLogoFile = null;
+    logoInput.value = '';
+    if (logoPreviewUrl) { URL.revokeObjectURL(logoPreviewUrl); logoPreviewUrl = null; }
+    logoPreviewImg.style.display = 'none';
+    logoPlaceholder.style.display = 'flex';
+    logoClear.style.display = 'none';
+  });
+
+  function formatHistoryStatus(job) {
+    if (job.status === 'done') return 'Ready';
+    if (job.status === 'error') return 'Failed';
+    if (job.status === 'queued-waiting') return 'Waiting…';
+    return 'Building…';
+  }
+
+  async function loadHistory() {
+    try {
+      const res = await fetch(API_BASE + '/api/history?clientId=' + encodeURIComponent(clientId));
+      if (!res.ok) return;
+      const items = await res.json();
+
+      if (!items.length) {
+        historyPanel.style.display = 'none';
+        historyEmpty.style.display = 'block';
+        historyBadge.style.display = 'none';
+        return;
+      }
+
+      historyPanel.innerHTML = items.map((job) => {
+        const name = (job.originalName || job.jobId).replace(/\.zip$/i, '');
+        const statusClass = job.status === 'done' ? 'ok' : job.status === 'error' ? 'err' : 'pending';
+        const link = job.status === 'done'
+          ? `<a href="${API_BASE}/api/download/${job.jobId}" class="historyLink">${name}</a>`
+          : name;
+        return `<div class="historyRow">
+          <span>${link} <span class="historyType">(${(job.buildType || 'apk').toUpperCase()})</span></span>
+          <span class="historyTag ${statusClass}">${formatHistoryStatus(job)}</span>
+        </div>`;
+      }).join('');
+      historyPanel.style.display = 'block';
+      historyEmpty.style.display = 'none';
+
+      const activeCount = items.filter((j) => j.status !== 'done' && j.status !== 'error').length;
+      if (activeCount > 0) {
+        historyBadge.textContent = activeCount;
+        historyBadge.style.display = 'inline-flex';
+      } else {
+        historyBadge.style.display = 'none';
+      }
+    } catch (e) {
+      // history is a convenience, never block the main flow on it
+    }
+  }
+  loadHistory();
+
+  let selectedFile = null;
+  let currentJobId = null;
+  let pollTimer = null;
+  let lastSeenStatus = null;
+
+  // ---- keep tracking a build across app restarts ----
+  // The build itself already runs entirely server-side (pushed to GitHub,
+  // built by Tycept Actions) — closing this app/tab was never able to stop
+  // it. What closing DID break is this page's polling loop: reopening used
+  // to land back on a blank "Build APK" screen with no way to tell the
+  // build had kept going. Stashing the jobId lets a fresh page load notice
+  // there's still a build in flight and resume watching it instead of
+  // losing track of it.
+  const JOB_STORAGE_KEY = 'tycept_active_build_job';
+  function saveActiveJob(jobId) {
+    try { localStorage.setItem(JOB_STORAGE_KEY, JSON.stringify({ jobId, savedAt: Date.now() })); } catch (e) {}
+  }
+  function clearActiveJob() {
+    try { localStorage.removeItem(JOB_STORAGE_KEY); } catch (e) {}
+  }
+  function loadActiveJob() {
+    try {
+      const raw = localStorage.getItem(JOB_STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      // Ignore anything absurdly old (server jobs get cleaned up after
+      // JOB_TTL_MINUTES anyway) so a stale key can't resurrect a dead job.
+      if (!parsed.jobId || Date.now() - parsed.savedAt > 3 * 60 * 60 * 1000) return null;
+      return parsed.jobId;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // ---- chime sounds (synthesized, no audio file needed — works fine
+  // packaged into the WebView app since nothing has to load from disk).
+  // Gain is set to 1 (max) on every note, i.e. full volume.
+  let audioCtx = null;
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  function playTone(freq, startTime, duration, peakGain = 1) {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(peakGain, startTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(startTime);
+    osc.stop(startTime + duration + 0.05);
+  }
+  function playStartChime() {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    playTone(587.33, now, 0.18, 1);        // D5
+    playTone(880.00, now + 0.12, 0.28, 1); // A5
+  }
+  function playDoneChime() {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    playTone(783.99, now, 0.16, 1);         // G5
+    playTone(987.77, now + 0.10, 0.16, 1);  // B5
+    playTone(1318.51, now + 0.20, 0.35, 1); // E6
+  }
+  // Short single tick, played on every intermediate step change
+  // (pushing -> queued -> building) so progress is audible even when the
+  // screen isn't being watched, without being as attention-grabbing as the
+  // start/done chimes.
+  function playStepTick() {
+    const ctx = getAudioCtx();
+    playTone(659.25, ctx.currentTime, 0.09, 0.6); // E5, short + quieter
+  }
+
+  // ---- universal tap ripple, applied to every button-like element ----
+  function spawnRipple(el, x, y) {
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty('--rx', (x - rect.left) + 'px');
+    el.style.setProperty('--ry', (y - rect.top) + 'px');
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    el.appendChild(r);
+    r.addEventListener('animationend', () => r.remove());
+  }
+  document.querySelectorAll('.tapfx').forEach((el) => {
+    el.addEventListener('pointerdown', (e) => {
+      if (el.disabled) return;
+      spawnRipple(el, e.clientX, e.clientY);
+    });
+  });
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  // ---- tiny in-browser ZIP writer (STORE method, no compression needed --
+  // one small HTML file doesn't need it) so a lone .html pick can be wrapped
+  // into a real .zip client-side before it ever hits the normal upload path. ----
+  const CRC_TABLE = (() => {
+    const table = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      table[n] = c >>> 0;
+    }
+    return table;
+  })();
+  function crc32(bytes) {
+    let crc = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) crc = CRC_TABLE[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+  }
+  function dosDateTime(d) {
+    const time = ((d.getHours() & 0x1F) << 11) | ((d.getMinutes() & 0x3F) << 5) | ((d.getSeconds() >> 1) & 0x1F);
+    const date = (((d.getFullYear() - 1980) & 0x7F) << 9) | (((d.getMonth() + 1) & 0xF) << 5) | (d.getDate() & 0x1F);
+    return { time, date };
+  }
+  function buildZip(entryName, bytes) {
+    const { time, date } = dosDateTime(new Date());
+    const nameBytes = new TextEncoder().encode(entryName);
+    const crc = crc32(bytes);
+    const size = bytes.length;
+
+    const local = new Uint8Array(30 + nameBytes.length);
+    const lv = new DataView(local.buffer);
+    lv.setUint32(0, 0x04034b50, true);   // local file header signature
+    lv.setUint16(4, 20, true);           // version needed
+    lv.setUint16(6, 0, true);            // flags
+    lv.setUint16(8, 0, true);            // method: store
+    lv.setUint16(10, time, true);
+    lv.setUint16(12, date, true);
+    lv.setUint32(14, crc, true);
+    lv.setUint32(18, size, true);        // compressed size
+    lv.setUint32(22, size, true);        // uncompressed size
+    lv.setUint16(26, nameBytes.length, true);
+    lv.setUint16(28, 0, true);           // extra field length
+    local.set(nameBytes, 30);
+
+    const central = new Uint8Array(46 + nameBytes.length);
+    const cv = new DataView(central.buffer);
+    cv.setUint32(0, 0x02014b50, true);   // central directory header signature
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0, true);
+    cv.setUint16(10, 0, true);
+    cv.setUint16(12, time, true);
+    cv.setUint16(14, date, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, size, true);
+    cv.setUint32(24, size, true);
+    cv.setUint16(28, nameBytes.length, true);
+    cv.setUint16(30, 0, true);
+    cv.setUint16(32, 0, true);
+    cv.setUint16(34, 0, true);
+    cv.setUint16(36, 0, true);
+    cv.setUint32(38, 0, true);
+    cv.setUint32(42, 0, true);           // local header offset
+    central.set(nameBytes, 46);
+
+    const end = new Uint8Array(22);
+    const ev = new DataView(end.buffer);
+    ev.setUint32(0, 0x06054b50, true);   // end of central directory signature
+    ev.setUint16(4, 0, true);
+    ev.setUint16(6, 0, true);
+    ev.setUint16(8, 1, true);            // entries on this disk
+    ev.setUint16(10, 1, true);           // total entries
+    ev.setUint32(12, central.length, true);
+    ev.setUint32(16, local.length + size, true); // offset of central dir
+    ev.setUint16(20, 0, true);
+
+    return new Blob([local, bytes, central, end], { type: 'application/zip' });
+  }
+  async function zipHtmlFile(file) {
+    const buf = new Uint8Array(await file.arrayBuffer());
+    const zipBlob = buildZip('index.html', buf);
+    const zipName = file.name.replace(/\.html?$/i, '') + '.zip';
+    return new File([zipBlob], zipName, { type: 'application/zip' });
+  }
+
+  function setFile(file) {
+    selectedFile = file;
+    if (file) {
+      fname.textContent = file.name;
+      fsize.textContent = formatSize(file.size);
+      fileRow.style.display = 'flex';
+      dropzone.classList.add('has-file');
+      dropFrame.classList.add('active');
+      buildBtn.disabled = false;
+    } else {
+      fileRow.style.display = 'none';
+      dropzone.classList.remove('has-file');
+      dropFrame.classList.remove('active');
+      buildBtn.disabled = true;
+    }
+  }
+
+  dropzone.onclick = () => fileInput.click();
+  fileInput.onchange = async () => {
+    const file = fileInput.files[0] || null;
+    if (!file) return;
+    const lower = file.name.toLowerCase();
+    if (lower.endsWith('.html') || lower.endsWith('.htm')) {
+      setFile(await zipHtmlFile(file));
+      fileInput.value = '';
+      return;
+    }
+    if (!lower.endsWith('.zip')) {
+      openModal();
+      fileInput.value = '';
+      return;
+    }
+    setFile(file);
+  };
+
+  clearFile.onclick = (e) => {
+    e.stopPropagation();
+    fileInput.value = '';
+    setFile(null);
+  };
+
+  ['dragenter', 'dragover'].forEach(evt =>
+    dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.add('drag'); dropFrame.classList.add('active'); })
+  );
+  ['dragleave', 'drop'].forEach(evt =>
+    dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.remove('drag'); if (!selectedFile) dropFrame.classList.remove('active'); })
+  );
+  dropzone.addEventListener('drop', async (e) => {
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    const lower = file.name.toLowerCase();
+    if (lower.endsWith('.html') || lower.endsWith('.htm')) {
+      setFile(await zipHtmlFile(file));
+      return;
+    }
+    if (lower.endsWith('.zip')) setFile(file);
+  });
+
+  // ---- instructions modal ----
+  function openModal() { modalOverlay.classList.add('open'); }
+  function hideModal() { modalOverlay.classList.remove('open'); }
+  infoBtn.onclick = openModal;
+  howToLink.onclick = openModal;
+  closeModal.onclick = hideModal;
+  modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) hideModal(); });
+
+  // ---- "what's new" dialog: server.js declares the current version +
+  // changelog; whenever that version differs from the one this browser
+  // last saw, show it once. A brand-new visitor (nothing saved yet) just
+  // has the current version silently recorded -- there's nothing "new"
+  // to tell someone who's never seen an older version. ----
+  async function checkWhatsNew() {
+    let info;
+    try {
+      const res = await fetch(API_BASE + '/api/version');
+      if (!res.ok) return;
+      info = await res.json();
+    } catch (e) {
+      return; // offline or server unreachable -- just skip, not worth retrying for this
+    }
+    if (!info || !info.version) return;
+
+    const seen = localStorage.getItem('apkBuilderSeenVersion');
+    if (seen === info.version) return;
+
+    if (seen) {
+      whatsNewTitle.textContent = info.title || 'Update available';
+      whatsNewVersion.textContent = `A new version of this app is available — v${info.version}`;
+      whatsNewList.innerHTML = (info.notes || []).map((note, i) =>
+        `<li><div class="num">${i + 1}</div><div class="txt">${note}</div></li>`
+      ).join('');
+      whatsNewOverlay.classList.add('open');
+    }
+    localStorage.setItem('apkBuilderSeenVersion', info.version);
+  }
+  function hideWhatsNew() { whatsNewOverlay.classList.remove('open'); }
+  laterBtn.onclick = hideWhatsNew;
+  // "Update now" — this build is already the latest deployed version (the
+  // version was just recorded above), so there's nothing to fetch; a reload
+  // just lands the person on a clean load of it and closes the dialog.
+  closeWhatsNew.onclick = () => { hideWhatsNew(); location.reload(); };
+  whatsNewOverlay.addEventListener('click', (e) => { if (e.target === whatsNewOverlay) hideWhatsNew(); });
+  checkWhatsNew();
+
+  function resetSteps() {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active', 'done', 'error'));
+    progressBarFill.style.width = '0%';
+  }
+
+  const stepPercents = { pushing: 15, queued: 40, building: 70, done: 100 };
+
+  function updateSteps(status) {
+    const idx = stepOrder.indexOf(status);
+    document.querySelectorAll('.step').forEach((el) => {
+      const stepIdx = stepOrder.indexOf(el.dataset.step);
+      el.classList.remove('active', 'done', 'error');
+      if (status === 'error') {
+        if (stepIdx <= Math.max(idx, 0)) el.classList.add(stepIdx < idx ? 'done' : 'error');
+      } else if (stepIdx < idx) {
+        el.classList.add('done');
+      } else if (stepIdx === idx) {
+        el.classList.add('active');
+      }
+    });
+    progressBarFill.style.width = (stepPercents[status] || 0) + '%';
+  }
+
+  // ---- build timer: ticks once a second for the duration of a build ----
+  let buildStartTs = null;
+  let timerHandle = null;
+  function tickTimer() {
+    const secs = Math.max(0, Math.floor((Date.now() - buildStartTs) / 1000));
+    const m = String(Math.floor(secs / 60)).padStart(2, '0');
+    const s = String(secs % 60).padStart(2, '0');
+    buildTimerEl.textContent = `${m}:${s}`;
+  }
+  function startBuildTimer() {
+    buildStartTs = Date.now();
+    clearInterval(timerHandle);
+    tickTimer();
+    timerHandle = setInterval(tickTimer, 1000);
+  }
+  function stopBuildTimer() {
+    clearInterval(timerHandle);
+  }
+
+  // ---- live console feed: one line per step/status change, timestamped
+  // against the build timer so it reads like a real CI log tailing by ----
+  function resetLog() {
+    buildLogEl.innerHTML = '';
+    buildLogEl.classList.remove('show');
+  }
+  function pushLog(text, tone) {
+    buildLogEl.classList.add('show');
+    const secs = buildStartTs ? Math.max(0, Math.floor((Date.now() - buildStartTs) / 1000)) : 0;
+    const m = String(Math.floor(secs / 60)).padStart(2, '0');
+    const s = String(secs % 60).padStart(2, '0');
+    const line = document.createElement('div');
+    line.className = 'logLine' + (tone ? ' tone-' + tone : '');
+    line.innerHTML = `<span class="ts">[${m}:${s}]</span>${text}`;
+    buildLogEl.appendChild(line);
+    buildLogEl.scrollTop = buildLogEl.scrollHeight;
+  }
+
+  // The tap navigates immediately (real navigation, not fetch+blob --
+  // that's what lets Android's WebView DownloadListener pick up the
+  // Content-Disposition header; see the comment where downloadLink.href
+  // is set below). But the server still has to fetch the artifact from
+  // GitHub and unzip it before the file actually starts arriving, which
+  // is where the few seconds of apparent "nothing happening" come from.
+  // Swap to a spinner + label the instant it's tapped so it's obvious
+  // the app registered the tap and is working on it, then revert once
+  // the download has had time to actually kick off.
+  let downloadRevertTimer = null;
+  downloadLink.addEventListener('click', () => {
+    if (downloadLink.classList.contains('preparing')) return;
+    const label = currentBuildType() === 'aab' ? 'AAB' : 'APK';
+    downloadLink.classList.add('preparing');
+    downloadLabel.textContent = `Preparing your ${label}…`;
+    clearTimeout(downloadRevertTimer);
+    downloadRevertTimer = setTimeout(() => {
+      downloadLink.classList.remove('preparing');
+      downloadLabel.textContent = `Download ${label}`;
+      downloadLink.classList.add('ready');
+      setTimeout(() => downloadLink.classList.remove('ready'), 450);
+    }, 6000);
+  });
+
+  buildBtn.onclick = async () => {
+    if (!selectedFile) return;
+    // The progress panel lives inside the Build tab's panel, but you can
+    // click this button from the Options tab too -- switch tabs so the
+    // progress you're about to see is actually visible instead of hidden
+    // behind whichever tab happened to be open.
+    setActiveTab('build');
+    buildBtn.disabled = true;
+    spinner.style.display = 'inline-block';
+    buildBtnLabel.textContent = 'Uploading…';
+    downloadLink.classList.remove('show');
+    downloadLink.style.display = 'none';
+    resetBtn.classList.remove('show');
+    resetBtn.style.display = 'none';
+    successBurst.classList.remove('show');
+    progressWrap.style.display = 'block';
+    progressLabel.style.display = 'block';
+    statusBox.className = '';
+    statusText.textContent = 'Uploading your project…';
+    resetSteps();
+    playStartChime();
+    document.body.classList.add('is-building');
+    progressWrap.classList.remove('success', 'errored', 'cancelled');
+    progressWrap.classList.add('active');
+    cancelBtn.disabled = false;
+    cancelBtn.textContent = 'Cancel';
+    resetLog();
+    startBuildTimer();
+    pushLog('Upload started — sending your project…');
+
+    const formData = new FormData();
+    formData.append('projectZip', selectedFile);
+    formData.append('buildType', currentBuildType());
+    formData.append('clientId', clientId);
+    if (appNameInput.value.trim()) formData.append('appName', appNameInput.value.trim());
+    if (packageSuffixInput.value.trim()) formData.append('packageSuffix', packageSuffixInput.value.trim());
+    if (selectedLogoFile) formData.append('logo', selectedLogoFile);
+
+    let jobId, error;
+    try {
+      const res = await fetch(API_BASE + '/api/build', { method: 'POST', body: formData });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        error = body.error || `Server error (${res.status})`;
+      } else {
+        ({ jobId, error } = await res.json());
+      }
+    } catch (e) {
+      error = 'Could not reach the server';
+    }
+
+    if (error) {
+      showError(error);
+      return;
+    }
+    currentJobId = jobId;
+    lastSeenStatus = null;
+    saveActiveJob(jobId);
+    spinner.style.display = 'none';
+    buildBtnLabel.textContent = 'Building…';
+    poll(jobId);
+  };
+
+  function showError(message, logExcerpt) {
+    statusBox.className = 'error';
+    statusText.textContent = message;
+    updateSteps('error');
+    spinner.style.display = 'none';
+    buildBtn.disabled = false;
+    buildBtn.style.display = 'flex';
+    updateBuildTypeLabels();
+    resetBtn.classList.add('show');
+    resetBtn.style.display = 'flex';
+    clearActiveJob();
+    stopBuildTimer();
+    progressWrap.classList.remove('active', 'success');
+    progressWrap.classList.add('errored');
+    pushLog(message, 'err');
+    if (logExcerpt) {
+      logExcerptEl.textContent = logExcerpt;
+      logExcerptEl.style.display = 'block';
+    } else {
+      logExcerptEl.style.display = 'none';
+    }
+    loadHistory();
+  }
+
+  function showCancelled(message) {
+    statusBox.className = 'cancelled';
+    statusText.textContent = message || 'Build cancelled';
+    spinner.style.display = 'none';
+    buildBtn.disabled = false;
+    buildBtn.style.display = 'flex';
+    updateBuildTypeLabels();
+    resetBtn.classList.add('show');
+    resetBtn.style.display = 'flex';
+    clearActiveJob();
+    stopBuildTimer();
+    progressWrap.classList.remove('active', 'success', 'errored');
+    progressWrap.classList.add('cancelled');
+    pushLog(message || 'Build cancelled by user');
+    loadHistory();
+  }
+
+  async function poll(jobId) {
+    if (jobId !== currentJobId) return; // a stale poll from a previous build
+    let job;
+    try {
+      const res = await fetch(API_BASE + '/api/status/' + jobId);
+      if (res.status === 404) {
+        // Job is gone server-side (finished + cleaned up while we weren't
+        // watching, or never existed). Nothing to resume.
+        clearActiveJob();
+        if (jobId === currentJobId) resetFlow();
+        return;
+      }
+      job = await res.json();
+    } catch (e) {
+      pollTimer = setTimeout(() => poll(jobId), 3000);
+      return;
+    }
+
+    if (jobId !== currentJobId) return;
+
+    if (job.status === 'error') {
+      showError(job.message || 'Build failed', job.logExcerpt);
+      return;
+    }
+
+    if (job.status === 'cancelled') {
+      showCancelled(job.message || 'Build cancelled');
+      return;
+    }
+
+    // Sound cue on every real step change (pushing/queued/building), not
+    // just at the very start and very end, so progress is audible even if
+    // you're not looking at the screen. Guarded so it fires once per
+    // transition, not once per 3s poll.
+    if (job.status !== lastSeenStatus) {
+      if (lastSeenStatus !== null && job.status !== 'done') playStepTick();
+      lastSeenStatus = job.status;
+      pushLog(job.message || job.status);
+    }
+
+    updateSteps(job.status);
+    statusText.textContent = job.message || job.status;
+
+    if (job.status === 'done') {
+      clearActiveJob();
+      statusBox.className = 'success';
+      successBurst.classList.add('show');
+      playDoneChime();
+      stopBuildTimer();
+      progressWrap.classList.remove('active', 'errored');
+      progressWrap.classList.add('success');
+      pushLog('Build succeeded — ready to download.', 'ok');
+      downloadLink.href = API_BASE + '/api/download/' + jobId;
+      // NOTE: intentionally no download="" attribute here. Android's
+      // WebView doesn't implement the HTML5 download attribute -- it tries
+      // to handle the save internally, fails silently, and never reaches
+      // MainActivity's setDownloadListener callback, so the button appears
+      // to do nothing when this page runs inside the wrapped app. Leaving
+      // this as a plain navigation lets WebView's DownloadListener pick up
+      // the Content-Disposition: attachment header the server sends and
+      // hand it off to Android's real DownloadManager instead.
+      downloadLink.style.display = 'flex';
+      downloadLink.classList.add('show');
+      buildBtn.style.display = 'none';
+      resetBtn.style.display = 'flex';
+      resetBtn.classList.add('show');
+      updateBuildTypeLabels();
+      loadHistory();
+      return;
+    }
+
+    pollTimer = setTimeout(() => poll(jobId), 3000);
+  }
+
+  // ---- start a fresh build without reloading the page ----
+  function resetFlow() {
+    if (pollTimer) clearTimeout(pollTimer);
+    currentJobId = null;
+    lastSeenStatus = null;
+    clearActiveJob();
+    document.body.classList.remove('is-building');
+    stopBuildTimer();
+    resetLog();
+    buildTimerEl.textContent = '00:00';
+    progressWrap.classList.remove('active', 'success', 'errored');
+    fileInput.value = '';
+    setFile(null);
+    progressWrap.style.display = 'none';
+    progressLabel.style.display = 'none';
+    statusBox.className = '';
+    statusText.textContent = 'Preparing…';
+    successBurst.classList.remove('show');
+    resetSteps();
+    downloadLink.classList.remove('show', 'preparing', 'ready');
+    downloadLink.style.display = 'none';
+    clearTimeout(downloadRevertTimer);
+    resetBtn.classList.remove('show');
+    resetBtn.style.display = 'none';
+    buildBtn.style.display = 'flex';
+    buildBtn.disabled = true;
+    logExcerptEl.style.display = 'none';
+    logExcerptEl.textContent = '';
+    updateBuildTypeLabels();
+  }
+  resetBtn.onclick = resetFlow;
+
+  // ---- resume a build that was still running when the app was closed ----
+  (function resumeIfActiveJob() {
+    const jobId = loadActiveJob();
+    if (!jobId) return;
+    currentJobId = jobId;
+    lastSeenStatus = null;
+    buildBtn.disabled = true;
+    buildBtn.style.display = 'none';
+    progressWrap.style.display = 'block';
+    progressLabel.style.display = 'block';
+    statusBox.className = '';
+    statusText.textContent = 'Reconnecting to your build…';
+    resetSteps();
+    document.body.classList.add('is-building');
+    progressWrap.classList.add('active');
+    cancelBtn.disabled = false;
+    cancelBtn.textContent = 'Cancel';
+    resetLog();
+    startBuildTimer();
+    pushLog('Reconnecting to your build…');
+    poll(jobId);
+  })();
+
+  cancelBtn.onclick = async () => {
+    if (!currentJobId) return;
+    cancelBtn.disabled = true;
+    cancelBtn.textContent = 'Cancelling…';
+    pushLog('Cancel requested…');
+    try {
+      const res = await fetch(API_BASE + '/api/cancel/' + currentJobId, { method: 'POST' });
+      if (res.ok) {
+        const job = await res.json();
+        if (currentJobId) showCancelled(job.message || 'Build cancelled');
+      } else {
+        // Already finished/failed server-side by the time we asked — the
+        // next regular poll will pick up whatever the real end state is.
+        cancelBtn.disabled = false;
+        cancelBtn.textContent = 'Cancel';
+      }
+    } catch (e) {
+      cancelBtn.disabled = false;
+      cancelBtn.textContent = 'Cancel';
+    }
+  };
+</script>
+</body>
+</html>
