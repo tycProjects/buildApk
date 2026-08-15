@@ -1,0 +1,45 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace 'com.generated.wzhtoapk'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.generated.wzhtoapk"
+        minSdk 21
+        targetSdk 34
+        versionCode 1786755898
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    // ABI-split debug APKs: a WebView wrapper has no native code of its own,
+    // but androidx/appcompat still ship a handful of native libs, so a
+    // single "fat" APK bundles all four architectures even though any one
+    // device only ever uses one. Splitting means most users can download a
+    // much smaller per-architecture APK; universalApk keeps a "just works
+    // everywhere" fallback around too (see pickDefaultApkEntry in server.js,
+    // which defaults to this universal one when a variant isn't specified).
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            universalApk true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+}
