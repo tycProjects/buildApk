@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 4
+# apk-builder fallback workflow — version: 5
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -24,6 +24,23 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+
+      # Self-updating apps (installing a new build over the one already
+      # running) require every build to be signed with the SAME
+      # certificate. Without this, each build runs on a brand-new GitHub
+      # Actions VM with no ~/.android/debug.keystore, so the Android Gradle
+      # Plugin silently generates a fresh random one every time -- a
+      # different signature on every build -- and Android refuses to
+      # install the "update" (which can surface as a crash/freeze right as
+      # the install finishes instead of a clear error). Caching the
+      # keystore by a fixed key means the first build generates it and
+      # every build after restores that same file, so the signature stays
+      # identical run to run.
+      - name: Persist debug keystore across builds
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: debug-keystore-v1
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
