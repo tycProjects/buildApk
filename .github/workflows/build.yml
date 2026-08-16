@@ -42,6 +42,35 @@ jobs:
           path: ~/.android/debug.keystore
           key: debug-keystore-v1
 
+      # Real release signing, not the ambient debug key: generated once per
+      # requester (see keystoreCacheKey) and cached across builds so every
+      # build from the same person carries the same signature. Without this,
+      # each build would get a brand-new random key, and installing a
+      # "later" build over an earlier one would be refused by Android as a
+      # certificate mismatch, and Play Console would reject the upload
+      # entirely for an unsigned/inconsistently-signed AAB.
+      - name: Restore release signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/release-keystore
+          key: release-keystore-b8c404ba3bac322980e7646f-v1
+
+      - name: Generate release signing key (first build only)
+        run: |
+          mkdir -p ~/.android/release-keystore
+          if [ ! -f ~/.android/release-keystore/release.jks ]; then
+            echo "No cached signing key for this requester — generating a new one."
+            PASS=$(openssl rand -hex 20)
+            echo -n "$PASS" > ~/.android/release-keystore/release.pass
+            keytool -genkeypair -v \
+              -keystore ~/.android/release-keystore/release.jks \
+              -alias release -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "$PASS" -keypass "$PASS" \
+              -dname "CN=App Builder, OU=Apps, O=Tycept, C=US"
+          else
+            echo "Reusing cached signing key for this requester"
+          fi
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -114,20 +143,28 @@ jobs:
           find . -path '*/res/*' -name '*.xml' -print0 \
             | xargs -0 -r perl -0777 -pi -e 's/<!--.*?-->//gs'
 
-      - name: Build debug APK
+      - name: Build signed release APK
         working-directory: ${{ steps.locate.outputs.dir }}
         run: |
           if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
             echo "Building with the project's own Gradle wrapper"
-            ./gradlew assembleDebug --no-daemon
+            ./gradlew assembleRelease --no-daemon -Pandroid.injected.signing.store.file="$HOME/.android/release-keystore/release.jks" -Pandroid.injected.signing.store.password="$(cat "$HOME/.android/release-keystore/release.pass")" -Pandroid.injected.signing.key.alias=release -Pandroid.injected.signing.key.password="$(cat "$HOME/.android/release-keystore/release.pass")"
           else
             echo "No usable Gradle wrapper found — building with the runner's Gradle instead"
-            gradle assembleDebug --no-daemon
+            gradle assembleRelease --no-daemon -Pandroid.injected.signing.store.file="$HOME/.android/release-keystore/release.jks" -Pandroid.injected.signing.store.password="$(cat "$HOME/.android/release-keystore/release.pass")" -Pandroid.injected.signing.key.alias=release -Pandroid.injected.signing.key.password="$(cat "$HOME/.android/release-keystore/release.pass")"
           fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk-${{ github.run_id }}
-          path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/debug/*.apk
+          name: release-apk-${{ github.run_id }}
+          path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/release/*.apk
           if-no-files-found: error
+
+      - name: Upload signing key
+        uses: actions/upload-artifact@v4
+        with:
+          name: signing-key-${{ github.run_id }}
+          path: ~/.android/release-keystore/release.jks
+          if-no-files-found: error
+          retention-days: 90
