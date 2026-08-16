@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;height:100%;background:#050505;}</style>
+</head><body>
+<script>
+fetch("https://zip-to-apk-ce53.onrender.com/api/app-config/ea4a6af0e476be80079714c7")
+  .then(r => r.json())
+  .then(cfg => location.replace(cfg.viewUrl))
+  .catch(() => { document.body.textContent = "Could not load — check your connection."; });
+</script>
+</body></html>
