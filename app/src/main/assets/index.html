@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Update Manager</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; height: 100%; background: #050505; color: #e6e6e6;
+    font-family: -apple-system, Roboto, "Segoe UI", sans-serif;
+  }
+  #app { padding: 20px 16px 40px; max-width: 480px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 8px 0 20px; color: #f2f2ee; }
+  .card {
+    background: #101014; border: 1px solid #1e1e24; border-radius: 12px;
+    padding: 16px; margin-bottom: 12px;
+  }
+  .row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .pkg { font-family: monospace; font-size: 13px; color: #5eead4; word-break: break-all; }
+  .ver { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .notes { font-size: 13px; color: #999; margin-top: 6px; white-space: pre-wrap; }
+  .meta { font-size: 11px; color: #666; margin-top: 8px; }
+  .btns { display: flex; gap: 8px; flex-shrink: 0; }
+  button {
+    border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px;
+    cursor: pointer; font-weight: 600;
+  }
+  .btn-edit { background: #1e1e24; color: #e6e6e6; }
+  .btn-del { background: #2a1216; color: #ff8a8a; }
+  .btn-primary { background: #5eead4; color: #05201c; width: 100%; padding: 14px; font-size: 15px; }
+  .btn-secondary { background: #1e1e24; color: #e6e6e6; width: 100%; padding: 14px; font-size: 15px; margin-top: 8px; }
+  input, textarea {
+    width: 100%; background: #101014; border: 1px solid #262630; border-radius: 8px;
+    padding: 12px; color: #e6e6e6; font-size: 14px; margin-bottom: 12px; font-family: inherit;
+  }
+  textarea { resize: vertical; min-height: 60px; }
+  label { display: block; font-size: 12px; color: #999; margin-bottom: 4px; }
+  .hint { font-size: 12px; color: #666; margin-top: -6px; margin-bottom: 12px; }
+  .empty { text-align: center; color: #666; padding: 40px 0; font-size: 14px; }
+  .err { color: #ff8a8a; font-size: 13px; margin: 8px 0; }
+  .top-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .icon-btn { background: none; color: #5eead4; font-size: 13px; padding: 6px 0; }
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex;
+    align-items: flex-end; z-index: 10;
+  }
+  .modal {
+    background: #0a0a0d; width: 100%; border-radius: 16px 16px 0 0; padding: 20px 16px 32px;
+    max-height: 85vh; overflow-y: auto;
+  }
+  .modal h2 { margin: 0 0 16px; font-size: 17px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ---- Setup: server URL + admin password, kept on-device only ----
+function getConfig() {
+  try { return JSON.parse(localStorage.getItem('um_config') || 'null'); } catch { return null; }
+}
+function saveConfig(cfg) { localStorage.setItem('um_config', JSON.stringify(cfg)); }
+
+let config = getConfig();
+let updates = {};
+let loadError = '';
+
+function apiFetch(path, opts = {}) {
+  const base = config.serverUrl.replace(/\/+$/, '');
+  return fetch(base + path, {
+    ...opts,
+    headers: {
+      ...(opts.headers || {}),
+      'X-Admin-Password': config.adminPassword
+    }
+  });
+}
+
+async function loadUpdates() {
+  loadError = '';
+  try {
+    const res = await apiFetch('/api/admin/updates');
+    if (res.status === 401) { loadError = 'Wrong admin password.'; render(); return; }
+    if (!res.ok) { loadError = 'Server error (' + res.status + ')'; render(); return; }
+    const data = await res.json();
+    updates = data.updates || {};
+  } catch (e) {
+    loadError = 'Could not reach the server — check the URL and your connection.';
+  }
+  render();
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (!config) { app.innerHTML = ''; app.appendChild(setupScreen()); return; }
+  app.innerHTML = '';
+  app.appendChild(listScreen());
+}
+
+function setupScreen() {
+  const div = document.createElement('div');
+  div.innerHTML = `
+    <h1>Update Manager</h1>
+    <label>Server URL</label>
+    <input id="setupUrl" placeholder="https://your-app.onrender.com" autocapitalize="off" autocorrect="off">
+    <label>Admin password</label>
+    <input id="setupPw" type="password" placeholder="Your ADMIN_PASSWORD">
+    <div class="err" id="setupErr"></div>
+    <button class="btn-primary" id="setupBtn">Connect</button>
+  `;
+  div.querySelector('#setupBtn').onclick = async () => {
+    const serverUrl = div.querySelector('#setupUrl').value.trim();
+    const adminPassword = div.querySelector('#setupPw').value;
+    const errEl = div.querySelector('#setupErr');
+    if (!/^https?:\/\//.test(serverUrl)) { errEl.textContent = 'Enter a full URL, starting with https://'; return; }
+    if (!adminPassword) { errEl.textContent = 'Enter the admin password.'; return; }
+    config = { serverUrl, adminPassword };
+    try {
+      const res = await apiFetch('/api/admin/updates');
+      if (res.status === 401) { errEl.textContent = 'Wrong password.'; config = null; return; }
+      if (!res.ok) { errEl.textContent = 'Server error (' + res.status + ')'; config = null; return; }
+    } catch (e) {
+      errEl.textContent = 'Could not reach that server.'; config = null; return;
+    }
+    saveConfig(config);
+    loadUpdates();
+  };
+  return div;
+}
+
+function listScreen() {
+  const div = document.createElement('div');
+  const entries = Object.entries(updates);
+
+  const top = document.createElement('div');
+  top.className = 'top-actions';
+  top.innerHTML = `<h1 style="margin:0;">Update Manager</h1>
+    <button class="icon-btn" id="signOutBtn">Sign out</button>`;
+  div.appendChild(top);
+
+  if (loadError) {
+    const err = document.createElement('div');
+    err.className = 'err';
+    err.textContent = loadError;
+    div.appendChild(err);
+  }
+
+  if (entries.length === 0 && !loadError) {
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.textContent = 'No apps tracked yet.';
+    div.appendChild(empty);
+  }
+
+  entries
+    .sort((a, b) => b[1].updatedAt - a[1].updatedAt)
+    .forEach(([packageName, entry]) => div.appendChild(appCard(packageName, entry)));
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'btn-primary';
+  addBtn.textContent = '+ Add / update an app';
+  addBtn.style.marginTop = '8px';
+  addBtn.onclick = () => openEditor(null);
+  div.appendChild(addBtn);
+
+  div.querySelector('#signOutBtn').onclick = () => {
+    localStorage.removeItem('um_config');
+    config = null;
+    updates = {};
+    render();
+  };
+
+  return div;
+}
+
+function appCard(packageName, entry) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  const date = new Date(entry.updatedAt).toLocaleDateString();
+  card.innerHTML = `
+    <div class="row">
+      <div style="min-width:0;">
+        <div class="pkg">${escapeHtml(packageName)}</div>
+        <div class="ver">v${escapeHtml(entry.versionName)} · code ${entry.versionCode}</div>
+        ${entry.notes ? `<div class="notes">${escapeHtml(entry.notes)}</div>` : ''}
+        <div class="meta">Updated ${date}</div>
+      </div>
+      <div class="btns">
+        <button class="btn-edit">Edit</button>
+        <button class="btn-del">Delete</button>
+      </div>
+    </div>
+  `;
+  card.querySelector('.btn-edit').onclick = () => openEditor(packageName, entry);
+  card.querySelector('.btn-del').onclick = () => deleteApp(packageName);
+  return card;
+}
+
+function openEditor(packageName, entry) {
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  const isEdit = !!packageName;
+  bg.innerHTML = `
+    <div class="modal">
+      <h2>${isEdit ? 'Update version' : 'Add an app'}</h2>
+      <label>Package name</label>
+      <input id="fPkg" placeholder="com.example.myapp" ${isEdit ? 'readonly style="opacity:.6;"' : ''} value="${isEdit ? escapeHtml(packageName) : ''}">
+      <label>Version code (integer, must increase each release)</label>
+      <input id="fCode" type="number" inputmode="numeric" placeholder="2" value="${entry ? entry.versionCode : ''}">
+      <label>Version name</label>
+      <input id="fName" placeholder="1.1.0" value="${entry ? escapeHtml(entry.versionName) : ''}">
+      <label>APK download URL</label>
+      <input id="fUrl" placeholder="https://.../app-v1.1.0.apk" value="${entry ? escapeHtml(entry.apkUrl) : ''}">
+      <label>Release notes (optional)</label>
+      <textarea id="fNotes" placeholder="What changed...">${entry ? escapeHtml(entry.notes) : ''}</textarea>
+      <div class="err" id="fErr"></div>
+      <button class="btn-primary" id="fSave">Save</button>
+      <button class="btn-secondary" id="fCancel">Cancel</button>
+    </div>
+  `;
+  document.body.appendChild(bg);
+  bg.querySelector('#fCancel').onclick = () => bg.remove();
+  bg.onclick = (e) => { if (e.target === bg) bg.remove(); };
+
+  bg.querySelector('#fSave').onclick = async () => {
+    const pkg = bg.querySelector('#fPkg').value.trim();
+    const versionCode = parseInt(bg.querySelector('#fCode').value, 10);
+    const versionName = bg.querySelector('#fName').value.trim();
+    const apkUrl = bg.querySelector('#fUrl').value.trim();
+    const notes = bg.querySelector('#fNotes').value.trim();
+    const errEl = bg.querySelector('#fErr');
+
+    if (!pkg) { errEl.textContent = 'Package name is required.'; return; }
+    if (!Number.isInteger(versionCode) || versionCode < 1) { errEl.textContent = 'Version code must be a positive whole number.'; return; }
+    if (!versionName) { errEl.textContent = 'Version name is required.'; return; }
+    if (!/^https?:\/\//.test(apkUrl)) { errEl.textContent = 'APK URL must start with http:// or https://'; return; }
+
+    try {
+      const res = await apiFetch('/api/admin/updates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ packageName: pkg, versionCode, versionName, apkUrl, notes })
+      });
+      const data = await res.json();
+      if (!res.ok) { errEl.textContent = data.error || 'Save failed.'; return; }
+      bg.remove();
+      loadUpdates();
+    } catch (e) {
+      errEl.textContent = 'Could not reach the server.';
+    }
+  };
+}
+
+async function deleteApp(packageName) {
+  if (!confirm('Stop tracking updates for ' + packageName + '?')) return;
+  try {
+    const res = await apiFetch('/api/admin/updates/' + encodeURIComponent(packageName), { method: 'DELETE' });
+    if (!res.ok) { alert('Delete failed.'); return; }
+    loadUpdates();
+  } catch (e) {
+    alert('Could not reach the server.');
+  }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+if (config) { loadUpdates(); } else { render(); }
+</script>
+</body>
+</html>
