@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fish Evolution - Ultimate Edition</title>
+    <style>
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+            user-select: none; 
+            -webkit-user-select: none; 
+            -webkit-touch-callout: none; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background: #0b0b0b; overflow: hidden;
+            position: fixed; top: 0; left: 0;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white;
+            touch-action: none;
+        }
+
+        /* STYLE UNTUK SPLASH SCREEN VIDEO */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            transition: opacity 0.5s ease;
+        }
+        #splash-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .game-wrapper {
+            width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center;
+            padding: 0 5px;
+        }
+
+        .header-ui {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; margin-bottom: 4px; padding: 0 4px; z-index: 10;
+        }
+
+        .ui { font-size: 10px; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+
+        .action-btn {
+            background: #333; border: 2px solid #777; color: white;
+            padding: 3px 8px; font-size: 10px; font-weight: bold;
+            border-radius: 4px; cursor: pointer; display: none; z-index: 20;
+            transition: transform 0.1s ease, background 0.1s ease, box-shadow 0.1s ease;
+        }
+        .action-btn:active, .action-btn.active {
+            transform: scale(0.92);
+            background: #555;
+            box-shadow: 0 0 8px rgba(0, 255, 170, 0.6);
+        }
+        
+        .game-container {
+            position: relative; width: 100%; max-width: 600px; aspect-ratio: 16 / 9;
+            box-shadow: 0 0 25px rgba(0,0,0,0.8);
+            border: 4px solid #555; background: #002244;
+            overflow: hidden; border-radius: 2px;
+        }
+        canvas { width: 100%; height: 100%; display: block; }
+
+        .overlay-menu {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #0a294a 0%, #000f20 100%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center; gap: 8px; z-index: 99999;
+            overflow: hidden; pointer-events: auto; border: inset 4px #333;
+            padding: 10px;
+        }
+        
+        .menu-title { 
+            font-size: 28px; font-weight: 900; color: #00ffaa; 
+            text-shadow: 3px 3px 0 #000, -1px -1px 0 #444; 
+            margin-bottom: 0px; text-align: center; letter-spacing: 1px; 
+        }
+        
+        .menu-subtitle {
+            font-size: 12px; color: #eee; margin-bottom: 10px; 
+            text-align: center; font-style: italic; opacity: 0.9;
+        }
+
+        .menu-btn {
+            background: linear-gradient(to bottom, #004433 0%, #00221a 100%);
+            border: 2px solid #00ffaa; color: #fff;
+            padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 4px;
+            cursor: pointer; width: 200px; text-align: center; pointer-events: auto;
+            text-transform: uppercase; letter-spacing: 1px; transition: transform 0.08s ease, box-shadow 0.08s ease;
+            box-shadow: 0 3px 0 #004f3b;
+        }
+        .menu-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #004f3b; }
+        
+        .menu-btn.gold { 
+            background: linear-gradient(to bottom, #554400 0%, #2a2200 100%); 
+            border-color: #ffcc00; color: #ffcc00; box-shadow: 0 3px 0 #886600;
+        }
+        .menu-btn.danger { 
+            background: linear-gradient(to bottom, #550000 0%, #2a0000 100%); 
+            border-color: #ff4444; color: #ff4444; box-shadow: 0 3px 0 #880000;
+        }
+
+        .back-btn { background: #333; border-color: #777; color: #ddd; margin-top: 8px; width: 140px; padding: 6px; box-shadow: 0 3px 0 #555; }
+
+        @media (max-width: 600px) {
+            .overlay-menu { gap: 6px; }
+            .menu-title { font-size: 20px; text-shadow: 2px 2px 0 #000; }
+            .menu-subtitle { font-size: 10px; margin-bottom: 6px; }
+            .menu-btn { width: 160px; padding: 6px 10px; font-size: 11px; }
+            .back-btn { width: 120px; padding: 5px; font-size: 10px; margin-top: 4px; }
+        }
+
+        .controls-wrapper {
+            display: flex; justify-content: center; align-items: center;
+            width: 100%; margin-top: 10px; position: relative; z-index: 10;
+        }
+        .controls { display: flex; justify-content: center; width: 100%; position: relative; }
+        
+        .dpad { display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px); gap: 4px; }
+        
+        .ctrl-btn {
+            background: rgba(255, 255, 255, 0.12); border: 2px solid #fff; color: #fff;
+            font-size: 20px; font-weight: bold; text-align: center; border-radius: 4px; 
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+            transition: transform 0.08s ease, background 0.08s ease, box-shadow 0.08s ease, border-color 0.08s ease;
+        }
+        .ctrl-btn:active, .ctrl-btn.active { 
+            background: rgba(0, 255, 170, 0.4); 
+            border-color: #00ffaa; 
+            color: #00ffaa; 
+            transform: scale(0.90); 
+            box-shadow: 0 0 10px #00ffaa;
+        }
+
+        .b-up { grid-column: 2; grid-row: 1; }
+        .b-left { grid-column: 1; grid-row: 2; }
+        .b-right { grid-column: 3; grid-row: 2; }
+        .b-down { grid-column: 2; grid-row: 3; }
+        
+        .b-skill {
+            grid-column: 2; grid-row: 2;
+            background: linear-gradient(to bottom, #770000 0%, #400000 100%);
+            border: 2px solid #ff4444 !important; color: #ffffff !important;
+            font-size: 7px; font-weight: bold; text-align: center;
+            position: relative; overflow: hidden; padding: 2px; cursor: pointer;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            line-height: 1.1;
+            transition: transform 0.08s ease, background 0.08s ease;
+        }
+        .b-skill.on-cooldown {
+            background: linear-gradient(to bottom, #333333 0%, #1a1a1a 100%) !important;
+            border-color: #777 !important;
+            color: #aaa !important;
+            cursor: not-allowed;
+        }
+
+        #menuBtnBottom {
+            position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+            background: #550000; border: 2px solid #ff4444; color: #ff4444;
+            padding: 10px 18px; font-size: 11px; font-weight: bold;
+            border-radius: 4px; cursor: pointer; display: none; z-index: 30;
+            text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;
+            box-shadow: 0 3px 0 #880000;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ELEMEN SPLASH SCREEN VIDEO -->
+<div id="splash-screen">
+    <video id="splash-video" autoplay muted playsinline>
+        <source src="https://files.catbox.moe/1y0nnh.mp4" type="video/mp4">
+        Browser kamu tidak mendukung video.
+    </video>
+</div>
+
+<div class="game-wrapper">
+    <div class="header-ui">
+        <div class="ui">
+            MAP: <span id="uiMap" style="color: #ffcc00;">Main Menu</span> | 
+            COINS: <span id="uiCoin" style="color: #f8d000;">500</span> 🪙 | 
+            HP: <span id="uiHp">❤️❤️❤️</span> | 
+            EXP: <span id="uiExp" style="color: #ffcc00;">0</span>/<span id="uiMaxExp" style="color: #ffcc00;">100</span> | 
+            POWER: <span id="uiPower" style="color: #00ffaa;">13</span>
+        </div>
+        <div class="top-btn-group">
+            <button id="pauseBtn" class="action-btn" onclick="togglePause()">PAUSE</button>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <canvas id="gameCanvas" width="600" height="337.5"></canvas>
+
+        <div id="mainMenu" class="overlay-menu">
+            <div class="menu-title">FISH EVOLUTION</div>
+            <div class="menu-subtitle">- Ultimate Edition -</div>
+            <button class="menu-btn" onclick="openSelectMap()">START GAME</button>
+            <button class="menu-btn gold" onclick="openPetShop()">PET SHOP 🐾</button>
+        </div>
+
+        <div id="selectMapMenu" class="overlay-menu hidden">
+            <div class="menu-title">SELECT MAP</div>
+            <button class="menu-btn" onclick="startGame(0)">1. Coral Reef</button>
+            <button class="menu-btn" onclick="startGame(1)">2. Deep Sea</button>
+            <button class="menu-btn" onclick="startGame(2)">3. Ancient Ocean</button>
+            <button class="menu-btn back-btn" onclick="openMainMenu()">[ BACK ]</button>
+        </div>
+
+        <div id="petShopMenu" class="overlay-menu hidden">
+            <div class="menu-title" style="font-size: 24px; color: #ffcc00;">🐾 PET SHOP 🐾</div>
+            <div id="petListContainer" style="display: flex; flex-direction: column; gap: 6px; width: 85%; max-height: 180px; overflow-y: auto; padding: 5px;"></div>
+            <button class="menu-btn danger" style="width: 200px; padding: 8px; font-size: 11px;" onclick="resetGameData()">🔄 RESET ALL PETS & COINS</button>
+            <button class="menu-btn back-btn" onclick="openMainMenu()">[ BACK ]</button>
+        </div>
+
+        <div id="gameOverMenu" class="overlay-menu hidden">
+            <div class="menu-title" style="color: #ff3333;">GAME OVER!</div>
+            <div style="font-size: 11px; color: #ddd; margin-bottom: 4px;">You were eaten by a bigger fish.</div>
+            <button class="menu-btn" onclick="openMainMenu()">MAIN MENU</button>
+        </div>
+
+        <div id="victoryMenu" class="overlay-menu hidden">
+            <div class="menu-title" style="color: #00ffaa;">APEX LEGEND! 👑</div>
+            <div style="font-size: 11px; color: #ddd; margin-bottom: 4px;">You reached Max Power 50 and became King of the Ocean!</div>
+            <button class="menu-btn" onclick="openMainMenu()">MAIN MENU</button>
+        </div>
+    </div>
+
+    <div class="controls-wrapper">
+        <div class="controls">
+            <div class="dpad">
+                <div class="ctrl-btn b-up" id="btnUp" 
+                     onmousedown="setKey('up', true)" onmouseup="setKey('up', false)" onmouseleave="setKey('up', false)"
+                     ontouchstart="setKey('up', true)" ontouchend="setKey('up', false)">▲</div>
+                <div class="ctrl-btn b-left" id="btnLeft" 
+                     onmousedown="setKey('left', true)" onmouseup="setKey('left', false)" onmouseleave="setKey('left', false)"
+                     ontouchstart="setKey('left', true)" ontouchend="setKey('left', false)">◀</div>
+                <div class="ctrl-btn b-skill" id="btnSkill" 
+                     onmousedown="triggerSkill()" ontouchstart="triggerSkill()">SKILL</div>
+                <div class="ctrl-btn b-right" id="btnRight" 
+                     onmousedown="setKey('right', true)" onmouseup="setKey('right', false)" onmouseleave="setKey('right', false)"
+                     ontouchstart="setKey('right', true)" ontouchend="setKey('right', false)">▶</div>
+                <div class="ctrl-btn b-down" id="btnDown" 
+                     onmousedown="setKey('down', true)" onmouseup="setKey('down', false)" onmouseleave="setKey('down', false)"
+                     ontouchstart="setKey('down', true)" ontouchend="setKey('down', false)">▼</div>
+            </div>
+            <button id="menuBtnBottom" onclick="openMainMenu()">MENU</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// SCRIPT SPLASH SCREEN VIDEO DENGAN AUTO-FORCE PLAY
+const splashScreen = document.getElementById('splash-screen');
+const splashVideo = document.getElementById('splash-video');
+
+window.addEventListener('DOMContentLoaded', () => {
+    splashVideo.play().catch(error => {
+        console.log("Autoplay dicegah browser, menunggu interaksi sentuhan.");
+    });
+});
+
+document.addEventListener('click', () => {
+    if (splashVideo.paused && splashScreen.style.display !== 'none') {
+        splashVideo.play();
+    }
+}, { once: true });
+
+splashVideo.addEventListener('ended', function() {
+    splashScreen.style.opacity = '0';
+    setTimeout(function() {
+        splashScreen.style.display = 'none';
+    }, 500);
+});
+
+// Backup pengaman 13 detik jika video selesai lebih cepat atau macet
+setTimeout(function() {
+    if (splashScreen.style.display !== 'none') {
+        splashScreen.style.opacity = '0';
+        setTimeout(function() { splashScreen.style.display = 'none'; }, 500);
+    }
+}, 13000);
+
+
+// SCRIPT UTAMA GAME
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const uiMap = document.getElementById('uiMap');
+const uiCoin = document.getElementById('uiCoin');
+const uiHp = document.getElementById('uiHp');
+const uiExp = document.getElementById('uiExp');
+const uiMaxExp = document.getElementById('uiMaxExp');
+const uiPower = document.getElementById('uiPower');
+const pauseBtn = document.getElementById('pauseBtn');
+const menuBtnBottom = document.getElementById('menuBtnBottom');
+const skillBtnLabel = document.getElementById('btnSkill');
+
+const mainMenu = document.getElementById('mainMenu');
+const selectMapMenu = document.getElementById('selectMapMenu');
+const petShopMenu = document.getElementById('petShopMenu');
+const gameOverMenu = document.getElementById('gameOverMenu');
+const victoryMenu = document.getElementById('victoryMenu');
+const petListContainer = document.getElementById('petListContainer');
+
+let state = 'MENU'; 
+let mapIdx = 0;
+
+let coins = parseInt(localStorage.getItem('fish_coins'));
+if (isNaN(coins)) coins = 500;
+
+let ownedPets = JSON.parse(localStorage.getItem('fish_ownedPets')) || [];
+let activePet = localStorage.getItem('fish_activePet') || null;
+
+let player = {};
+let fishes = [];
+let decorations = [];
+let ambientBubbles = [];
+const keys = { up: false, left: false, right: false, down: false };
+
+let dragonLaserActive = false; 
+let eelStealthActive = false; 
+
+let skillCooldownTimer = 0; 
+let skillDurationTimer = 0;  
+
+function getEvolutionStage(power) {
+    if (power < 20) return { name: 'Small Fry(You)', color: '#ff7675', stage: 1, skillName: 'DASH' };
+    if (power < 30) return { name: 'Teen Fish(You)', color: '#00cec9', stage: 2, skillName: 'SHIELD' };
+    if (power < 40) return { name: 'Tuna(You)', color: '#0984e3', stage: 3, skillName: 'MEGA DASH' };
+    if (power < 48) return { name: 'Long Black Eel(You)', color: '#2d3436', stage: 4, skillName: 'STEALTH' };
+    return { name: 'Sea Dragon(You)', color: '#6c5ce7', stage: 5, skillName: 'WATER LASER' };
+}
+
+const petsData = [
+    { id: 'pet_nemo', name: 'Nemo', price: 200, color: '#ff7675', desc: 'EXP x1.5' },
+    { id: 'pet_narwhal', name: 'Narwhal', price: 500, color: '#74b9ff', desc: 'EXP x2' },
+    { id: 'pet_seadragon', name: 'Sea Dragon', price: 1200, color: '#55efc4', desc: 'EXP x5' }
+];
+
+const maps = [
+    { 
+        name: "Coral Reef", bg: "#004477", decorType: 'coral',
+        list: [
+            {r: 10, spd: 1.5, col: '#ffeaa7', name: 'Small Fry', exp: 25, coinReward: 2},
+            {r: 14, spd: 1.2, col: '#00ffaa', name: 'Nemo', exp: 40, coinReward: 4},
+            {r: 18, spd: 1.0, col: '#00bbff', name: 'Blue Clownfish', exp: 60, coinReward: 7},
+            {r: 25, spd: 0.9, col: '#fdcb6e', name: 'Goldfish', exp: 80, coinReward: 10},
+            {r: 34, spd: 0.8, col: '#e17055', name: 'Young Barracuda', exp: 120, coinReward: 15},
+            {r: 44, spd: 0.6, col: '#ff3333', name: 'Reef Shark', exp: 200, coinReward: 25}
+        ]
+    },
+    { 
+        name: "Deep Sea", bg: "#001d3d", decorType: 'bubble',
+        list: [
+            {r: 12, spd: 1.4, col: '#a29bfe', name: 'Lanternfish', exp: 50, coinReward: 6},
+            {r: 18, spd: 1.1, col: '#00ffcc', name: 'Mini Jellyfish', exp: 75, coinReward: 9},
+            {r: 26, spd: 0.9, col: '#ff00ff', name: 'Phantom Fish', exp: 100, coinReward: 13},
+            {r: 36, spd: 0.7, col: '#6c5ce7', name: 'Electric Eel', exp: 160, coinReward: 20},
+            {r: 46, spd: 0.5, col: '#aa0000', name: 'Darkness Shark', exp: 300, coinReward: 35}
+        ]
+    },
+    { 
+        name: "Ancient Ocean", bg: "#0a0a1a", decorType: 'ruins',
+        list: [
+            {r: 13, spd: 1.5, col: '#55efc4', name: 'Trilobite', exp: 60, coinReward: 10},
+            {r: 24, spd: 1.0, col: '#00ffff', name: 'Crystal Fish', exp: 120, coinReward: 18},
+            {r: 35, spd: 0.8, col: '#e84393', name: 'Plesiosaurus', exp: 220, coinReward: 30},
+            {r: 45, spd: 0.6, col: '#b2bec3', name: 'Dunkleosteus', exp: 380, coinReward: 45},
+            {r: 49, spd: 0.4, col: '#ff8800', name: 'Ancient Megalodon', exp: 600, coinReward: 70}
+        ]
+    }
+];
+
+function saveGameData() {
+    localStorage.setItem('fish_coins', coins);
+    localStorage.setItem('fish_ownedPets', JSON.stringify(ownedPets));
+    localStorage.setItem('fish_activePet', activePet || '');
+}
+
+function resetGameData() {
+    if (confirm('Are you sure you want to reset all pets and coins?')) {
+        localStorage.removeItem('fish_coins');
+        localStorage.removeItem('fish_ownedPets');
+        localStorage.removeItem('fish_activePet');
+        
+        coins = 500;
+        ownedPets = [];
+        activePet = null;
+        
+        uiCoin.innerText = coins;
+        renderPetShop();
+        alert('Game data has been reset!');
+    }
+}
+
+function hideAllMenus() {
+    mainMenu.classList.add('hidden');
+    selectMapMenu.classList.add('hidden');
+    petShopMenu.classList.add('hidden');
+    gameOverMenu.classList.add('hidden');
+    victoryMenu.classList.add('hidden');
+}
+
+function openMainMenu() {
+    state = 'MENU';
+    hideAllMenus();
+    mainMenu.classList.remove('hidden');
+    pauseBtn.style.display = 'none';
+    menuBtnBottom.style.display = 'none';
+    uiMap.innerText = 'Main Menu';
+    uiCoin.innerText = coins;
+}
+
+function openSelectMap() {
+    state = 'SELECT_MAP';
+    hideAllMenus();
+    selectMapMenu.classList.remove('hidden');
+}
+
+function openPetShop() {
+    state = 'PET_SHOP';
+    hideAllMenus();
+    petShopMenu.classList.remove('hidden');
+    renderPetShop();
+}
+
+function togglePause() {
+    if (state === 'PLAYING') { state = 'PAUSED'; pauseBtn.innerText = 'RESUME'; }
+    else if (state === 'PAUSED') { state = 'PLAYING'; pauseBtn.innerText = 'PAUSE'; }
+}
+
+function renderPetShop() {
+    uiCoin.innerText = coins;
+    petListContainer.innerHTML = '';
+    petsData.forEach(p => {
+        let isOwned = ownedPets.includes(p.id);
+        let isActive = activePet === p.id;
+        let btnText = isActive ? '✅ EQUIPPED (CLICK TO UNEQUIP)' : isOwned ? '⭐ OWNED (CLICK TO EQUIP)' : `🛒 BUY: ${p.price} 🪙`;
+
+        let div = document.createElement('div');
+        div.style.cssText = `background: ${isActive ? 'rgba(0,255,170,0.3)' : 'rgba(255,255,255,0.1)'}; border: 2px solid ${isActive ? '#00ffaa' : '#fff'}; padding: 6px 10px; border-radius: 6px; cursor: pointer;`;
+        div.innerHTML = `<b style="color:${p.color}; font-size:11px;">${p.name}</b> <span style="font-size:9px; color:#ddd;">- ${p.desc}</span><br><span style="font-size:10px; color:#ffcc00; font-weight:bold;">${btnText}</span>`;
+        
+        div.onclick = (e) => {
+            e.stopPropagation();
+            if (isOwned) {
+                activePet = (activePet === p.id) ? null : p.id;
+            } else if (coins >= p.price) {
+                coins -= p.price;
+                ownedPets.push(p.id);
+                activePet = p.id;
+            } else {
+                alert('Not enough coins to buy this pet!');
+                return;
+            }
+            saveGameData();
+            renderPetShop();
+        };
+
+        petListContainer.appendChild(div);
+    });
+}
+
+function setupDecorations(type) {
+    decorations = [];
+    for (let i = 0; i < 8; i++) {
+        decorations.push({
+            x: Math.random() * canvas.width,
+            y: type === 'bubble' ? Math.random() * canvas.height : canvas.height - 20 - Math.random() * 20,
+            size: Math.random() * 12 + 8,
+            speed: type === 'bubble' ? Math.random() * 0.8 + 0.3 : 0
+        });
+    }
+
+    ambientBubbles = [];
+    for (let i = 0; i < 15; i++) {
+        ambientBubbles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 5 + 2,
+            spd: Math.random() * 0.5 + 0.2
+        });
+    }
+}
+
+function startGame(selectedMapIndex) {
+    state = 'PLAYING';
+    hideAllMenus();
+    pauseBtn.style.display = 'block';
+    menuBtnBottom.style.display = 'block';
+    
+    skillCooldownTimer = 0;
+    skillDurationTimer = 0;
+    dragonLaserActive = false;
+    eelStealthActive = false;
+
+    player = { 
+        x: canvas.width / 2, 
+        y: canvas.height / 2, 
+        power: 13, 
+        exp: 0, 
+        maxExp: 100, 
+        spd: 4.0, 
+        facing: 'right', 
+        hp: 3, 
+        inv: 120,          
+        isHitImmune: false 
+    };
+    loadMap(selectedMapIndex);
+}
+
+function loadMap(idx) {
+    mapIdx = idx;
+    uiMap.innerText = maps[idx].name;
+    
+    let rawList = maps[idx].list;
+    fishes = [];
+    
+    rawList.forEach((fData, i) => {
+        let dir = (i % 2 === 0) ? 1 : -1;
+        let startX = (dir === 1) ? (-60 - (i * 50)) : (canvas.width + 60 + (i * 50));
+        let startY = 40 + (i * 45);
+        if (startY > canvas.height - 40) startY = canvas.height - 40;
+
+        let fishTypeOpts = ['small', 'teen', 'tuna', 'eel'];
+        let assignedType = fishTypeOpts[Math.floor(Math.random() * fishTypeOpts.length)];
+
+        fishes.push({
+            x: startX,
+            y: startY,
+            r: fData.r,
+            spd: fData.spd,
+            col: fData.col,
+            name: fData.name,
+            exp: fData.exp,
+            coinReward: fData.coinReward,
+            dir: dir,
+            type: assignedType
+        });
+    });
+
+    setupDecorations(maps[idx].decorType);
+}
+
+function setKey(k, isDown) {
+    keys[k] = isDown;
+    let btnElem = document.getElementById('btn' + k.charAt(0).toUpperCase() + k.slice(1));
+    if (btnElem) {
+        if (isDown) btnElem.classList.add('active');
+        else btnElem.classList.remove('active');
+    }
+}
+
+function triggerSkill() {
+    if (skillCooldownTimer > 0) return; 
+
+    let ev = getEvolutionStage(player.power);
+
+    skillDurationTimer = 180;             
+    skillCooldownTimer = 165 * 60;        
+
+    if (ev.stage === 1) {
+        player.spd = 7.5;
+    } else if (ev.stage === 2) {
+        player.inv = 180;
+        player.isHitImmune = false;
+    } else if (ev.stage === 3) {
+        player.spd = 9.0;
+        if (player.facing === 'right') player.x += 40;
+        else player.x -= 40;
+    } else if (ev.stage === 4) {
+        eelStealthActive = true;
+        player.spd = 9.5;
+        player.inv = 180;
+    } else if (ev.stage === 5) {
+        dragonLaserActive = true;
+        player.spd = 8.0;
+    }
+}
+
+window.addEventListener('keydown', e => handleKey(e.code, true));
+window.addEventListener('keyup', e => handleKey(e.code, false));
+
+function handleKey(code, isDown) {
+    if (code === 'ArrowRight' || code === 'KeyD' || code === 'End') setKey('right', isDown);
+    if (code === 'ArrowLeft' || code === 'KeyA' || code === 'Home') setKey('left', isDown);
+    if (code === 'ArrowUp' || code === 'KeyW' || code === 'PageUp') setKey('up', isDown);
+    if (code === 'ArrowDown' || code === 'KeyS' || code === 'PageDown') setKey('down', isDown);
+}
+
+function update() {
+    if (state !== 'PLAYING') return;
+
+    if (skillCooldownTimer > 0) {
+        skillCooldownTimer--;
+    }
+
+    if (skillDurationTimer > 0) {
+        skillDurationTimer--;
+        if (skillDurationTimer === 0) {
+            player.spd = 4.0;
+            eelStealthActive = false;
+            dragonLaserActive = false;
+        }
+    }
+
+    let currentEv = getEvolutionStage(player.power);
+    if (currentEv.stage === 5 && dragonLaserActive) {
+        fishes.forEach(f => {
+            let inFront = (player.facing === 'right' && f.x > player.x && f.x < player.x + 300) ||
+                          (player.facing === 'left' && f.x < player.x && f.x > player.x - 300);
+            if (inFront && Math.abs(f.y - player.y) < 70) {
+                let expMultiplier = activePet === 'pet_seadragon' ? 5 : 1;
+                player.exp += (f.exp * expMultiplier * 0.1); 
+                coins += 1;
+                f.x = (f.dir === 1) ? -100 : canvas.width + 100;
+                f.y = Math.random() * (canvas.height - 50) + 25;
+            }
+        });
+    }
+
+    if (keys.right) { player.x += player.spd; player.facing = 'right'; }
+    if (keys.left) { player.x -= player.spd; player.facing = 'left'; }
+    if (keys.up) player.y -= player.spd;
+    if (keys.down) player.y += player.spd;
+
+    let playerRadius = 10 + (player.power * 0.8);
+
+    player.x = Math.max(playerRadius, Math.min(canvas.width - playerRadius, player.x));
+    player.y = Math.max(playerRadius, Math.min(canvas.height - playerRadius, player.y));
+    
+    if (player.inv > 0) {
+        player.inv--;
+    } else {
+        player.isHitImmune = false;
+    }
+
+    let btnSkillElem = document.getElementById('btnSkill');
+    if (skillBtnLabel) {
+        if (skillCooldownTimer > 0) {
+            let secondsLeft = Math.ceil(skillCooldownTimer / 60);
+            skillBtnLabel.innerHTML = `CD<br>${secondsLeft}s`;
+            btnSkillElem.classList.add('on-cooldown');
+        } else {
+            skillBtnLabel.innerHTML = currentEv.skillName;
+            btnSkillElem.classList.remove('on-cooldown');
+        }
+    }
+
+    decorations.forEach(d => {
+        if (maps[mapIdx].decorType === 'bubble') {
+            d.y -= d.speed;
+            if (d.y < 0) d.y = canvas.height;
+        }
+    });
+
+    ambientBubbles.forEach(b => {
+        b.y -= b.spd;
+        if (b.y < -10) {
+            b.y = canvas.height + 10;
+            b.x = Math.random() * canvas.width;
+        }
+    });
+
+    fishes.forEach(f => {
+        f.x += f.spd * f.dir;
+        
+        if (f.dir === 1 && f.x > canvas.width + 60) {
+            f.x = -60;
+        } else if (f.dir === -1 && f.x < -60) {
+            f.x = canvas.width + 60;
+        }
+
+        let dist = Math.hypot(player.x - f.x, player.y - f.y);
+        if (dist < playerRadius + f.r) {
+            if (player.power >= Math.floor(f.r)) {
+                let expMultiplier = 1;
+                if (activePet === 'pet_nemo') expMultiplier = 1.5;
+                if (activePet === 'pet_narwhal') expMultiplier = 2;
+                if (activePet === 'pet_seadragon') expMultiplier = 5;
+
+                player.exp += (f.exp * expMultiplier);
+                coins += (f.coinReward || 5);
+                saveGameData();
+
+                if (player.exp >= player.maxExp) {
+                    player.power = Math.min(50, player.power + 1);
+                    player.exp = 0;
+                    player.maxExp += 45; 
+                }
+
+                if (player.power >= 50) {
+                    state = 'VICTORY';
+                    hideAllMenus();
+                    victoryMenu.classList.remove('hidden');
+                    pauseBtn.style.display = 'none';
+                    menuBtnBottom.style.display = 'none';
+                    return;
+                }
+                
+                f.x = (f.dir === 1) ? -100 : canvas.width + 100;
+                f.y = Math.random() * (canvas.height - 50) + 25;
+            } else {
+                if (player.inv > 0 || eelStealthActive) return; 
+
+                player.hp--;
+                player.inv = 90; 
+                player.isHitImmune = true; 
+                player.x += (player.facing === 'right' ? -25 : 25);
+                
+                if (player.hp <= 0) {
+                    state = 'GAMEOVER';
+                    hideAllMenus();
+                    gameOverMenu.classList.remove('hidden');
+                    pauseBtn.style.display = 'none';
+                    menuBtnBottom.style.display = 'none';
+                }
+            }
+        }
+    });
+
+    uiCoin.innerText = coins;
+    uiHp.innerText = '❤️'.repeat(Math.max(0, player.hp));
+    uiExp.innerText = Math.floor(player.exp);
+    uiMaxExp.innerText = player.maxExp;
+    uiPower.innerText = player.power;
+}
+
+function drawFishShape(x, y, r, col, right, fishType, labelText, isBlinking, isTransparent) {
+    if (isBlinking && Math.floor(Date.now() / 80) % 2 === 0) {
+        return; 
+    }
+
+    ctx.save();
+    ctx.translate(x, y);
+    if (!right) ctx.scale(-1, 1);
+
+    if (isTransparent) {
+        ctx.globalAlpha = 0.25; 
+    }
+
+    ctx.fillStyle = col; ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5;
+
+    if (fishType === 'eel' || fishType === 'Long Black Eel') {
+        ctx.beginPath();
+        ctx.ellipse(0, 0, r * 1.7, r * 0.3, 0, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+    } else if (fishType === 'tuna' || fishType === 'Tuna') {
+        ctx.beginPath();
+        ctx.moveTo(r, 0);
+        ctx.bezierCurveTo(r * 0.8, -r * 0.8, -r * 0.5, -r * 0.7, -r, 0);
+        ctx.bezierCurveTo(-r * 0.5, r * 0.7, r * 0.8, r * 0.8, r, 0);
+        ctx.fill(); ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.2, -r * 0.7);
+        ctx.lineTo(r * 0.1, -r * 1.1);
+        ctx.lineTo(r * 0.3, -r * 0.7);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+    } else {
+        ctx.beginPath();
+        ctx.moveTo(r, 0);
+        ctx.bezierCurveTo(r * 0.8, -r * 0.8, -r * 0.5, -r * 0.7, -r, 0);
+        ctx.bezierCurveTo(-r * 0.5, r * 0.7, r * 0.8, r * 0.8, r, 0);
+        ctx.fill(); ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(-r, 0);
+        ctx.lineTo(-r * 1.4, -r * 0.7);
+        ctx.lineTo(-r * 1.2, 0);
+        ctx.lineTo(-r * 1.4, r * 0.7);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+    }
+
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(r * 0.4, -r * 0.2, Math.max(3, r * 0.2), 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(r * 0.45, -r * 0.2, Math.max(1.5, r * 0.08), 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    if (labelText) {
+        ctx.save();
+        ctx.font = '8px Arial'; ctx.textAlign = 'center';
+        ctx.fillText(labelText, x, y - r - 5);
+        ctx.restore();
+    }
+}
+
+function drawWaterLaser(x, y, facingRight) {
+    ctx.save();
+    let dirMultiplier = facingRight ? 1 : -1;
+    let startX = x + (dirMultiplier * 20);
+    let startY = y - 2;
+
+    let gradient = ctx.createLinearGradient(startX, startY, startX + (dirMultiplier * 320), startY);
+    gradient.addColorStop(0, 'rgba(0, 255, 255, 0.95)');
+    gradient.addColorStop(0.5, 'rgba(0, 150, 255, 0.8)');
+    gradient.addColorStop(1, 'rgba(0, 50, 255, 0)');
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY - 16);
+    ctx.lineTo(startX + (dirMultiplier * 320), startY - 28);
+    ctx.lineTo(startX + (dirMultiplier * 320), startY + 28);
+    ctx.lineTo(startX, startY + 16);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(startX + (dirMultiplier * 300), startY);
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+function drawSpawnShield(x, y, r, timeLeft) {
+    ctx.save();
+    ctx.beginPath();
+    let radius = r * 1.4 + 4;
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+
+    if (timeLeft < 40) {
+        if (Math.floor(Date.now() / 80) % 2 === 0) {
+            ctx.restore();
+            return; 
+        }
+        ctx.strokeStyle = 'rgba(255, 68, 68, 0.9)';
+        ctx.fillStyle = 'rgba(255, 68, 68, 0.18)';
+    } else {
+        ctx.strokeStyle = 'rgba(0, 170, 255, 0.85)';
+        ctx.fillStyle = 'rgba(0, 170, 255, 0.12)';
+    }
+
+    ctx.lineWidth = 2.5;
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+}
+
+function drawSkeleton(ox, oy) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(200, 220, 240, 0.35)';
+    ctx.fillStyle = 'rgba(200, 220, 240, 0.2)';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+
+    ctx.beginPath();
+    ctx.arc(ox + 20, oy + 25, 18, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(ox + 38, oy + 25);
+    ctx.lineTo(ox + 105, oy + 25);
+    ctx.stroke();
+
+    ctx.lineWidth = 2;
+    for (let rx = 50; rx <= 95; rx += 12) {
+        ctx.beginPath();
+        ctx.moveTo(ox + rx, oy + 12);
+        ctx.lineTo(ox + rx, oy + 38);
+        ctx.stroke();
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(ox + 105, oy + 25);
+    ctx.lineTo(ox + 125, oy + 8);
+    ctx.moveTo(ox + 105, oy + 25);
+    ctx.lineTo(ox + 125, oy + 42);
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+function drawDecorations() {
+    ctx.save();
+    let type = maps[mapIdx].decorType;
+    
+    if (mapIdx === 2) {
+        drawSkeleton(canvas.width - 145, canvas.height - 75);
+    }
+
+    decorations.forEach(d => {
+        if (type === 'coral') {
+            ctx.fillStyle = '#ff6b81';
+            ctx.beginPath(); ctx.arc(d.x, d.y, d.size * 0.5, Math.PI, 0, false); ctx.fill();
+        } else if (type === 'bubble') {
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.arc(d.x, d.y, d.size * 0.3, 0, Math.PI * 2); ctx.stroke();
+        } else if (type === 'ruins') {
+            ctx.fillStyle = '#4b6584';
+            ctx.fillRect(d.x, canvas.height - d.size * 1.5, d.size * 0.8, d.size * 1.5);
+        }
+    });
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 1;
+    ambientBubbles.forEach(b => {
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+        ctx.stroke();
+    });
+
+    ctx.restore();
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (state !== 'PLAYING' && state !== 'PAUSED') return;
+
+    canvas.style.background = maps[mapIdx].bg;
+    drawDecorations();
+    
+    fishes.forEach(f => {
+        let isRight = (f.dir === 1);
+        let minPowerVal = Math.floor(f.r);
+        ctx.fillStyle = player.power >= minPowerVal ? '#00ffaa' : '#ff4444';
+        let label = `${f.name} (Req: ${minPowerVal})`;
+        drawFishShape(f.x, f.y, f.r, f.col, isRight, f.type, label, false, false);
+    });
+    
+    let playerRadius = 10 + (player.power * 0.8);
+    let currentEv = getEvolutionStage(player.power);
+    
+    let playerFishType = (currentEv.stage === 4) ? 'eel' : 'small';
+    let playerLabel = currentEv.name;
+    let isPlayerTransparent = (currentEv.stage === 4 && eelStealthActive);
+
+    drawFishShape(player.x, player.y, playerRadius, currentEv.color, player.facing === 'right', playerFishType, playerLabel, player.isHitImmune, isPlayerTransparent);
+
+    if (currentEv.stage === 5 && dragonLaserActive) {
+        drawWaterLaser(player.x, player.y, player.facing === 'right');
+    }
+
+    if (player.inv > 0 && !player.isHitImmune && !eelStealthActive) {
+        drawSpawnShield(player.x, player.y, playerRadius, player.inv);
+    }
+
+    if (activePet) {
+        let petObj = petsData.find(p => p.id === activePet);
+        if (petObj) {
+            drawFishShape(player.x - (player.facing === 'right' ? 25 : -25), player.y + 8, 7, petObj.color, player.facing === 'right', 'small', petObj.name, false, false);
+        }
+    }
+
+    if (state === 'PAUSED') {
+        ctx.fillStyle = 'rgba(0,0,0,0.7)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 18px Arial'; ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('GAME PAUSED', canvas.width/2, canvas.height/2);
+    }
+}
+
+function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+openMainMenu();
+loop();
+</script>
+
+</body>
+</html>
