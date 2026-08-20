@@ -1,0 +1,13 @@
+{
+  "appId": "com.virn.notebook",
+  "appName": "VIRN",
+  "webDir": "www",
+  "backgroundColor": "#0B0D12",
+  "android": {
+    "backgroundColor": "#0B0D12",
+    "allowMixedContent": false
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}
