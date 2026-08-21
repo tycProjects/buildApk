@@ -1,0 +1,2998 @@
+{
+  "1234": {
+    "password": "4321",
+    "displayName": "1234",
+    "role": "member",
+    "uid": "10c242e1858e2443799d3a56183b9d0f",
+    "createdBy": "Vanda",
+    "createdAt": "2026-06-12T10:42:08.050Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Smooth": {
+    "password": "7",
+    "displayName": "Smooth",
+    "role": "developer",
+    "uid": "d7e27df25f68d737f7a454b58a97f77c",
+    "smooth": true,
+    "createdAt": "2026-05-23T14:20:24.479Z"
+  },
+  "Astro": {
+    "password": "0987",
+    "displayName": "Astro",
+    "role": "member",
+    "uid": "a62dad83b2d554f8ed037367e27beb85",
+    "createdBy": "Smooth",
+    "createdAt": "2026-05-24T12:34:27.613Z"
+  },
+  "Gustav": {
+    "password": "0990",
+    "displayName": "Gustav",
+    "role": "reseller",
+    "uid": "bd43dc8906f030e80055f82ba7f2efec",
+    "createdBy": "Smooth",
+    "createdAt": "2026-05-24T12:37:13.232Z"
+  },
+  "Sav": {
+    "password": "4321",
+    "displayName": "Sav",
+    "role": "member",
+    "uid": "58bce9eaae512954d6437d6c3ad665fc",
+    "createdBy": "Smooth",
+    "createdAt": "2026-05-24T12:37:54.617Z"
+  },
+  "Rius": {
+    "password": "RIUS",
+    "displayName": "Rius",
+    "role": "member",
+    "uid": "b92974aee00c40ccdee64b86a3fea8b3",
+    "createdBy": "Smooth",
+    "createdAt": "2026-05-24T12:38:09.137Z"
+  },
+  "Saputra": {
+    "password": "7676",
+    "displayName": "Saputra",
+    "role": "member",
+    "uid": "7f50f94c8edba0ded6b913ac38b9fe4d",
+    "createdBy": "Smooth",
+    "createdAt": "2026-05-24T12:44:28.586Z"
+  },
+  "Doonkalsel": {
+    "password": "Doon9876",
+    "displayName": "Doonkalsel",
+    "role": "member",
+    "uid": "6a9a8c4d8c5079e9d1874077b1a074ed",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-05-26T02:11:53.217Z"
+  },
+  "DEV": {
+    "password": "2211",
+    "displayName": "DEV",
+    "role": "developer",
+    "uid": "380025be4ac83d08e2d709d8b95a7529",
+    "createdBy": "Smooth",
+    "createdAt": "2026-05-27T06:55:16.464Z"
+  },
+  "Vyan": {
+    "password": "1903",
+    "displayName": "Vyan",
+    "role": "member",
+    "uid": "8b51e758330668a9a761d46415d733f8",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-05-27T07:34:15.136Z"
+  },
+  "HanzzOfficial": {
+    "password": "223e11",
+    "displayName": "HanzzOfficial",
+    "role": "reseller",
+    "uid": "f53c397d0a163c070ab24fee650e3a3b",
+    "createdBy": "Smooth",
+    "createdAt": "2026-05-27T09:48:40.993Z"
+  },
+  "DIKAW": {
+    "password": "RIRIN98",
+    "displayName": "DIKAW",
+    "role": "member",
+    "uid": "b9dc99ef2b5699bc452899e7aa4eb63a",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-05-27T15:40:17.170Z"
+  },
+  "bamz": {
+    "password": "bamzzz3241",
+    "displayName": "bamz",
+    "role": "member",
+    "uid": "6fa211d08855b4ca0e03af226d4445f9",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-05-28T01:14:04.179Z"
+  },
+  "Fahww": {
+    "password": "Palker",
+    "displayName": "Fahww",
+    "role": "member",
+    "uid": "39d410212c446e11c76267f4aac5ded6",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-05-28T05:26:05.995Z"
+  },
+  "jonijon": {
+    "password": "jonijon8297",
+    "displayName": "jonijon",
+    "role": "member",
+    "uid": "252f734fff9f60b66efe7049f9c2803a",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-05-28T08:58:50.892Z"
+  },
+  "Rinto dlahom": {
+    "password": "Segawe123",
+    "displayName": "Rinto dlahom",
+    "role": "member",
+    "uid": "a77908c0dd17f41b064a2e72d311a30e",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-05-29T09:05:59.352Z"
+  },
+  "VIP": {
+    "password": "2211",
+    "displayName": "VIP",
+    "role": "vip",
+    "uid": "0ea0fd3df95127b4747193b5f5e8f5df",
+    "createdBy": "Smooth",
+    "createdAt": "2026-05-31T06:36:52.549Z"
+  },
+  "yudzx": {
+    "password": "yudzxrat67",
+    "displayName": "yudzx",
+    "role": "member",
+    "uid": "10a4940c3719bc108f1728bc01af904b",
+    "createdBy": "Smooth",
+    "createdAt": "2026-05-31T10:26:41.541Z"
+  },
+  "DAVSTR": {
+    "password": "DAVSSTRREAL#1",
+    "displayName": "DAVSTR",
+    "role": "member",
+    "uid": "c5324ff82deef6824f1daf4017484618",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-01T04:42:07.699Z"
+  },
+  "Akbar": {
+    "password": "rama2010",
+    "displayName": "Akbar",
+    "role": "member",
+    "uid": "b00454473a016d3c4b46cd7510076108",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-01T12:57:53.402Z"
+  },
+  "Arka": {
+    "password": "9999",
+    "displayName": "Arka",
+    "role": "member",
+    "uid": "1e29e2206b5521e157c59553c01a0ba3",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-02T06:30:57.115Z"
+  },
+  "aisy": {
+    "password": "aisyamriq",
+    "displayName": "aisy",
+    "role": "member",
+    "uid": "2715f899c5bb9f3345dc0c314ddba58e",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-02T13:34:01.146Z"
+  },
+  "rezstore": {
+    "password": "www123",
+    "displayName": "rezstore",
+    "role": "member",
+    "uid": "ccbbd5d110048aaa62e1f9c30dcf1e29",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-04T13:23:18.316Z"
+  },
+  "susje": {
+    "password": "@10661066",
+    "displayName": "susje",
+    "role": "reseller",
+    "uid": "948913db1f8750ca144978363462e29f",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-05T03:40:22.722Z"
+  },
+  "Yursange": {
+    "password": "Yuraslilegian",
+    "displayName": "Yursange",
+    "role": "member",
+    "uid": "16e8327161f3b307b1685e8d4cb3a221",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-06T12:11:45.988Z"
+  },
+  "saril": {
+    "password": "matamu123",
+    "displayName": "saril",
+    "role": "member",
+    "uid": "9b5ce2207cdeb0aabaa3018737a2bda3",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-07T00:40:36.608Z"
+  },
+  "Felz": {
+    "password": "99",
+    "displayName": "Felz",
+    "role": "member",
+    "uid": "f347abf5bbc74b8330fb210929afb994",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-07T04:21:39.435Z"
+  },
+  "sergio": {
+    "password": "sergio67",
+    "displayName": "sergio",
+    "role": "member",
+    "uid": "536d92e8b70ed24096be3a3a90fafc17",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-07T11:05:46.359Z"
+  },
+  "Vinn": {
+    "password": "2211",
+    "displayName": "Vinn",
+    "role": "member",
+    "uid": "0d1bb61d3f4559d44cef0407339faf2c",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-08T07:42:08.929Z"
+  },
+  "Hnzz": {
+    "password": "2211",
+    "displayName": "Hnzz",
+    "role": "reseller",
+    "uid": "e09cc2b309e0a3bfe3907861b0688655",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-08T07:54:54.498Z"
+  },
+  "danzstr": {
+    "password": "1212",
+    "displayName": "danzstr",
+    "role": "member",
+    "uid": "bb3e1bde31eceeba23d738f23c58f62a",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-08T12:18:09.586Z"
+  },
+  "dikaw": {
+    "password": "dikaw231",
+    "displayName": "dikaw",
+    "role": "member",
+    "uid": "d96559bd59224394f081811236f6a55c",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-06-08T12:25:12.069Z"
+  },
+  "Fano NTT": {
+    "password": "Genetical",
+    "displayName": "Fano NTT",
+    "role": "member",
+    "uid": "4f69f236ee5721b83d3b6366fff9a99f",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-09T03:37:31.981Z"
+  },
+  "chikoyzz": {
+    "password": "chikoanakbaik",
+    "displayName": "chikoyzz",
+    "role": "member",
+    "uid": "7baeec6188b667e2d6037091ed4c66f0",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-09T06:03:46.310Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Heri": {
+    "password": "2211",
+    "displayName": "Heri",
+    "role": "member",
+    "uid": "e9e83721b1c206ce357a403265fc1680",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-09T13:47:46.830Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Jayzz": {
+    "password": "Bocil ff",
+    "displayName": "Jayzz",
+    "role": "member",
+    "uid": "8965978785216255b1df326215e40d56",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-10T06:24:45.993Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Zico": {
+    "password": "ZicoRenz",
+    "displayName": "Zico",
+    "role": "member",
+    "uid": "9ec34668158235fc53bde8e08574f079",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-10T09:52:17.862Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Pertamina123": {
+    "password": "Pertamax321",
+    "displayName": "Pertamina123",
+    "role": "member",
+    "uid": "35bf7f1fac3bebe1f0d7514dbad44385",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-10T14:40:14.096Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "✅": {
+    "password": "34513451",
+    "displayName": "anjggg",
+    "role": "reseller",
+    "uid": "83d5189a0d0eb83571ec5d46c06e5929",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-10T17:02:38.085Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Sanz stecu": {
+    "password": "098",
+    "displayName": "Sanz stecu",
+    "role": "member",
+    "uid": "6c4601ece13fba264416780edbec4268",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T03:17:38.080Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "danjitzy": {
+    "password": "danjitzy666",
+    "displayName": "danjitzy",
+    "role": "member",
+    "uid": "769ff314e62f4be21b831f524c202c6d",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-11T04:04:29.965Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Dwi ardikha Ceysar": {
+    "password": "#Dw100982",
+    "displayName": "Dwi ardikha Ceysar",
+    "role": "member",
+    "uid": "706d3c991086fcda9cd92bfed92e44d3",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-11T05:00:17.112Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Kalz": {
+    "password": "098",
+    "displayName": "Kalz",
+    "role": "member",
+    "uid": "c845af9f797da95d56a120d67a9f36c9",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T05:39:32.185Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Bagas": {
+    "password": "098",
+    "displayName": "Bagas",
+    "role": "member",
+    "uid": "3c654b8784ef672c0de314e67bce1f38",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T05:42:13.482Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "bramz": {
+    "password": "042011",
+    "displayName": "bramz",
+    "role": "member",
+    "uid": "9d1fc7cac0b58e16d8441f6133c819d6",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T05:42:35.834Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "adudu": {
+    "password": "098",
+    "displayName": "adudu",
+    "role": "member",
+    "uid": "6a74e5e965b5c73094f1c7e525e297bd",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T05:43:11.919Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "JAMETTT SYif": {
+    "password": "098",
+    "displayName": "JAMETTT SYif",
+    "role": "member",
+    "uid": "03f00311b69aaaf3b7647f4e199fac44",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T05:45:55.962Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Danzz": {
+    "password": "Danzz123",
+    "displayName": "Danzz",
+    "role": "member",
+    "uid": "fe8532bfcf2d9373aeb0a903413edc46",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-11T07:33:38.321Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "mnyy04_": {
+    "password": "098",
+    "displayName": "mnyy04_",
+    "role": "member",
+    "uid": "593ad2941a218d8d56c3c716b6eda494",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T08:53:14.637Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Vannzstecu": {
+    "password": "098",
+    "displayName": "Vannzstecu",
+    "role": "member",
+    "uid": "e71d23687fc45b6c13437916fe68605a",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T08:53:37.394Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Komol": {
+    "password": "098",
+    "displayName": "Komol",
+    "role": "member",
+    "uid": "2559042a933842e98916574a05835ecc",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T08:54:09.493Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "DANI": {
+    "password": ",,daniganteng#",
+    "displayName": "DANI",
+    "role": "member",
+    "uid": "d98b2152ecd30bd61a35ddd4d65a9c2a",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-11T11:02:31.949Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "juju": {
+    "password": "123",
+    "displayName": "jjhhhh",
+    "role": "member",
+    "uid": "058fb6bc68fe16da00a3bb090c215bb4",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T11:37:36.558Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "XSYAWAL": {
+    "password": "SYAWALX",
+    "displayName": "XSYAWAL",
+    "role": "member",
+    "uid": "e65264eb7dbd6864956ddb5771db63bd",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T11:39:23.769Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "NILXSA": {
+    "password": "321",
+    "displayName": "NILXSA",
+    "role": "member",
+    "uid": "40a80f4184f0f23a907725a8bcd64b32",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T11:40:38.264Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Faqeh": {
+    "password": "331",
+    "displayName": "Faqeh",
+    "role": "member",
+    "uid": "5ac1d58a8e02ef9b233baf1e5af3047c",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T11:55:46.910Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "uwong": {
+    "password": "123567899",
+    "displayName": "uwong",
+    "role": "member",
+    "uid": "752ac3a6b03203e4a03056eea3c51144",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-11T12:04:45.339Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "RSZ_BOYZ": {
+    "password": "654321",
+    "displayName": "RSZ_BOYZ",
+    "role": "member",
+    "uid": "333cc1d1b59d8e41ebf939b7f848cbac",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T12:06:26.363Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Aha": {
+    "password": "098",
+    "displayName": "Aha",
+    "role": "member",
+    "uid": "28f1b3afa560369d4450edcfdff5c809",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T12:07:18.103Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Yanzz": {
+    "password": "098",
+    "displayName": "Yanzz",
+    "role": "member",
+    "uid": "068b5271af36b209c1cdc25bae83a990",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T12:07:39.774Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "GARTZY": {
+    "password": "321",
+    "displayName": "GARTZY",
+    "role": "member",
+    "uid": "08fa15f102b3eec9dbf1a6aa891912e0",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T12:09:44.932Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Kitforever": {
+    "password": "321",
+    "displayName": "Kitforever",
+    "role": "member",
+    "uid": "cad1ae1bd80648c135fedbc646e90fa5",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T12:23:52.915Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "MECPAN": {
+    "password": "MECPAN",
+    "displayName": "MECPAN",
+    "role": "member",
+    "uid": "2836c62fcdff5e17ee312ab089931395",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T12:26:26.904Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Abdil": {
+    "password": "098",
+    "displayName": "Abdil",
+    "role": "member",
+    "uid": "bec6870ccb9cddcae6ae941780ac7c49",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T12:40:05.565Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Dilzbug": {
+    "password": "098",
+    "displayName": "Dilzbug",
+    "role": "member",
+    "uid": "bf1c9d4bc3dba2d730ce0964a914d41d",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T12:40:23.934Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "kotim": {
+    "password": "321",
+    "displayName": "kotim",
+    "role": "member",
+    "uid": "4bf9a6840487f70b031a20c00bdf2447",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T12:50:04.618Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Alif": {
+    "password": "098",
+    "displayName": "Alif",
+    "role": "member",
+    "uid": "fd8ab3c594b40292bcfaa4b58f44445b",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T13:10:23.507Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Anjing4455": {
+    "password": "16114433",
+    "displayName": "Anjing4455",
+    "role": "member",
+    "uid": "9ad65853395808d60f59922cacbac1ef",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T13:10:47.935Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Dukun jadab": {
+    "password": "098",
+    "displayName": "Dukun jadab",
+    "role": "member",
+    "uid": "6769cd6525f36a46bc8d26b279140b4c",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T13:12:13.420Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Dukun jadabb": {
+    "password": "123456",
+    "displayName": "Dukun jadabb",
+    "role": "member",
+    "uid": "76f22f4d9d79d5ae86439565850ed519",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T13:14:04.831Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "anime bole": {
+    "password": "098",
+    "displayName": "anime bole",
+    "role": "member",
+    "uid": "f2b24e9430c737c0db244dc292262728",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T13:14:28.308Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Kalzz": {
+    "password": "098",
+    "displayName": "Kalzz",
+    "role": "member",
+    "uid": "4214c90ab7c0dfc885f435a42274c496",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T13:48:08.363Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "kalz": {
+    "password": "098",
+    "displayName": "kalz",
+    "role": "member",
+    "uid": "4482967920ea256abd6debd06ad23cdc",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T13:49:05.481Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Noxy": {
+    "password": "Noxy991",
+    "displayName": "Noxy",
+    "role": "member",
+    "uid": "b80f8f9e87a5c4bf374cace344f2fd9c",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-06-11T14:12:35.678Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "RIFAL": {
+    "password": "098",
+    "displayName": "RIFAL",
+    "role": "member",
+    "uid": "9b34fbbf9352e20bc9bd893269f570ed",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T15:05:05.151Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "nalzstr": {
+    "password": "098",
+    "displayName": "nalzstr",
+    "role": "member",
+    "uid": "2137c10309f4a86d343763e225498862",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T15:05:22.551Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "lutz ganteng": {
+    "password": "4321",
+    "displayName": "lutz ganteng",
+    "role": "member",
+    "uid": "e89f4d3d402e537bc02ecebf92e1e8f9",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T15:08:14.062Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Gamz": {
+    "password": "321",
+    "displayName": "Gamz",
+    "role": "member",
+    "uid": "e599eb1422d03374866762b66e921c34",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-11T15:20:34.115Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "hanzzboyss": {
+    "password": "098",
+    "displayName": "hanzzboyss",
+    "role": "member",
+    "uid": "20d86c9ad4d2cf5d199b4697e4cdc10f",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T03:32:49.721Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Vanda": {
+    "password": "Kuro28",
+    "displayName": "Vanda",
+    "role": "reseller",
+    "uid": "23c67c42fcd87c520b85730278046a0d",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-12T03:34:52.403Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Haida": {
+    "password": "321",
+    "displayName": "Haida",
+    "role": "member",
+    "uid": "5a0727277e9bf33e2a877f1543a8b612",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T03:38:00.162Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "sufz": {
+    "password": "321",
+    "displayName": "sufz",
+    "role": "member",
+    "uid": "0034005e2c18473da251dd3d0e82f477",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T03:53:42.288Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "finzx": {
+    "password": "098",
+    "displayName": "finzx",
+    "role": "member",
+    "uid": "bc50e9f7963bff35b8e900e144543c5d",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T04:11:18.527Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Damnz": {
+    "password": "675",
+    "displayName": "Damnz",
+    "role": "member",
+    "uid": "c600f19b17f666ec7b5a2b2e82e06b91",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T04:21:28.467Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "kalz offc": {
+    "password": "kalz_445k",
+    "displayName": "kalz offc",
+    "role": "reseller",
+    "uid": "2ffd29c9816d15398be48dff27af2f8c",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-12T04:24:15.646Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "RYUUOFFICIAL1": {
+    "password": "321",
+    "displayName": "RYUUOFFICIAL1",
+    "role": "member",
+    "uid": "5d750b9fd9ccf70b501d354ccd53a9ba",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T05:32:14.072Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Jajwhww": {
+    "password": "atagafa",
+    "displayName": "Jajwhww",
+    "role": "member",
+    "uid": "df203bdd823a9c0d62c0da8e8a9545c3",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:34:40.615Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Gshahaha": {
+    "password": "agaga",
+    "displayName": "Gshahaha",
+    "role": "member",
+    "uid": "9579c08d0c1af9da50947c178e397c3a",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:34:44.775Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Heyyy antek antek asiih": {
+    "password": "auauaiaiaiai",
+    "displayName": "Heyyy antek antek asiih",
+    "role": "member",
+    "uid": "db4b62674009906ae467cf1df090915e",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:34:56.157Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "ucup": {
+    "password": "321",
+    "displayName": "ucup",
+    "role": "member",
+    "uid": "7d81e8565b2227b055f0309b71101952",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T05:45:10.439Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "kalz off": {
+    "password": "mbahy",
+    "displayName": "kalz off",
+    "role": "member",
+    "uid": "6681e7dbda9cf7e1fe8f2f87c36a6720",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:46:30.367Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "29w9aiahsggew": {
+    "password": "agwgv2vww",
+    "displayName": "29w9aiahsggew",
+    "role": "member",
+    "uid": "dfe4a11d379653b3fcfeaab002d2df3c",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:46:38.905Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "それは何ですか？": {
+    "password": "それは何ですか？",
+    "displayName": "それは何ですか？",
+    "role": "member",
+    "uid": "b11379e850082228e5a5b371a3e57726",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:48:04.194Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Kalzz2662": {
+    "password": "cuy",
+    "displayName": "Kalzz2662",
+    "role": "member",
+    "uid": "db74e1b92f8956da1b5492873a26f89c",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:48:46.978Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Welzzzz": {
+    "password": "hama",
+    "displayName": "Welzzzz",
+    "role": "member",
+    "uid": "84d82052145cb443bb3ec80ddd8c2f8b",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:48:54.584Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Araaa": {
+    "password": "aaa",
+    "displayName": "Araaa",
+    "role": "member",
+    "uid": "dcdb4d26c23d67b26ae9ef4b8eaba0c9",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:49:00.950Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Seketi": {
+    "password": "whsgw",
+    "displayName": "Seketi",
+    "role": "member",
+    "uid": "43d596aed969c81ff85e1114f8a0e6d8",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:49:19.997Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Sbgsgsgws": {
+    "password": "vsgsg",
+    "displayName": "Sbgsgsgws",
+    "role": "member",
+    "uid": "8342d74aabcab776bab9296a548bf7e8",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:49:24.328Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "biutipulll2": {
+    "password": "woiiantis",
+    "displayName": "biutipulll2",
+    "role": "member",
+    "uid": "25cfd29757afb1e39a88aae39d885d4e",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:49:35.495Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "woiiantis": {
+    "password": "biutipulll2",
+    "displayName": "woiiantis",
+    "role": "member",
+    "uid": "16f8993cb065db6c5e5f86ac1e5544fe",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:49:41.351Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "8495987329": {
+    "password": "+62 822-6032-0527",
+    "displayName": "8495987329",
+    "role": "member",
+    "uid": "3ecde081d864a3df1fff36192f3ceaa2",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T05:50:51.286Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "gizz": {
+    "password": "dongoo",
+    "displayName": "gizz",
+    "role": "member",
+    "uid": "0e073766b592dca125b23c3567360eb6",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-12T06:13:34.281Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "lipz x zy": {
+    "password": "321",
+    "displayName": "lipz x zy",
+    "role": "member",
+    "uid": "a107e410225aa0b7805d619040c1dd30",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T06:34:13.913Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Ziii": {
+    "password": "321",
+    "displayName": "Ziii",
+    "role": "member",
+    "uid": "7944f4d1543609c0a4bb0099fd303943",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T06:35:41.463Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Vyynzz": {
+    "password": "99Vyynzz",
+    "displayName": "Vyynzz",
+    "role": "member",
+    "uid": "33aa0ce1ac6eb0855d40a28c4a364bf7",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-06-12T07:20:51.594Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "LuxssXTR": {
+    "password": "LuxssXTR__",
+    "displayName": "LuxssXTR",
+    "role": "member",
+    "uid": "7fffab9381dbdf13f5602931f81a4bad",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-12T09:15:13.062Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Alby123": {
+    "password": "violin123",
+    "displayName": "Alby123",
+    "role": "member",
+    "uid": "6c9d1dd10c7b528fa591756d5c0c2874",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T09:23:52.152Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Kerekbear": {
+    "password": "098",
+    "displayName": "Kerekbear",
+    "role": "member",
+    "uid": "8e69e57b49357e4ea2ef741bc830edf0",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T09:24:18.936Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "All": {
+    "password": "123456",
+    "displayName": "All",
+    "role": "member",
+    "uid": "79240ff0ba8b0be2d04462c4e11f3005",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T09:28:45.117Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Alll": {
+    "password": "098",
+    "displayName": "Alll",
+    "role": "member",
+    "uid": "ad9e2a51160383c0a5f4cf801d4a3f7a",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T09:29:43.421Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "totong imup": {
+    "password": "098",
+    "displayName": "totong imup",
+    "role": "member",
+    "uid": "8589bc58d1a7e0f6102bcba1659ce6ad",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-12T09:30:05.414Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Habsi00": {
+    "password": "321",
+    "displayName": "Habsi00",
+    "role": "member",
+    "uid": "039789d7051043514eba722865ca6339",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T09:40:05.040Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "H4BIBI": {
+    "password": "BX",
+    "displayName": "H4BIBI",
+    "role": "member",
+    "uid": "888b31fefa6a542f96f651738dd95d64",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T09:41:22.100Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Hanzz": {
+    "password": "321",
+    "displayName": "Hanzz",
+    "role": "member",
+    "uid": "d3c2b8b255c52f4156688747f9cb80cd",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-12T11:08:55.659Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Nexo": {
+    "password": "2211",
+    "displayName": "Nexo",
+    "role": "member",
+    "uid": "0949e1dd7d642c10aaeab6bbebbf21d5",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-12T12:00:53.520Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "depz": {
+    "password": "depz76",
+    "displayName": "depz",
+    "role": "member",
+    "uid": "fc94fede059af553ef6723f63f0e692c",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T03:25:20.537Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "fall": {
+    "password": "098",
+    "displayName": "fall",
+    "role": "member",
+    "uid": "2fc49e4bf0193ee6cc4ed92c63bf4bde",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T03:27:20.994Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Rezyy": {
+    "password": "001234",
+    "displayName": "Rezyy",
+    "role": "member",
+    "uid": "2d667eb341b6a6b86002ca6e54a822b3",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T03:27:51.758Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "FADHIL": {
+    "password": "321",
+    "displayName": "FADHIL",
+    "role": "member",
+    "uid": "11a7a7ab7349ee21ee9fdfd6135c6b4f",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-14T05:40:24.451Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Idham": {
+    "password": "321",
+    "displayName": "Idham",
+    "role": "member",
+    "uid": "a1efe90287fd900522a8bd685a21d29b",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-14T05:47:47.014Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Muqbill": {
+    "password": "321",
+    "displayName": "Muqbill",
+    "role": "member",
+    "uid": "fcb7dd351336b95120efee6ba247a80e",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-14T05:48:03.254Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "ato123": {
+    "password": "ABCPALZ00",
+    "displayName": "ato123",
+    "role": "member",
+    "uid": "7d1e6c4669b4d0dff14d0f447940d52a",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T06:03:25.309Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Nata": {
+    "password": "098",
+    "displayName": "Nata",
+    "role": "member",
+    "uid": "f3770867fbcb57d0273c0ee97b13fada",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T06:03:43.509Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "hhhhb": {
+    "password": "1010",
+    "displayName": "hhhhhjhnkklhhhh",
+    "role": "member",
+    "uid": "1fbb4c9044cb8f942cdc03c29995ec86",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-14T07:17:25.890Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Atala": {
+    "password": "321",
+    "displayName": "Atala",
+    "role": "member",
+    "uid": "5653908849d25013a2ea9d4ec1fd1951",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-14T09:33:39.303Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "hackerpler": {
+    "password": "hackerpler56",
+    "displayName": "hackerpler",
+    "role": "member",
+    "uid": "e3d58074c004e15dd1b4c67cb100ba24",
+    "createdBy": "Vanda",
+    "createdAt": "2026-06-14T09:40:09.038Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "VINZ": {
+    "password": "098",
+    "displayName": "VINZ",
+    "role": "member",
+    "uid": "d501088291fd613ea0be686c44a4a695",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T10:01:02.415Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "apasih": {
+    "password": "alip123",
+    "displayName": "apasih",
+    "role": "member",
+    "uid": "27b3f3f08a1f6dfba74b4e55cab61f76",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-14T10:02:02.417Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "bayyvuckk": {
+    "password": "098",
+    "displayName": "bayyvuckk",
+    "role": "member",
+    "uid": "830b6037ed0fcf8cb6fd27683b7ec7c9",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T10:04:07.920Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Flado": {
+    "password": "098",
+    "displayName": "Flado",
+    "role": "member",
+    "uid": "667e1c7a28972bce2696c6e6eef8080d",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T10:04:30.944Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Qyy444": {
+    "password": "305758",
+    "displayName": "Qyy444",
+    "role": "member",
+    "uid": "475d9910fd4fe8c09e1df1ca27e94075",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T10:16:38.840Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "B123": {
+    "password": "098",
+    "displayName": "B123",
+    "role": "member",
+    "uid": "f32ac442100b604163f56b797265b907",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T10:18:14.465Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Dap str": {
+    "password": "098",
+    "displayName": "Dap str",
+    "role": "member",
+    "uid": "7d51e0205d6baaa04403d8f33a025d4e",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T10:19:06.849Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Kontol": {
+    "password": "181088azzam",
+    "displayName": "Kontol",
+    "role": "member",
+    "uid": "1e64e068976824a81f18ad62facb9e26",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T11:16:47.797Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Bintang": {
+    "password": "098",
+    "displayName": "Bintang",
+    "role": "member",
+    "uid": "841856b55cba83903e4963056658ca73",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T11:17:53.807Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "b098": {
+    "password": "098",
+    "displayName": "b098",
+    "role": "member",
+    "uid": "0a15023b0db7ad1ac35136d6b7a1dee2",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T11:18:37.853Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "akbarNOCRAS": {
+    "password": "100000",
+    "displayName": "akbarNOCRAS",
+    "role": "member",
+    "uid": "4a534d502d24bb8d90f653224340c079",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T11:18:55.665Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "hafiz": {
+    "password": "hafiz ganteng",
+    "displayName": "hafiz",
+    "role": "member",
+    "uid": "de238c1f33db8baa8d2107c6b7a3a3c6",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-14T11:59:35.202Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Panz": {
+    "password": "Aku aja",
+    "displayName": "Panz",
+    "role": "member",
+    "uid": "cdafb490c003663dea9d02a58acc7f9d",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-14T12:29:05.900Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "hizqil ganteng": {
+    "password": "fahrijlk",
+    "displayName": "hizqil ganteng",
+    "role": "member",
+    "uid": "a08585a24b08770d31fab11728784474",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-14T13:59:10.944Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Linxz": {
+    "password": "321",
+    "displayName": "Linxz",
+    "role": "member",
+    "uid": "32fa442ed3778fb71bafc18ad6849aa0",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-14T14:07:26.679Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "aldi": {
+    "password": "321",
+    "displayName": "aldi",
+    "role": "member",
+    "uid": "14bbcc6855a99d9287c375b88eadf03a",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-14T14:08:48.844Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "m4rzx": {
+    "password": "20132710",
+    "displayName": "m4rzx",
+    "role": "reseller",
+    "uid": "9b7fa36205888b54eb547d25e4eda656",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-14T14:21:49.267Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "FREE12": {
+    "password": "2211",
+    "displayName": "FREE12",
+    "role": "member",
+    "uid": "53339706bd81e189614f13cf1b8f618b",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-14T14:42:03.547Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "SHANXX": {
+    "password": "321",
+    "displayName": "SHANXX",
+    "role": "member",
+    "uid": "b1c634bc533461bb29ccabdf2d2ab591",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-14T15:18:50.679Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "bryan": {
+    "password": "098",
+    "displayName": "bryan",
+    "role": "member",
+    "uid": "e922e2668323c1037898c61f8a880c01",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T15:29:14.225Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "cream": {
+    "password": "buntelan778",
+    "displayName": "cream",
+    "role": "member",
+    "uid": "d340d0a459b40cc11f19bf371f7e0085",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-14T15:47:44.678Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "apis": {
+    "password": "098",
+    "displayName": "apis",
+    "role": "member",
+    "uid": "d5d4359131c752a0458a9ad304c28efd",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T16:01:31.983Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "fhrixzformee": {
+    "password": "fhrixzNE¹",
+    "displayName": "fhrixzformee",
+    "role": "member",
+    "uid": "ec95823e8e8ab4a58f8a315206143a96",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-14T16:18:09.134Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "putra 11": {
+    "password": "098",
+    "displayName": "putra 11",
+    "role": "member",
+    "uid": "a095fcbaaf5497a6852d42c3416301d9",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T16:27:14.858Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "fayi Surendra": {
+    "password": "098",
+    "displayName": "fayi Surendra",
+    "role": "member",
+    "uid": "444b0baa571d6510c61dd42efd21677e",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-14T16:38:12.160Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Scofield": {
+    "password": "2211",
+    "displayName": "Scofield",
+    "role": "reseller",
+    "uid": "fd4438e8aa93b91e2b27f82e5bef411d",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-14T16:53:07.948Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "official rdvd": {
+    "password": "050514",
+    "displayName": "official rdvd",
+    "role": "member",
+    "uid": "aecbac3f2b70d29d6362345d8eb3cd67",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-15T03:32:15.290Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Rezz": {
+    "password": "123",
+    "displayName": "Rezz",
+    "role": "member",
+    "uid": "64a4f3e6f1abe2bc9ec54e18ea514cc1",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-15T03:54:38.914Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Riu": {
+    "password": "11",
+    "displayName": "Riu",
+    "role": "member",
+    "uid": "a7c43d69cfda3e5927f9ef0f140b4cba",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-15T04:01:53.001Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Japarz": {
+    "password": "098",
+    "displayName": "Japarz",
+    "role": "member",
+    "uid": "269dffde8a64cb5626707b803de435dc",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T04:03:32.985Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Vino": {
+    "password": "098",
+    "displayName": "Vino",
+    "role": "member",
+    "uid": "9c5f855a0c495347cce0ef95fa8c3f89",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T04:03:50.516Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Kalzzz": {
+    "password": "098",
+    "displayName": "Kalzzz",
+    "role": "member",
+    "uid": "8c6c7bad88c8240fbdef4ce331e86f61",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T04:04:59.398Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "nyonggzzz": {
+    "password": "098",
+    "displayName": "nyonggzzz",
+    "role": "member",
+    "uid": "082fcc681ce80abbc01fec17eecbb165",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T04:05:22.911Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "K2r": {
+    "password": "098",
+    "displayName": "K2r",
+    "role": "member",
+    "uid": "fdf08098f3aaa9c78421bd6375302873",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T04:06:24.839Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "hhhhhh": {
+    "password": "456436",
+    "displayName": "hhhhhhh",
+    "role": "member",
+    "uid": "23fe95ffed98297faea562b9ef0a2438",
+    "createdBy": "hhh",
+    "createdAt": "2026-06-15T04:41:59.857Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Lynx": {
+    "password": "rahmathidayat123",
+    "displayName": "Lynx",
+    "role": "member",
+    "uid": "ef290c0cb5e0b3689040c3dc0d97a398",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-15T05:11:51.870Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Awing": {
+    "password": "phoveus123",
+    "displayName": "Awing",
+    "role": "member",
+    "uid": "0f2bc08f07ecf151a9c437a0a9e4b4cc",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-15T07:00:45.417Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Byymaubug": {
+    "password": "098",
+    "displayName": "Byymaubug",
+    "role": "member",
+    "uid": "dc50dbd0241bbbe4131dc347273a70d7",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T07:55:56.451Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "zoelki": {
+    "password": "098",
+    "displayName": "zoelki",
+    "role": "member",
+    "uid": "5e6e3502bf35b8c4761b691cb871e40e",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T07:56:47.246Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Hycxxx": {
+    "password": "098",
+    "displayName": "Hycxxx",
+    "role": "member",
+    "uid": "61059348c5ef8f44f7e4046af58876ce",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T07:57:11.990Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Rupzz": {
+    "password": "098",
+    "displayName": "Rupzz",
+    "role": "member",
+    "uid": "f1813625eebf35030807310093fff0a8",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T07:59:08.543Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "K98": {
+    "password": "098",
+    "displayName": "K98",
+    "role": "member",
+    "uid": "7a41f3d89174bb9dccc8f4e6f438a795",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T07:59:23.367Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "fell": {
+    "password": "13",
+    "displayName": "fell",
+    "role": "member",
+    "uid": "8a6d6cd5b4760b67a941610030eb0e9d",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-15T08:10:50.622Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Willyganteng12": {
+    "password": "098",
+    "displayName": "Willyganteng12",
+    "role": "member",
+    "uid": "764d864f69dd5a7a4ae64384e63cd0fe",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T08:59:52.663Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "vanz": {
+    "password": "persija1928",
+    "displayName": "vanz",
+    "role": "member",
+    "uid": "5ea2ea02be4d2ffbd2e1e1586953ace7",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T09:00:23.869Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "vattz": {
+    "password": "132011",
+    "displayName": "vattz",
+    "role": "member",
+    "uid": "b756d5311545445248a276bf8df01f23",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-15T09:06:25.773Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "NALZX": {
+    "password": "APK BUG",
+    "displayName": "NALZX",
+    "role": "member",
+    "uid": "437cb5951e1dc5f0245953b865e68251",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-15T09:22:16.937Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "biyanz": {
+    "password": "1",
+    "displayName": "biyanz",
+    "role": "member",
+    "uid": "662eaf6a623587757afe625c313133cd",
+    "createdBy": "Vanda",
+    "createdAt": "2026-06-15T09:48:16.893Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "K789": {
+    "password": "098",
+    "displayName": "K789",
+    "role": "member",
+    "uid": "8cfee104cc180e63cca92cfd41afdab2",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T09:56:58.734Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Kenzganteng": {
+    "password": "2211",
+    "displayName": "Kenzganteng",
+    "role": "member",
+    "uid": "d9ae898169295e04e773a337830dfbff",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-15T09:59:41.493Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "ranz": {
+    "password": "098",
+    "displayName": "ranz",
+    "role": "member",
+    "uid": "bd1054945fc4a195deffdbd7163323fb",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T10:15:27.067Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Akun ff sultan": {
+    "password": "098",
+    "displayName": "Akun ff sultan",
+    "role": "member",
+    "uid": "6591aac4fd986f923f02f08eb40027bd",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T10:27:50.288Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Ganzz": {
+    "password": "098",
+    "displayName": "Ganzz",
+    "role": "member",
+    "uid": "977fbb487cfe5681837b696d1b55d450",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T10:29:30.133Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Zaynn": {
+    "password": "2211",
+    "displayName": "Zaynn",
+    "role": "member",
+    "uid": "13452467ed459fe2006d8bfd0e429347",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-15T10:31:59.606Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "jepin": {
+    "password": "2211",
+    "displayName": "jepin",
+    "role": "member",
+    "uid": "dd6b39be51cd07ba4be228d220edf393",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-15T10:36:12.359Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "FLICKR": {
+    "password": "2027",
+    "displayName": "FLICKR",
+    "role": "member",
+    "uid": "e63a0c00fd8d3f46979480d058e7e279",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-15T10:39:00.812Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "kaizen": {
+    "password": "101115",
+    "displayName": "kaizen",
+    "role": "member",
+    "uid": "cddba0d44bf85420902e70ae0bb4b24e",
+    "createdBy": "Vanda",
+    "createdAt": "2026-06-15T10:52:44.305Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Nisa": {
+    "password": "321",
+    "displayName": "Nisa",
+    "role": "member",
+    "uid": "f74262d5f3f57f304e85fc6e000ddf3a",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-15T11:57:21.546Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Murayama": {
+    "password": "321",
+    "displayName": "Murayama",
+    "role": "member",
+    "uid": "a101eb5ca3a123e682318b1201261f52",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-15T12:28:44.050Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "sayyidzzx": {
+    "password": "27",
+    "displayName": "sayyidzzx",
+    "role": "member",
+    "uid": "e5ebddf747b9c8f83ad2f62639aa1a69",
+    "createdBy": "m4rzx",
+    "createdAt": "2026-06-15T12:32:03.467Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Gege91": {
+    "password": "@r3zk1_j4y4$",
+    "displayName": "Gege91",
+    "role": "member",
+    "uid": "7e45cef428af42bb247b1c4444546894",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-15T12:33:19.250Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Graha": {
+    "password": "098",
+    "displayName": "Graha",
+    "role": "member",
+    "uid": "ea064f81c8290b1fdedae89bcdcd98bc",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T12:58:31.928Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Fikri x": {
+    "password": "098",
+    "displayName": "Fikri x",
+    "role": "member",
+    "uid": "80406ab7f1f747780de61e84ff80ae8a",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T12:59:12.235Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "ZAKK RAWW BH": {
+    "password": "098",
+    "displayName": "ZAKK RAWW BH",
+    "role": "member",
+    "uid": "4a14cc1a8124f5cee97ba1c85f07d011",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T13:02:44.456Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Pixzstcu": {
+    "password": "2211",
+    "displayName": "Pixzstcu",
+    "role": "reseller",
+    "uid": "13c32ea3b7d71b073a243f8cb5f84bf8",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-15T14:01:09.075Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Finzz": {
+    "password": "098",
+    "displayName": "Finzz",
+    "role": "member",
+    "uid": "73446c5c77b4f92ab8d2dcfe1291667a",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T14:02:31.440Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "njayybis": {
+    "password": "098",
+    "displayName": "njayybis",
+    "role": "member",
+    "uid": "61b200ba6ea5b72c2c61d6aa75fa5421",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T14:13:32.902Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "dillfizsor": {
+    "password": "098",
+    "displayName": "dillfizsor",
+    "role": "member",
+    "uid": "41fa59da9b8940e3c7ede2d7888a4983",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T14:13:49.063Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Obito": {
+    "password": "321",
+    "displayName": "Obito",
+    "role": "member",
+    "uid": "5e5ee9544c224bdff7a92190e45fbf3b",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-15T14:40:28.248Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "ArvesHD": {
+    "password": "098",
+    "displayName": "ArvesHD",
+    "role": "member",
+    "uid": "617d6f172716e52e756784436be3bda2",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-15T15:19:08.895Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Lanzimut": {
+    "password": "2211",
+    "displayName": "Lanzimut",
+    "role": "reseller",
+    "uid": "cf7314b9184cbae08a42b6c718c12d7d",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-16T16:00:59.209Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "jilzz": {
+    "password": "321",
+    "displayName": "jilzz",
+    "role": "member",
+    "uid": "5ead71118c19a4709ce855bc80fa951f",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-16T16:07:10.068Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Tuturin": {
+    "password": "321",
+    "displayName": "Tuturin",
+    "role": "member",
+    "uid": "5216e059743ee52ffc412dbeb9ae0adb",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-16T16:07:33.276Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Erwin 33 2054": {
+    "password": "321",
+    "displayName": "Erwin 33 2054",
+    "role": "member",
+    "uid": "79fe3443a62da046ea72396979dbd54c",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-16T18:12:17.254Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Mpruyy": {
+    "password": "321",
+    "displayName": "Mpruyy",
+    "role": "member",
+    "uid": "f3ae3f45d8259451d62f7e38979e74a6",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-16T22:39:03.124Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "aryhfiss": {
+    "password": "28",
+    "displayName": "aryhfiss",
+    "role": "member",
+    "uid": "6c514739c1f91b57d5dab5b8f9884057",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-17T00:04:59.455Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "KAFIE": {
+    "password": "20122020",
+    "displayName": "KAFIE",
+    "role": "member",
+    "uid": "2fe9cf90515827f610d2c371c47aef12",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-17T00:05:51.522Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Dirzx_Nr": {
+    "password": "AWMBLUZONE",
+    "displayName": "Dirzx_Nr",
+    "role": "member",
+    "uid": "867a3936c91aa18efd15577aafe851e5",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-17T00:13:04.125Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "skyhigh": {
+    "password": "zuya7676",
+    "displayName": "skyhigh",
+    "role": "member",
+    "uid": "babdcf9496c6eaf93170fa98062923f5",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-17T01:11:51.202Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "salman.design": {
+    "password": "admin@123",
+    "displayName": "salman.design",
+    "role": "member",
+    "uid": "60485e17151b58d7a87748267018b2f8",
+    "createdBy": "Vanda",
+    "createdAt": "2026-06-17T04:14:36.714Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Lutfy": {
+    "password": "2211",
+    "displayName": "Lutfy",
+    "role": "member",
+    "uid": "9e77a8745f53430a47fc548812838df1",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-17T04:34:14.128Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "fata": {
+    "password": "9999",
+    "displayName": "fata",
+    "role": "member",
+    "uid": "39b45a922fa855f2ce86c74ae0dc6058",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-06-17T04:35:35.705Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Pimz": {
+    "password": "098",
+    "displayName": "Pimz",
+    "role": "member",
+    "uid": "0fec096e56e3e0e442200ff81502f865",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-17T05:02:14.808Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "putz": {
+    "password": "098",
+    "displayName": "putz",
+    "role": "member",
+    "uid": "7354f21e6cf280fc28991bafca5080f2",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-17T05:02:38.609Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Gene": {
+    "password": "098",
+    "displayName": "Gene",
+    "role": "member",
+    "uid": "fa2b4bff5d825a896a574e005750fa52",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-17T05:03:32.325Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Ppp3k": {
+    "password": "098",
+    "displayName": "Ppp3k",
+    "role": "member",
+    "uid": "e06e2cba6323d1ffd50f2444d6ef1625",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-17T05:09:35.655Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Zanzn": {
+    "password": "098",
+    "displayName": "Zanzn",
+    "role": "member",
+    "uid": "8d3114f4f812ee224b1841321bc75436",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-17T05:13:11.825Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "nyongz": {
+    "password": "123",
+    "displayName": "nyongz",
+    "role": "member",
+    "uid": "dc0d1fe2ce274893e0d09b128e85976d",
+    "createdBy": "Scofield",
+    "createdAt": "2026-06-17T05:13:44.427Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "zero12": {
+    "password": "1212",
+    "displayName": "zero12",
+    "role": "member",
+    "uid": "5c973e75c536831a2cc8956b4af0aaf1",
+    "createdBy": "Scofield",
+    "createdAt": "2026-06-17T05:14:35.631Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "restu": {
+    "password": "1212",
+    "displayName": "restu",
+    "role": "member",
+    "uid": "ecddfc7c03773929e3ec2362e6282c0c",
+    "createdBy": "Scofield",
+    "createdAt": "2026-06-17T05:15:33.825Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "ajimz": {
+    "password": "1212",
+    "displayName": "ajimz",
+    "role": "member",
+    "uid": "3e09eca34bcdbaf7ac10ca98d663ac6f",
+    "createdBy": "Scofield",
+    "createdAt": "2026-06-17T05:33:26.663Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Rafz": {
+    "password": "564",
+    "displayName": "Rafz",
+    "role": "member",
+    "uid": "81a00a2b42641576dc4f03ec947ddfaf",
+    "createdBy": "Pixzstcu",
+    "createdAt": "2026-06-17T06:07:42.590Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "hanstr": {
+    "password": "kodokbau123",
+    "displayName": "hanstr",
+    "role": "member",
+    "uid": "b04f39aabeca3dee9b40e33b5bc6650a",
+    "createdBy": "miunnst",
+    "createdAt": "2026-06-17T06:57:08.335Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "dakzkalcer122": {
+    "password": "321",
+    "displayName": "dakzkalcer122",
+    "role": "member",
+    "uid": "0be9dfc7fcee38b83fd05180b4190ef2",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-17T07:19:05.908Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Gazege": {
+    "password": "321",
+    "displayName": "Gazege",
+    "role": "member",
+    "uid": "11401375a6e6e3555f167e7e89e7a6d9",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-17T07:22:22.363Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Wann": {
+    "password": "2211",
+    "displayName": "Wann",
+    "role": "member",
+    "uid": "f1460b5d7053398408cb6b72c566aab6",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-17T07:33:50.644Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Zans": {
+    "password": "2211",
+    "displayName": "Zans",
+    "role": "reseller",
+    "uid": "291686eb73eff659e6c77027bdd27ac2",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-17T07:39:31.471Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Dika": {
+    "password": "mahar231",
+    "displayName": "Dika",
+    "role": "member",
+    "uid": "14334a39ce8d88a5ccfd0f0194b9611c",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-17T07:50:45.250Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "miunnst2": {
+    "password": "2211",
+    "displayName": "miunnst2",
+    "role": "owner",
+    "uid": "b44a72e7fd2a2720fea22196230968f9",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-17T07:55:08.378Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Najmi": {
+    "password": "Najmi12345",
+    "displayName": "Najmi",
+    "role": "member",
+    "uid": "77848a416490b858288ee7499ead8030",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-17T08:21:06.547Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Langz": {
+    "password": "098",
+    "displayName": "Langz",
+    "role": "member",
+    "uid": "cfefcbc45902cc1d92123505876eaf17",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-17T08:33:46.371Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "ARIEFZ": {
+    "password": "098",
+    "displayName": "ARIEFZ",
+    "role": "member",
+    "uid": "68d281df40a09ee6d17d93a6db424fe6",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-17T08:34:21.443Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "kalzz_boy": {
+    "password": "098",
+    "displayName": "kalzz_boy",
+    "role": "member",
+    "uid": "ed84e5af8b0568635b5c033d8ec325e6",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-17T08:57:47.781Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "paongg": {
+    "password": "fairuz1903",
+    "displayName": "paongg",
+    "role": "member",
+    "uid": "03327ac1e92303efb3b0bc85ddaba097",
+    "createdBy": "m4rzx",
+    "createdAt": "2026-06-17T09:17:12.412Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "AlexTampan": {
+    "password": "321",
+    "displayName": "AlexTampan",
+    "role": "member",
+    "uid": "6a79cbe9e59863424f1ff8d66171eea7",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-17T09:52:06.417Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "buyyer17": {
+    "password": "dimasXellylove12",
+    "displayName": "buyyer17",
+    "role": "member",
+    "uid": "02a129eeddb0ca5555bb78ca9693b3b0",
+    "createdBy": "m4rzx",
+    "createdAt": "2026-06-17T10:50:15.655Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "MEMEK": {
+    "password": "2211",
+    "displayName": "MEMEK",
+    "role": "reseller",
+    "uid": "450666501cedf2fb61623b484ef1e471",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-17T11:02:34.909Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Bshshhsh": {
+    "password": "hhh",
+    "displayName": "Bshshhsh",
+    "role": "member",
+    "uid": "991263e49cfb0a808a9c77f5e4947321",
+    "createdBy": "MEMEK",
+    "createdAt": "2026-06-17T11:03:10.496Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "RAHUL": {
+    "password": "dekjun17",
+    "displayName": "RAHUL",
+    "role": "member",
+    "uid": "6baf0be4acfdea659be89ed956d28a3b",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-17T11:12:16.282Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "hansetecu": {
+    "password": "1212",
+    "displayName": "hansetecu",
+    "role": "member",
+    "uid": "31d29a5f142ff9b70455cd62ddc4032e",
+    "createdBy": "Scofield",
+    "createdAt": "2026-06-17T11:47:24.375Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Manx": {
+    "password": "2211",
+    "displayName": "Manx",
+    "role": "owner",
+    "uid": "ccc80c0d10266e4a588d1c49cfa6030c",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-17T11:52:37.882Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "bos nyawit": {
+    "password": "098",
+    "displayName": "bos nyawit",
+    "role": "member",
+    "uid": "9f16e3eef7b63bbedefe0ac680c6e816",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-17T13:33:13.755Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Kiazz": {
+    "password": "098",
+    "displayName": "Kiazz",
+    "role": "member",
+    "uid": "9358847ce6e1daca2918c3b349cb559b",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-17T13:33:43.852Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "bahri99": {
+    "password": "098",
+    "displayName": "bahri99",
+    "role": "member",
+    "uid": "90d1ebb460e430e4df7292222c4802fe",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-17T13:34:10.216Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "user12": {
+    "password": "1212",
+    "displayName": "user12",
+    "role": "member",
+    "uid": "2ec0e08e2903cf16f3bf3462265b0727",
+    "createdBy": "Scofield",
+    "createdAt": "2026-06-17T14:19:04.472Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "viann": {
+    "password": "viann",
+    "displayName": "viann",
+    "role": "member",
+    "uid": "8389a14f6f7691f324e087bba0596547",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-17T14:29:05.919Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "manxzz": {
+    "password": "098",
+    "displayName": "manxzz",
+    "role": "member",
+    "uid": "8a23e69af7c8dd12a53e6876be2896cd",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T04:16:55.493Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "apit32": {
+    "password": "098",
+    "displayName": "apit32",
+    "role": "member",
+    "uid": "8a20eca24173e6156fd2d3de39c53426",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T04:17:28.714Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Bilal": {
+    "password": "999999",
+    "displayName": "Bilal",
+    "role": "member",
+    "uid": "887de080330fc4390d8779a180d9c1a1",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T04:17:55.660Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Jeruk nipis": {
+    "password": "098",
+    "displayName": "Jeruk nipis",
+    "role": "member",
+    "uid": "3aac4e1aedc43f206faff5bbe080dbc8",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T04:30:40.915Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Syam Syam": {
+    "password": "098",
+    "displayName": "Syam Syam",
+    "role": "member",
+    "uid": "60a0bfa2fa6e62f5945ad846adcc308f",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T04:33:41.366Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Gunawan": {
+    "password": "6677",
+    "displayName": "Gunawan",
+    "role": "member",
+    "uid": "4ae31bf75c69cbacb38c63215cf5e9ca",
+    "createdBy": "Pixzstcu",
+    "createdAt": "2026-06-18T04:35:42.192Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "saxhi": {
+    "password": "098",
+    "displayName": "saxhi",
+    "role": "member",
+    "uid": "1ace043332e453f26520e047961a2e8e",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T04:39:43.329Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "pler": {
+    "password": "anjir",
+    "displayName": "pler",
+    "role": "member",
+    "uid": "d9d7279d6cf2c9d0489928d6739fd01f",
+    "createdBy": "Hnzz",
+    "createdAt": "2026-06-18T05:18:46.842Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Anonymous": {
+    "password": "098",
+    "displayName": "Anonymous",
+    "role": "member",
+    "uid": "5a7b013427231c4dc85a4488e17bbc71",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T06:11:03.429Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Ropzyyy": {
+    "password": "098",
+    "displayName": "Ropzyyy",
+    "role": "member",
+    "uid": "f3050a9c3affdf9d670aac0df096daf4",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T06:11:24.065Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "dzkkspp": {
+    "password": "098",
+    "displayName": "dzkkspp",
+    "role": "member",
+    "uid": "fb8ec82abaa644ecd6ae68d234df8485",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T06:11:51.831Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Mr zaa": {
+    "password": "098",
+    "displayName": "Mr zaa",
+    "role": "member",
+    "uid": "a5a105246c1d167dced0711ed9e0cc94",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T06:42:29.120Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Wira": {
+    "password": "098",
+    "displayName": "Wira",
+    "role": "member",
+    "uid": "a6ea2b32ab2ccb3709e7b25fbd17cdd8",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T06:43:05.001Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "met": {
+    "password": "1",
+    "displayName": "met",
+    "role": "member",
+    "uid": "eae8e6ace0162d157e906c0478d12302",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-18T06:45:51.333Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Finzzz": {
+    "password": "098",
+    "displayName": "Finzzz",
+    "role": "member",
+    "uid": "a6359fc92e3caf87e24e485ef2a504d1",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T06:50:49.145Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Dziljan": {
+    "password": "1212",
+    "displayName": "Dziljan",
+    "role": "member",
+    "uid": "137cb8935783a833e79fedc63e9b579d",
+    "createdBy": "Scofield",
+    "createdAt": "2026-06-18T06:52:04.920Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "K098": {
+    "password": "098",
+    "displayName": "K098",
+    "role": "member",
+    "uid": "865655314265d7f805317e4f751b1ef0",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T06:54:35.179Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "K890": {
+    "password": "098",
+    "displayName": "K890",
+    "role": "member",
+    "uid": "7fc1171fa50e42174cef04cb2e1c9968",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T06:56:36.477Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Firzz": {
+    "password": "321",
+    "displayName": "Firzz",
+    "role": "member",
+    "uid": "f43fef3842d6157c636f7bea2000a231",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-18T07:10:38.489Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Lanzbuyer": {
+    "password": "321",
+    "displayName": "Lanzbuyer",
+    "role": "member",
+    "uid": "709e863306e5f09396a4595783e30ddd",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-18T07:11:37.926Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Raxzy": {
+    "password": "321",
+    "displayName": "Raxzy",
+    "role": "member",
+    "uid": "9559e69421d6a71a82524314121905b3",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-18T07:23:20.675Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "mirza": {
+    "password": "asrof",
+    "displayName": "mirza",
+    "role": "member",
+    "uid": "a926045edc3a0ca201ee081e315febc1",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-18T07:28:04.588Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Doxs": {
+    "password": "135246",
+    "displayName": "Doxs",
+    "role": "member",
+    "uid": "dd11cfa052c1efa1525a5b2cdc943aa3",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-18T07:34:34.613Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "bimz": {
+    "password": "321",
+    "displayName": "bimz",
+    "role": "member",
+    "uid": "a350e919227608032617e6a79ebc15ef",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-18T07:38:56.570Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "lois": {
+    "password": "321",
+    "displayName": "lois",
+    "role": "member",
+    "uid": "b4c342a7c413fbd7bbe6d8614b7f5076",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-18T07:45:10.427Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Jazzvy": {
+    "password": "098",
+    "displayName": "Jazzvy",
+    "role": "member",
+    "uid": "97759909dec656dee3673d3389753dd9",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T08:08:26.002Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "fadhill": {
+    "password": "098",
+    "displayName": "fadhill",
+    "role": "member",
+    "uid": "600ec5185b2af429d97f0791c8921126",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T08:08:53.542Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "fanzxcv": {
+    "password": "26102010",
+    "displayName": "fanzxcv",
+    "role": "member",
+    "uid": "fd9f5923ff0fd6b7bbf467f6be81d2b0",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-18T10:44:55.778Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "ndraa": {
+    "password": "10",
+    "displayName": "ndraa",
+    "role": "member",
+    "uid": "0b520194e4147a034a507ba08edc3cf0",
+    "createdBy": "miunnst2",
+    "createdAt": "2026-06-18T11:45:06.101Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "lapet": {
+    "password": "lapetmania",
+    "displayName": "lapet",
+    "role": "member",
+    "uid": "5aee65780312bf44279637ae4546e43b",
+    "createdBy": "Manx",
+    "createdAt": "2026-06-18T12:36:15.826Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "zeiss": {
+    "password": "zeissganteng",
+    "displayName": "zeiss",
+    "role": "member",
+    "uid": "c91768c289a0f65b99bf392b49cac624",
+    "createdBy": "m4rzx",
+    "createdAt": "2026-06-18T12:51:51.798Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "azizganteng": {
+    "password": "taufikaziz123",
+    "displayName": "azizganteng",
+    "role": "member",
+    "uid": "b5dd856acf626cd26fa56d2b8742c0de",
+    "createdBy": "m4rzx",
+    "createdAt": "2026-06-18T12:52:39.104Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "TR PRII": {
+    "password": "098",
+    "displayName": "TR PRII",
+    "role": "member",
+    "uid": "4b3a7bb25fcd336ae27a1c2b52ad75f4",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T13:34:00.501Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "fahri": {
+    "password": "098",
+    "displayName": "fahri",
+    "role": "member",
+    "uid": "a7eb98580eebcd46b26e6b53e4b9a1e8",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T13:36:27.884Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "tayostr": {
+    "password": "1",
+    "displayName": "tayostr",
+    "role": "member",
+    "uid": "8baae92df5d10349932a41fafb8dbdb0",
+    "createdBy": "Manx",
+    "createdAt": "2026-06-18T13:40:51.263Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "FARZZ": {
+    "password": "123",
+    "displayName": "FARZZ",
+    "role": "member",
+    "uid": "0c3c7719a82613736513aa44a31294a0",
+    "createdBy": "Manx",
+    "createdAt": "2026-06-18T13:41:42.211Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "DanishTamvan": {
+    "password": "098",
+    "displayName": "DanishTamvan",
+    "role": "member",
+    "uid": "f198b493d3a5e590a8d31304dc6cc5f3",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T13:44:01.921Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "reyzo": {
+    "password": "098",
+    "displayName": "reyzo",
+    "role": "member",
+    "uid": "dbf0732306f6f302cf7f09a85d4f82ea",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-18T14:01:20.786Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Tayo": {
+    "password": "2211",
+    "displayName": "Tayo",
+    "role": "reseller",
+    "uid": "3994776f2079bb011158ca8d7995a4d8",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-18T14:39:39.869Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "rafatar": {
+    "password": "id6gog6g",
+    "displayName": "rafatar",
+    "role": "member",
+    "uid": "14f8688e56c1c52fbaca0191c90b945f",
+    "createdBy": "Tayo",
+    "createdAt": "2026-06-18T14:44:22.513Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Faqih": {
+    "password": "2211",
+    "displayName": "Faqih",
+    "role": "member",
+    "uid": "91743cad49c5a367de145753c5e15a2d",
+    "createdBy": "Smooth",
+    "createdAt": "2026-06-19T06:36:17.250Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "faqih": {
+    "password": "faqihstok12",
+    "displayName": "faqih",
+    "role": "member",
+    "uid": "e01d3946f66a7a71db8293d6c8d9d660",
+    "createdBy": "m4rzx",
+    "createdAt": "2026-06-19T07:02:51.057Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "YANZ": {
+    "password": "354311",
+    "displayName": "YANZ",
+    "role": "member",
+    "uid": "ecca2b39c69c8be0c98524b61bc41d06",
+    "createdBy": "Scofield",
+    "createdAt": "2026-06-19T07:07:08.311Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "USER99": {
+    "password": "2211",
+    "displayName": "USER99",
+    "role": "member",
+    "uid": "d98f59bbf5d283d28cc426b96e7cc856",
+    "createdBy": "Scofield",
+    "createdAt": "2026-06-19T07:28:13.122Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "fakhrul": {
+    "password": "alyafakhrul25",
+    "displayName": "fakhrul",
+    "role": "member",
+    "uid": "4bff2af97a3e1ad6a62841ef05d63fb3",
+    "createdBy": "HanzzOfficial",
+    "createdAt": "2026-06-19T07:35:42.439Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "ahmad jr": {
+    "password": "321",
+    "displayName": "ahmad jr",
+    "role": "member",
+    "uid": "ad5f5cbe6c6d486a2ab074b2209ffe90",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-19T08:21:40.473Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "gaktau231": {
+    "password": "321",
+    "displayName": "gaktau231",
+    "role": "member",
+    "uid": "425a1e8e8116b2c1bf926d7102c81eac",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-19T08:27:13.635Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Dapnsg": {
+    "password": "Embege71",
+    "displayName": "Dapnsg",
+    "role": "member",
+    "uid": "1227d44c71f8c8704d6a23788ba6b592",
+    "createdBy": "Vanda",
+    "createdAt": "2026-06-19T08:33:10.678Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Ikin": {
+    "password": "123",
+    "displayName": "Ikin",
+    "role": "member",
+    "uid": "22bca749aa797a7cd85ff7e0b720923e",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-19T08:46:10.937Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "lanxbuyer": {
+    "password": "321",
+    "displayName": "lanxbuyer",
+    "role": "member",
+    "uid": "d8d3f37c3275510ff324f374e48c0857",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-19T08:59:43.493Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "nendra": {
+    "password": "321",
+    "displayName": "nendra",
+    "role": "member",
+    "uid": "ff05740358b6c0bd715f39685f6ed44c",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-19T09:00:41.864Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "raintzy": {
+    "password": "raintzy321",
+    "displayName": "raintzy",
+    "role": "member",
+    "uid": "3b3074f03e224964b671637adfb659f4",
+    "createdBy": "Manx",
+    "createdAt": "2026-06-19T09:10:55.693Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "kiel": {
+    "password": "1",
+    "displayName": "kiel",
+    "role": "member",
+    "uid": "adfe784f99ed1f8467bcdc844a35f958",
+    "createdBy": "Tayo",
+    "createdAt": "2026-06-19T09:28:17.642Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "KAYES": {
+    "password": "321",
+    "displayName": "KAYES",
+    "role": "member",
+    "uid": "986575575e989bc9e28cfb1f4c37e7ad",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-19T10:14:07.198Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "ahyan_ff3": {
+    "password": "098",
+    "displayName": "ahyan_ff3",
+    "role": "member",
+    "uid": "3260b6c930ec22f89fb00e903839973d",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-19T10:16:47.560Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Penadarah": {
+    "password": "980",
+    "displayName": "Penadarah",
+    "role": "member",
+    "uid": "19a7f6fd05b36f8d149023cf5e2a74cc",
+    "createdBy": "Pixzstcu",
+    "createdAt": "2026-06-19T10:21:03.498Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "repan": {
+    "password": "098",
+    "displayName": "repan",
+    "role": "member",
+    "uid": "99040e11ecc1a8cb6fd4b9ae557e77c4",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-19T10:35:10.301Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "bimo": {
+    "password": "321",
+    "displayName": "bimo",
+    "role": "member",
+    "uid": "86b93ff4a79ad2f6e7c842713e2b0057",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-19T13:48:12.391Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "ATHANASIA": {
+    "password": "098",
+    "displayName": "ATHANASIA",
+    "role": "member",
+    "uid": "9d2560a674e4bca4060eec4ee9fcdee7",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-19T14:04:52.767Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "farel": {
+    "password": "098",
+    "displayName": "farel",
+    "role": "member",
+    "uid": "cd7aeccbbfce9a6efb2854988fa71aef",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-19T14:31:50.644Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "Jogz34": {
+    "password": "321",
+    "displayName": "Jogz34",
+    "role": "member",
+    "uid": "d7467278bf24ad8504be3cc7cbb25bbe",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-19T14:40:28.478Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "enji67": {
+    "password": "098",
+    "displayName": "enji67",
+    "role": "member",
+    "uid": "606c155f29f19f2015ecb896e6ddb61b",
+    "createdBy": "kalz offc",
+    "createdAt": "2026-06-19T14:48:04.787Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "rizqynst": {
+    "password": "241084",
+    "displayName": "rizqynst",
+    "role": "reseller",
+    "uid": "26f61e5afdbf115617d01fed6985238c",
+    "createdBy": "Manx",
+    "createdAt": "2026-06-19T14:49:30.797Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  },
+  "kii13": {
+    "password": "321",
+    "displayName": "kii13",
+    "role": "member",
+    "uid": "95ebfc46a1c49ae5cb93b25e09e3b338",
+    "createdBy": "Lanzimut",
+    "createdAt": "2026-06-19T15:12:24.618Z",
+    "trialDuration": "permanent",
+    "trialExpiry": null
+  }
+}
