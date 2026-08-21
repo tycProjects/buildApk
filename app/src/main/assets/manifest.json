@@ -1,0 +1,15 @@
+{
+  "name": "Kenrser - Phim & Chương Trình Truyền Hình Cao Cấp",
+  "short_name": "Kenrser",
+  "description": "Kenrser là điểm đến cao cấp để khám phá và theo dõi những bộ phim và chương trình truyền hình hay nhất trực tuyến.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "display_override": ["window-controls-overlay", "fullscreen", "standalone"],
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "dir": "ltr",
+  "lang": "vi",
+  "icons": []
+}
