@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 5
+# apk-builder fallback workflow — version: 6
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -42,19 +42,6 @@ jobs:
           path: ~/.android/debug.keystore
           key: debug-keystore-v1
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          # Pinned rather than left to the runner default: AGP 8.4.0 (used by
-          # both the auto-detected fallback and our generated WebView-wrapper
-          # projects) relies on Gradle APIs that get removed in newer Gradle
-          # releases (e.g. DependencyHandler.module(...)), and GitHub's
-          # runner-default Gradle version drifts forward over time. Pinning
-          # here is what actually fixes "...DependencyHandler.module(...)"
-          # style failures, since they're a version-compatibility issue, not
-          # a problem with the project itself.
-          gradle-version: '8.7'
-
       - name: Locate Android project
         id: locate
         run: |
@@ -65,11 +52,51 @@ jobs:
             \( -name settings.gradle -o -name settings.gradle.kts \) -print | head -n 1)
           if [ -z "$MATCH" ]; then
             echo "::error::No settings.gradle or settings.gradle.kts found anywhere in the uploaded project."
+            echo "---- Workspace contents (for debugging) ----"
+            find "$GITHUB_WORKSPACE" -maxdepth 4 -not -path '*/.git*' | sort
+            echo "---------------------------------------------"
             exit 1
           fi
           PROJECT_DIR=$(dirname "$MATCH")
           echo "Using Gradle project at: $PROJECT_DIR"
           echo "dir=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
+
+      # Runs before "Set up Gradle" (and reads the project rather than using
+      # one hardcoded version) so this works across whatever AGP/Gradle
+      # combination each uploaded project actually needs, instead of only
+      # the one version we happened to pin last. A committed
+      # gradle-wrapper.properties already records the exact Gradle version
+      # its author built against -- that's the version whose
+      # com.android.internal.version-check will actually be satisfied, so
+      # prefer it over any single hardcoded number.
+      - name: Detect required Gradle version
+        id: gradle-detect
+        working-directory: ${{ steps.locate.outputs.dir }}
+        run: |
+          # Only reached for projects with no wrapper properties of their own
+          # -- currently just this tool's own AGP 8.4.0 WebView-wrapper
+          # fallback template (see generateWebViewWrapperProject in
+          # server.js), which ships no gradlew/wrapper at all. Bump this if
+          # that template's pinned AGP version ever changes.
+          DEFAULT_GRADLE_VERSION="8.9"
+          DETECTED=""
+          if [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
+            DETECTED=$(grep -oP 'gradle-\K[0-9.]+(?=-(all|bin)\.zip)' ./gradle/wrapper/gradle-wrapper.properties | head -n1)
+          fi
+          if [ -z "$DETECTED" ]; then
+            echo "No usable gradle-wrapper.properties found — defaulting to Gradle $DEFAULT_GRADLE_VERSION"
+            DETECTED="$DEFAULT_GRADLE_VERSION"
+          else
+            echo "Project's own wrapper declares Gradle $DETECTED — using that"
+          fi
+          echo "version=$DETECTED" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          # Whatever the previous step detected for THIS project, rather
+          # than a single hardcoded version pinned for every build.
+          gradle-version: ${{ steps.gradle-detect.outputs.version }}
 
       - name: Normalize the project for CI
         working-directory: ${{ steps.locate.outputs.dir }}
@@ -94,13 +121,13 @@ jobs:
           # gradle-wrapper.jar (a binary file, easy to lose in a zip or via
           # .gitignore) is missing. That's the "Could not find or load main
           # class org.gradle.wrapper.GradleWrapperMain" failure -- gradlew has
-          # nothing to run. Regenerate the missing jar with the Gradle we
-          # already set up above (pinned to the same version), so the
-          # project's own wrapper becomes usable again instead of just being
-          # abandoned.
+          # nothing to run. Regenerate the missing jar using the exact same
+          # version detected (and installed) above, so the project's own
+          # wrapper comes back matching what its properties file already
+          # declared, instead of being pinned to a different version.
           if [ -f "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ] && [ ! -f "./gradle/wrapper/gradle-wrapper.jar" ]; then
             echo "gradle-wrapper.jar is missing — regenerating it"
-            gradle wrapper --gradle-version 8.7 --no-daemon
+            gradle wrapper --gradle-version ${{ steps.gradle-detect.outputs.version }} --no-daemon
             chmod +x ./gradlew
           fi
 
