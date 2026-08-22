@@ -1,12 +1,10 @@
-# apk-builder fallback workflow — version: 7
+# apk-builder fallback workflow — version: 8
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
 name: Build APK
 
 on:
-  push:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
