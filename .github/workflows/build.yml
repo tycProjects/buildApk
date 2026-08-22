@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 6
+# apk-builder fallback workflow — version: 7
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -144,12 +144,42 @@ jobs:
       - name: Build debug APK
         working-directory: ${{ steps.locate.outputs.dir }}
         run: |
+          set -o pipefail
+          run_build() {
+            if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
+              ./gradlew assembleDebug --no-daemon
+            else
+              gradle assembleDebug --no-daemon
+            fi
+          }
+
           if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
             echo "Building with the project's own Gradle wrapper"
-            ./gradlew assembleDebug --no-daemon
           else
             echo "No usable Gradle wrapper found — building with the runner's Gradle instead"
-            gradle assembleDebug --no-daemon
+          fi
+
+          if run_build 2>&1 | tee build.log; then
+            exit 0
+          fi
+
+          # The "Detect required Gradle version" step (further up) trusts
+          # whatever version the project's own committed
+          # gradle-wrapper.properties declares -- but that file can simply
+          # be stale for the AGP version actually in use, which is exactly
+          # what just happened here. Gradle's own failure message already
+          # states the real minimum ("Minimum supported Gradle version is
+          # X. Current version is Y."), so pull X straight out of the log
+          # and retry once with the wrapper regenerated at that version,
+          # instead of surfacing a failure the log itself already answers.
+          REQUIRED=$(grep -oP 'Minimum supported Gradle version is \K[0-9]+(?:\.[0-9]+)*' build.log | head -n1)
+          if [ -n "$REQUIRED" ] && [ -x "./gradlew" ]; then
+            echo "Project's committed Gradle wrapper is too old for its own AGP version — it needs Gradle $REQUIRED. Regenerating the wrapper at that version and retrying once."
+            gradle wrapper --gradle-version "$REQUIRED" --no-daemon
+            chmod +x ./gradlew
+            run_build
+          else
+            exit 1
           fi
 
       - name: Upload APK
