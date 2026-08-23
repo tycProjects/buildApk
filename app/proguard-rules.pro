@@ -1,0 +1,6 @@
+-keep class com.yausername.** { *; }
+-keep class org.mozilla.javascript.** { *; }
+-dontwarn org.mozilla.javascript.**
+-keep class dagger.hilt.** { *; }
+-keep class javax.inject.** { *; }
+-keep class com.ryan.download.data.** { *; }
