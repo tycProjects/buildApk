@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#0b0d12">
+  <title>PipWise · trading education</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { margin: 0; background: #0b0d12; color: #f5f7fb; font-family: 'Inter', system-ui, -apple-system, sans-serif; line-height: 1.5; }
+    :root { --bg: #0b0d12; --card: #151922; --card2: #1b202b; --text: #f5f7fb; --muted: #9aa3b2; --accent: #58e0c1; --danger: #ff637d; --line: #29303d; }
+    .app { max-width: 880px; margin: 0 auto; min-height: 100vh; padding-bottom: 90px; }
+    .top { padding: 18px 18px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: rgba(11,13,18,.94); backdrop-filter: blur(10px); z-index: 12; }
+    .logo { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 6px; }
+    .logo-icon { background: var(--accent); color: #06110e; width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; margin-right: 4px; }
+    .logo span { color: var(--accent); }
+    .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    main { padding: 16px 18px 30px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 18px 20px; }
+    .card2 { background: var(--card2); border: 1px solid var(--line); border-radius: 20px; padding: 16px; }
+    .hero { padding: 24px 22px; border-radius: 28px; background: linear-gradient(145deg, #151922, #0f1f1b); border: 1px solid #2b4a42; margin-bottom: 20px; }
+    .muted { color: var(--muted); }
+    h1, h2, h3 { margin-top: 0; letter-spacing: -0.02em; }
+    .stat { font-size: 32px; font-weight: 800; line-height: 1.2; }
+    .progress { height: 8px; background: #252b35; border-radius: 99px; overflow: hidden; margin: 6px 0; }
+    .progress i { display: block; height: 100%; background: var(--accent); width: 0; border-radius: 99px; }
+    .btn { background: var(--accent); color: #06110e; border: none; padding: 12px 20px; border-radius: 60px; font-weight: 700; font-size: 0.95rem; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn.secondary { background: var(--card2); color: var(--text); border: 1px solid var(--line); }
+    .btn.danger { background: var(--danger); color: white; }
+    .btn.small { padding: 8px 16px; font-size: 0.85rem; }
+    .nav { position: fixed; bottom: 0; left: 0; right: 0; background: #10131a; border-top: 1px solid var(--line); display: flex; justify-content: space-around; z-index: 20; padding: 6px 0 8px; }
+    .nav button { background: transparent; border: none; color: var(--muted); padding: 10px 6px; font-size: 0.8rem; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; }
+    .nav button.active { color: var(--accent); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .pill { display: inline-block; padding: 4px 12px; border-radius: 99px; background: #202733; color: var(--muted); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.3px; }
+    .choice { display: block; width: 100%; text-align: left; margin: 10px 0; padding: 14px 16px; border-radius: 16px; background: var(--card2); color: var(--text); border: 1.5px solid var(--line); transition: 0.15s; font-weight: 500; }
+    .choice.correct { border-color: var(--accent); background: #1a3a32; }
+    .choice.wrong { border-color: var(--danger); background: #3a1e26; }
+    input, textarea { width: 100%; background: #0f1218; color: var(--text); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin: 8px 0; font-size: 0.95rem; }
+    .chart { height: 150px; display: flex; align-items: end; gap: 6px; padding: 12px 8px; background: #0f1218; border-radius: 20px; }
+    .bar { flex: 1; background: var(--accent); opacity: 0.7; border-radius: 6px 6px 0 0; min-height: 8px; }
+    .toast { position: fixed; right: 20px; top: 80px; background: var(--accent); color: #06110e; padding: 14px 24px; border-radius: 60px; font-weight: 700; box-shadow: 0 8px 20px rgba(0,0,0,0.5); display: none; z-index: 30; }
+    .lesson-item { border-bottom: 1px solid var(--line); padding: 16px 0; }
+    .lesson-item:last-child { border-bottom: 0; }
+    .flex { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .tag { background: #1e2b2a; color: var(--accent); padding: 2px 12px; border-radius: 40px; font-size: 0.7rem; font-weight: 600; }
+    .explanation { background: #0d1419; border-radius: 18px; padding: 18px; margin: 16px 0; border-left: 4px solid var(--accent); }
+    .explanation p { margin: 6px 0; }
+    @media (max-width: 500px) { .stat { font-size: 26px; } .btn { padding: 10px 16px; } }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="logo">
+      <span class="logo-icon">📈</span> 
+      Pip<span>Wise</span>
+    </div>
+    <div class="row"><span id="xp">0 XP</span><button class="btn secondary small" onclick="toggleTheme()">☾</button></div>
+  </header>
+  <main id="content"></main>
+  <nav class="nav">
+    <button onclick="page('home')" id="n-home">⌂ Home</button>
+    <button onclick="page('learn')" id="n-learn">📚 Learn</button>
+    <button onclick="page('practice')" id="n-practice">🎯 Practice</button>
+    <button onclick="page('tools')" id="n-tools">🧮 Tools</button>
+    <button onclick="page('journal')" id="n-journal">📝 Journal</button>
+  </nav>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+  // ---------- expanded course data : 20+ lessons with detailed explanations & quizzes ----------
+  const courses = [
+    { title: "Forex Foundations", desc: "The essential building blocks of currency trading.",
+      lessons: [
+        { name: "What is Forex?", content: "Forex (FX) is the global decentralized market for trading currencies. It's the largest financial market in the world. Currencies are traded in pairs (e.g., EUR/USD). The first currency is the base, the second is the quote. Price shows how much of the quote currency is needed to buy one unit of base." },
+        { name: "Pips, Lots & Spreads", content: "A pip is the smallest price move in a currency pair (usually 0.0001). A lot is a standardized unit (100,000 units). Spread is the difference between bid and ask price – it's the cost of trading." },
+        { name: "Trading Sessions", content: "Forex is open 24/5, but liquidity varies. The three main sessions: Asian, London, and New York. Overlaps (London-NY) often see the highest volume." },
+        { name: "Leverage & Risk", content: "Leverage allows you to control large positions with small capital. But it magnifies both gains and losses. Never risk more than you can afford to lose." },
+        { name: "Foundation Checklist", content: "Know your pair, understand leverage, set a stop-loss, define risk per trade (1-2% of capital), and have a plan." }
+      ] },
+    { title: "Market Structure", desc: "Understand the flow of price.",
+      lessons: [
+        { name: "Swing Structure", content: "Market moves in swings – peaks and troughs. Identifying them helps define trend and potential reversal zones." },
+        { name: "Uptrends & Downtrends", content: "Uptrend: higher highs and higher lows. Downtrend: lower highs and lower lows. Trends can be found on any timeframe." },
+        { name: "Ranges", content: "When price moves sideways between support and resistance – it's a range. Trading ranges involve buying support and selling resistance." },
+        { name: "Liquidity", content: "Liquidity refers to the ease of buying/selling without affecting price. High liquidity = tighter spreads and faster execution." },
+        { name: "Practice structure", content: "Draw swings on a chart. Mark structure breaks. This builds a foundation for strategy." }
+      ] },
+    { title: "Crypto Essentials", desc: "Digital assets and blockchain.",
+      lessons: [
+        { name: "Crypto Assets", content: "Cryptocurrencies are digital assets secured by cryptography. Bitcoin, Ethereum, and stablecoins are common examples." },
+        { name: "Blockchain Basics", content: "A blockchain is a distributed ledger. Transactions are grouped into blocks and added chronologically. It's decentralized and transparent." },
+        { name: "Spot vs Derivatives", content: "Spot trading is buying the actual asset. Derivatives (futures, options) are contracts based on the asset's price." },
+        { name: "Security & Custody", content: "Self-custody means holding your own private keys. Exchanges also offer custody. Use 2FA and cold storage for large amounts." },
+        { name: "Volatility", content: "Crypto prices can move 10-20% in a day. This creates opportunity but also risk. Manage position sizes accordingly." }
+      ] },
+    { title: "Crypto Risk", desc: "Stay safe in digital markets.",
+      lessons: [
+        { name: "Volatility", content: "High volatility means large price swings. Always set stops and avoid over-leverage." },
+        { name: "Concentration Risk", content: "Putting too much capital into one asset can be dangerous. Diversify across assets and strategies." },
+        { name: "Scams", content: "Be wary of 'pump and dump' groups, phishing links, and fake exchanges. Only use reputable platforms." },
+        { name: "Counterparty Risk", content: "When you trade on an exchange, you trust the exchange with your funds. Choose regulated, transparent platforms." },
+        { name: "Safe Practice", content: "Use stop-losses, take profits, and never invest money you cannot afford to lose." }
+      ] },
+    { title: "Stock Market Basics", desc: "Equity markets explained.",
+      lessons: [
+        { name: "Shares", content: "A share represents ownership in a company. Shareholders benefit from price appreciation and dividends." },
+        { name: "Indexes", content: "An index like S&P 500 tracks a basket of stocks to measure market performance." },
+        { name: "Market Capitalization", content: "Market cap = share price × number of shares. It shows the size of a company." },
+        { name: "Dividends", content: "Some companies pay dividends – a portion of profits distributed to shareholders." },
+        { name: "Price vs Value", content: "Price is what you pay, value is what you get. Fundamental analysis helps assess value." }
+      ] },
+    { title: "Fundamental Analysis", desc: "Dig into company health.",
+      lessons: [
+        { name: "Revenue & Earnings", content: "Revenue is income from sales; earnings are profit after expenses. Growing earnings often drive stock prices." },
+        { name: "Balance Sheets", content: "A balance sheet shows assets, liabilities, and equity. A strong balance sheet indicates financial stability." },
+        { name: "Cash Flow", content: "Cash flow tracks the actual cash moving in and out. Positive cash flow is crucial for operations." },
+        { name: "Valuation", content: "Valuation ratios like P/E (price-to-earnings) help compare companies. A high P/E may indicate overvaluation." },
+        { name: "Economic Context", content: "Interest rates, inflation, and GDP growth affect all companies. Keep an eye on macro factors." }
+      ] },
+    { title: "Candlesticks", desc: "Read price action with candles.",
+      lessons: [
+        { name: "Candle Anatomy", content: "A candlestick has a body (open-close) and wicks (high-low). Bullish body = close > open; bearish = close < open." },
+        { name: "Bullish & Bearish Candles", content: "Large bullish candles show strong buying; large bearish candles show strong selling." },
+        { name: "Wicks & Rejection", content: "Long wicks suggest rejection at that price level. A long upper wick in an uptrend may signal selling pressure." },
+        { name: "Patterns", content: "Doji, hammer, engulfing patterns can hint at reversals or continuation. Always confirm with context." },
+        { name: "Practice candlesticks", content: "Look at any chart and identify candle patterns. Combine with support/resistance for better signals." }
+      ] },
+    { title: "Support & Resistance", desc: "Key price levels.",
+      lessons: [
+        { name: "Zones", content: "Support and resistance are not exact lines, but zones. Price often reacts in an area." },
+        { name: "Reactions", content: "When price approaches support, it may bounce up. At resistance, it may reverse down." },
+        { name: "Breakouts", content: "When price breaks through a level, it may continue in that direction. Watch for volume and retests." },
+        { name: "Retests", content: "After a breakout, price often returns (retests) the level. A successful retest can offer an entry." },
+        { name: "Practice", content: "Draw horizontal levels on a chart. Mark where price reacted in the past. These are your zones." }
+      ] },
+    { title: "Indicators", desc: "Tools to analyze price.",
+      lessons: [
+        { name: "Moving Averages", content: "MA smooths price data. The 50-day and 200-day MAs are popular. Crossovers can signal trend changes." },
+        { name: "RSI", content: "Relative Strength Index (0-100) measures momentum. Above 70 = overbought, below 30 = oversold (in range conditions)." },
+        { name: "MACD", content: "MACD shows momentum and trend strength. The signal line crossover gives entry signals." },
+        { name: "Volume", content: "Volume confirms price moves. High volume on a breakout = stronger conviction." },
+        { name: "Avoiding Overload", content: "Too many indicators can lead to analysis paralysis. Choose 2-3 that you understand well." }
+      ] },
+    { title: "Strategy Lab", desc: "Build and test your approach.",
+      lessons: [
+        { name: "Create a Setup", content: "Define entry conditions (e.g., price bounces from support with bullish candle)." },
+        { name: "Hypothesis", content: "State why this setup should work (e.g., 'trend continuation after pullback')." },
+        { name: "Backtesting", content: "Test your idea on historical data manually or with software. Track win rate and risk/reward." },
+        { name: "Sample Size", content: "Aim for at least 50-100 trades to have statistical meaning." },
+        { name: "Review Results", content: "Analyze your winners and losers. Refine your rules." }
+      ] },
+    { title: "Risk Management", desc: "Protect your capital.",
+      lessons: [
+        { name: "Risk Per Trade", content: "Risk only 1-2% of your account on any single trade. This preserves capital during losing streaks." },
+        { name: "Position Sizing", content: "Position size = risk amount / stop distance. This ensures you risk the same amount each time." },
+        { name: "Risk/Reward", content: "Aim for at least 1:2 risk-to-reward. That means if you risk $100, aim to make $200." },
+        { name: "Drawdown", content: "Drawdown is the decline from a peak. Manage it by reducing size after losses." },
+        { name: "Process Rules", content: "Write down your risk rules. Follow them consistently. Discipline is key." }
+      ] },
+    // ---- extra trading psychology & advanced topics ----
+    { title: "Trading Psychology", desc: "Master your mind.",
+      lessons: [
+        { name: "Emotional Control", content: "Fear and greed are the biggest enemies. Stick to your plan, not your emotions." },
+        { name: "Discipline", content: "Following your rules even when you feel like deviating – that's discipline." },
+        { name: "Patience", content: "Wait for your setup. Don't force trades. The market will always offer opportunities." },
+        { name: "Confidence & Humility", content: "Be confident in your analysis but humble enough to accept losses." },
+        { name: "Journaling", content: "Write down every trade, your emotions, and your thought process. It reveals patterns." }
+      ] },
+    { title: "Advanced Order Types", desc: "Beyond market orders.",
+      lessons: [
+        { name: "Limit Orders", content: "Buy below the current price, sell above. You get a better price but may not fill." },
+        { name: "Stop Orders", content: "Buy above the current price, sell below. Used for breakouts or stop-losses." },
+        { name: "Stop-Limit Orders", content: "Combines stop and limit: triggers a limit order once a stop price is hit." },
+        { name: "Trailing Stops", content: "A stop that moves with the price. Protects profits as the trade moves in your favor." },
+        { name: "OCO Orders", content: "One Cancels Other – place a take-profit and stop-loss simultaneously." }
+      ] },
+    { title: "Economic Indicators", desc: "Macro drivers.",
+      lessons: [
+        { name: "Interest Rates", content: "Central banks set rates. Higher rates tend to strengthen a currency." },
+        { name: "Inflation", content: "Inflation erodes purchasing power. Central banks often hike rates to combat it." },
+        { name: "GDP", content: "Gross Domestic Product measures economic growth. Strong GDP = strong currency." },
+        { name: "Employment Data", content: "Non-farm payrolls (NFP) is a key US jobs report. It can cause huge volatility." },
+        { name: "CPI & PPI", content: "CPI (consumer prices) and PPI (producer prices) measure inflation at different levels." }
+      ] },
+    { title: "Intermarket Analysis", desc: "Correlations between assets.",
+      lessons: [
+        { name: "Stocks vs Bonds", content: "When stocks fall, bonds often rise (flight to safety)." },
+        { name: "USD and Gold", content: "Gold is often inversely correlated to the US dollar. When USD weakens, gold tends to rise." },
+        { name: "Oil & CAD", content: "Canada is a major oil exporter, so CAD often moves with oil prices." },
+        { name: "Risk-on / Risk-off", content: "In risk-on mode, investors buy stocks and sell safe-havens (USD, JPY, bonds)." },
+        { name: "Using Correlations", content: "Correlations can help diversify or hedge your positions." }
+      ] }
+  ];
+
+  // ----- state -----
+  let state = JSON.parse(localStorage.getItem("pipwise") || '{"xp":0,"completed":[],"journal":[],"balance":10000,"theme":"dark"}');
+  function save() { localStorage.setItem("pipwise", JSON.stringify(state)); document.getElementById("xp").textContent = state.xp + " XP"; }
+  function toast(x) { let t = document.getElementById("toast"); t.textContent = x; t.style.display = "block"; setTimeout(() => t.style.display = "none", 1900); }
+  function level() { return Math.floor(state.xp / 100) + 1; }
+
+  // ----- navigation -----
+  function page(p) {
+    document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
+    const btn = document.getElementById("n-" + p); if (btn) btn.classList.add("active");
+    if (p === "home") home();
+    else if (p === "learn") learn();
+    else if (p === "practice") practice();
+    else if (p === "tools") tools();
+    else if (p === "journal") journal();
+  }
+
+  // ----- HOME -----
+  function home() {
+    const pct = Math.min(100, state.xp % 100);
+    document.getElementById("content").innerHTML = `
+      <section class="hero"><h1>Welcome to PipWise 👋</h1><p class="muted">Learn markets, practice safely, build your edge.</p>
+        <div class="row"><div><div class="stat">Level ${level()}</div><span class="muted">${state.xp} XP</span></div>
+        <div style="flex:1"><div class="progress"><i style="width:${pct}%"></i></div><small class="muted">${100-pct} XP to next level</small></div></div></section>
+      <div class="grid">
+        <div class="card"><h3>🔥 Streak</h3><div class="stat">${Math.min(7, Math.floor(state.xp / 80) + 1)}d</div><p class="muted">Keep going!</p></div>
+        <div class="card"><h3>🏆 Lessons</h3><div class="stat">${state.completed.length}</div><p class="muted">completed</p></div>
+        <div class="card"><h3>💰 Sim balance</h3><div class="stat">$${state.balance.toFixed(0)}</div><p class="muted">virtual only</p></div>
+      </div>
+      <div class="card" style="margin-top:18px"><h2>📘 Daily concept</h2><p class="muted">Risk management isn't optional — it's your lifeline. Define your risk before every simulated trade.</p>
+        <button class="btn" onclick="page('learn')">Explore courses</button></div>
+      <div style="margin-top:16px; background:#11161e; border-radius:20px; padding:18px;"><span class="pill">💡 pro tip</span><p style="margin:10px 0 0;">Focus on process, not profits. A good process leads to consistent results over time.</p></div>
+    `;
+  }
+
+  // ----- LEARN (course list) -----
+  function learn() {
+    let html = `<h1>📚 Learning Hub</h1><p class="muted">${courses.length} courses · ${state.completed.length} lessons completed</p><div class="grid" style="margin-top:12px;">`;
+    courses.forEach((c, i) => {
+      const done = c.lessons.filter((_, idx) => state.completed.includes(i + "-" + idx)).length;
+      html += `<div class="card"><span class="pill">${c.lessons.length} lessons</span><h3>${i+1}. ${c.title}</h3><p class="muted">${c.desc}</p><div class="row"><span class="muted">${done}/${c.lessons.length} done</span><button class="btn small" onclick="course(${i})">Open</button></div></div>`;
+    });
+    document.getElementById("content").innerHTML = html + "</div>";
+  }
+
+  // ----- single course view -----
+  function course(i) {
+    const c = courses[i];
+    let html = `<button class="btn secondary small" onclick="learn()">← Courses</button><h1 style="margin-top:12px">${c.title}</h1><p class="muted">${c.desc}</p><div id="lessons" style="margin-top:14px;">`;
+    c.lessons.forEach((lesson, idx) => {
+      const done = state.completed.includes(i + "-" + idx);
+      html += `<div class="card2 lesson-item" style="margin-bottom:12px;"><div class="flex"><div><span class="pill">Lesson ${idx+1}</span><h3 style="margin:4px 0;">${lesson.name}</h3><p class="muted" style="font-size:0.9rem;">${lesson.content.slice(0, 120)}${lesson.content.length>120?'…':''}</p></div><button class="btn small ${done?'secondary':''}" onclick="quiz(${i},${idx})">${done?'✅ Done':'Quiz'}</button></div></div>`;
+    });
+    document.getElementById("content").innerHTML = html + "</div>";
+  }
+
+  // ----- QUIZ (with 3-4 answer options) -----
+  function quiz(i, j) {
+    const c = courses[i];
+    const lesson = c.lessons[j];
+    // generate 4 questions based on lesson content
+    const qBank = [
+      { q: "What is the primary purpose of risk management?", a: "Protect your capital", w: ["Maximize profits", "Predict price", "Trade often"] },
+      { q: "What does a higher high indicate in market structure?", a: "Potential uptrend", w: ["Reversal down", "Range continuation", "No meaning"] },
+      { q: "What is a pip in forex?", a: "Smallest price move", w: ["A currency", "A broker fee", "A trading session"] },
+      { q: "Why do we use stop-loss orders?", a: "Limit potential losses", w: ["Guarantee profit", "Avoid spreads", "Increase leverage"] },
+      { q: "What is the role of support in trading?", a: "Area where price may bounce", w: ["Always holds", "Resistance", "Trend line"] },
+      { q: "Which is a sign of strong momentum?", a: "Large bullish candles", w: ["Doji", "Spinning top", "Low volume"] },
+      { q: "What is the 1% rule?", a: "Risk 1% per trade", w: ["Trade 1% of capital", "Profit 1%", "Leverage 1:1"] },
+      { q: "What is a trailing stop?", a: "Moves with price", w: ["Fixed level", "Only for crypto", "Guaranteed"] },
+      { q: "What is market cap?", a: "Price × shares outstanding", w: ["Total revenue", "Book value", "Dividend yield"] },
+      { q: "Why diversify?", a: "Reduce concentration risk", w: ["Increase returns", "Avoid taxes", "Guarantee profit"] }
+    ];
+    const selected = qBank[(i + j * 3) % qBank.length];
+    const options = [selected.a, ...selected.w].sort(() => Math.random() - 0.5);
+
+    document.getElementById("content").innerHTML = `
+      <button class="btn secondary small" onclick="course(${i})">← Lesson</button>
+      <div class="card" style="margin-top:14px;"><span class="pill">🧠 Knowledge check</span>
+        <h2>${lesson.name}</h2>
+        <div class="explanation"><p>${lesson.content}</p></div>
+        <p style="font-weight:600; margin:14px 0 6px;">${selected.q}</p>
+        ${options.map(opt => `<button class="choice" onclick="answer(this,'${opt}','${selected.a}',${i},${j})">${opt}</button>`).join('')}
+      </div>
+    `;
+  }
+
+  function answer(el, selected, correct, i, j) {
+    if (el.classList.contains("correct") || el.classList.contains("wrong")) return;
+    const isCorrect = selected === correct;
+    if (!isCorrect) { el.classList.add("wrong"); toast("Not quite. Review the explanation."); return; }
+    el.classList.add("correct");
+    const key = i + "-" + j;
+    if (!state.completed.includes(key)) { state.completed.push(key); state.xp += 30; save(); toast("✅ +30 XP!"); }
+    setTimeout(() => course(i), 900);
+  }
+
+  // ----- PRACTICE (paper trading) -----
+  function practice() {
+    document.getElementById("content").innerHTML = `
+      <h1>🎯 Simulator</h1><div class="card"><h2>Virtual balance</h2><p class="muted">Educational only · no real money</p>
+      <div class="stat">$${state.balance.toFixed(2)}</div>
+      <div class="chart">${[50,70,55,80,65,90,72,85,68,88,76,92].map(h => `<i class="bar" style="height:${h}%"></i>`).join('')}</div>
+      <div class="row" style="margin-top:16px;"><button class="btn" onclick="sim(1)">📈 Gain</button><button class="btn danger" onclick="sim(-1)">📉 Loss</button><button class="btn secondary" onclick="resetBalance()">↻ Reset</button></div>
+      <p class="muted" style="margin-top:10px;">Each click simulates a random price move.</p></div>
+      <div class="card2" style="margin-top:14px;"><span class="pill">💡 tip</span><p style="margin:6px 0 0;">Track your virtual equity curve. If you're losing, reduce position size.</p></div>
+    `;
+  }
+  function sim(dir) { state.balance = Math.max(0, state.balance + dir * (30 + Math.random() * 200)); save(); practice(); }
+  function resetBalance() { state.balance = 10000; save(); practice(); }
+
+  // ----- TOOLS (risk + position size) -----
+  function tools() {
+    document.getElementById("content").innerHTML = `
+      <h1>🧮 Tools</h1><div class="grid">
+        <div class="card"><h2>Risk $</h2><input id="acct" type="number" placeholder="Balance" value="${state.balance.toFixed(0)}"><input id="riskp" type="number" placeholder="Risk %" value="1"><button class="btn small" onclick="riskcalc()">Calculate</button><p id="riskout" class="muted"></p></div>
+        <div class="card"><h2>Position size</h2><input id="riskAmt" type="number" placeholder="Risk amount" value="100"><input id="stopDist" type="number" placeholder="Stop distance" value="50"><button class="btn small" onclick="poscalc()">Calculate</button><p id="posout" class="muted"></p></div>
+        <div class="card"><h2>Drawdown</h2><input id="peak" type="number" placeholder="Peak" value="10000"><input id="current" type="number" placeholder="Current" value="9500"><button class="btn small" onclick="ddcalc()">Calculate</button><p id="ddout" class="muted"></p></div>
+      </div>
+      <div class="card" style="margin-top:18px;"><h2>📐 Risk/Reward</h2><input id="rrRisk" type="number" placeholder="Risk $ (e.g. 100)" value="100"><input id="rrReward" type="number" placeholder="Reward $ (e.g. 200)" value="200"><button class="btn small" onclick="rrcalc()">Calculate ratio</button><p id="rrout" class="muted"></p></div>
+    `;
+  }
+  function riskcalc() { const a = +acct.value || 0, r = +riskp.value || 0; document.getElementById("riskout").textContent = "Risk amount: $" + (a * r / 100).toFixed(2); }
+  function poscalc() { const m = +riskAmt.value || 0, s = +stopDist.value || 0; document.getElementById("posout").textContent = s ? "Position units: " + (m / s).toFixed(4) : "Enter stop distance."; }
+  function ddcalc() { const p = +peak.value || 0, c = +current.value || 0; document.getElementById("ddout").textContent = p ? "Drawdown: " + ((p - c) / p * 100).toFixed(2) + "%" : "Enter peak."; }
+  function rrcalc() { const r = +rrRisk.value || 0, w = +rrReward.value || 0; document.getElementById("rrout").textContent = r ? "Risk:Reward = 1 : " + (w / r).toFixed(2) : "Enter risk."; }
+
+  // ----- JOURNAL -----
+  function journal() {
+    const entries = state.journal || [];
+    document.getElementById("content").innerHTML = `
+      <h1>📝 Journal</h1><div class="card"><textarea id="entry" rows="4" placeholder="What did you learn today?"></textarea><button class="btn" onclick="saveEntry()">Save entry</button></div>
+      <div id="entries">${entries.slice().reverse().map(e => `<div class="card2" style="margin-top:12px;"><span class="pill">${new Date(e.date).toLocaleString()}</span><p style="margin:6
