@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 13
+# apk-builder fallback workflow — version: 11
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -39,6 +39,53 @@ jobs:
         with:
           path: ~/.android/debug.keystore
           key: debug-keystore-v1
+
+      # Real release signing, not the ambient debug key: generated once per
+      # requester (see keystoreCacheKey) and cached across builds so every
+      # build from the same person carries the same signature. Without this,
+      # each build would get a brand-new random key, and installing a
+      # "later" build over an earlier one would be refused by Android as a
+      # certificate mismatch, and Play Console would reject the upload
+      # entirely for an unsigned/inconsistently-signed AAB.
+      - name: Restore release signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/release-keystore
+          key: release-keystore-393e9d0f2fc4e7660ab51240-v1
+
+      - name: Generate release signing key (first build only)
+        run: |
+          mkdir -p ~/.android/release-keystore
+          if [ ! -f ~/.android/release-keystore/release.jks ]; then
+            echo "No cached signing key for this requester — generating a new one."
+            PASS=$(openssl rand -hex 20)
+            echo -n "$PASS" > ~/.android/release-keystore/release.pass
+            keytool -genkeypair -v \
+              -keystore ~/.android/release-keystore/release.jks \
+              -alias release -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "$PASS" -keypass "$PASS" \
+              -dname "CN=App Builder, OU=Apps, O=Tycept, C=US"
+          else
+            echo "Reusing cached signing key for this requester"
+          fi
+
+      - name: Print App Links signing fingerprint
+        run: |
+          # SHA-256 cert fingerprint this build is actually signed with --
+          # needed to fill in the "sha256_cert_fingerprints" field of
+          # assetlinks.json (see the autoVerify="true" intent-filter in
+          # AndroidManifest.xml). Printed on every build, not just the
+          # first, since a cached key still needs this surfaced somewhere
+          # findable without downloading the .jks and running keytool
+          # locally.
+          FINGERPRINT=$(keytool -list -v \
+            -keystore ~/.android/release-keystore/release.jks \
+            -storepass "$(cat ~/.android/release-keystore/release.pass)" \
+            -alias release | grep "SHA256:" | sed 's/^[[:space:]]*SHA256:[[:space:]]*//')
+          echo "---- SHA-256 fingerprint for assetlinks.json ----"
+          echo "$FINGERPRINT"
+          echo "---------------------------------------------------"
+
 
       - name: Locate Android project
         id: locate
@@ -135,19 +182,30 @@ jobs:
           # within comments." Rather than trying to detect/repair just the
           # bad ones, strip ALL comments from res/*.xml files -- comments
           # have no effect on the build, so this is always safe and removes
-          # the whole class of failure.
-          find . -path '*/res/*' -name '*.xml' -print0 \
+          # the whole class of failure. AndroidManifest.xml is stripped
+          # too (same rule, same failure mode -- ManifestMerger2 chokes on
+          # it the same way resource merging does) since it lives outside
+          # any res/ directory and would otherwise be missed here.
+          find . \( -path '*/res/*' -o -name 'AndroidManifest.xml' \) -name '*.xml' -print0 \
             | xargs -0 -r perl -0777 -pi -e 's/<!--.*?-->//gs'
 
-      - name: Build debug APK
+          # Keep Java and Kotlin compiler targets on the same JVM level.
+          # The builder runs JDK 17, so normalize Gradle build files to 17.
+          # This fixes the common 1.8-vs-17 mismatch at :app:compileReleaseKotlin.
+          find . \
+            \( -name 'build.gradle' -o -name 'build.gradle.kts' \) \
+            -type f -print0 \
+            | xargs -0 -r perl -pi -e 's/JavaVersion\.VERSION_1_8/JavaVersion.VERSION_17/g'
+
+      - name: Build signed release APK
         working-directory: ${{ steps.locate.outputs.dir }}
         run: |
           set -o pipefail
           run_build() {
             if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
-              ./gradlew assembleDebug --no-daemon
+              ./gradlew assembleRelease --no-daemon -Pandroid.injected.signing.store.file="$HOME/.android/release-keystore/release.jks" -Pandroid.injected.signing.store.password="$(cat "$HOME/.android/release-keystore/release.pass")" -Pandroid.injected.signing.key.alias=release -Pandroid.injected.signing.key.password="$(cat "$HOME/.android/release-keystore/release.pass")"
             else
-              gradle assembleDebug --no-daemon
+              gradle assembleRelease --no-daemon -Pandroid.injected.signing.store.file="$HOME/.android/release-keystore/release.jks" -Pandroid.injected.signing.store.password="$(cat "$HOME/.android/release-keystore/release.pass")" -Pandroid.injected.signing.key.alias=release -Pandroid.injected.signing.key.password="$(cat "$HOME/.android/release-keystore/release.pass")"
             fi
           }
 
@@ -161,108 +219,18 @@ jobs:
             exit 0
           fi
 
-          # v13 AUTO-FIX ENGINE ------------------------------------------------
-          # First build failures are not immediately fatal. Apply only
-          # deterministic, high-confidence source repairs, then compile again.
-          # Every modified file is backed up. If the retry fails, the original
-          # source is restored and the real compiler failure remains visible.
-          echo "::group::v13 Auto-Fix Build Engine"
-          python3 - <<'PY'
-          from pathlib import Path
-          import re, shutil
-
-          root = Path('.')
-          log = (root / 'build.log').read_text(errors='replace') if (root / 'build.log').exists() else ''
-          changed = []
-
-          def find_kt():
-              m = re.search(r'(?:file:///)?([^\s:]+\.kt):(\d+):(\d+)', log)
-              if not m:
-                  return None
-              raw = m.group(1)
-              candidates = [Path(raw), root / raw.lstrip('/')]
-              for c in candidates:
-                  if c.exists(): return c
-              name = Path(raw).name
-              hits = list(root.rglob(name))
-              return hits[0] if len(hits) == 1 else None
-
-          def backup(f):
-              b = f.with_name(f.name + '.apkbuilder-v13-bak')
-              if not b.exists(): shutil.copy2(f, b)
-
-          def write(f, text):
-              old = f.read_text(errors='replace')
-              if old == text: return False
-              backup(f); f.write_text(text); changed.append(str(f)); return True
-
-          # Safe repair #1: objectively unmatched /* ... */ comment.
-          if re.search(r'Unclosed comment', log, re.I):
-              f = find_kt()
-              if f:
-                  text = f.read_text(errors='replace')
-                  if text.count('/*') > text.count('*/'):
-                      write(f, text.rstrip() + '\n*/\n')
-                      print(f'v13: closed unmatched block comment in {f}')
-
-          # Safe repair #2: a trailing Java-style semicolon on the exact
-          # compiler-reported Kotlin line.
-          if re.search(r'Unexpected tokens', log, re.I):
-              f = find_kt()
-              loc = re.search(r'\.kt:(\d+):(\d+)\s+Unexpected tokens', log)
-              if f and loc:
-                  lines = f.read_text(errors='replace').splitlines(True)
-                  n = int(loc.group(1)) - 1
-                  if 0 <= n < len(lines):
-                      old = lines[n]
-                      new = re.sub(r';(\s*)$', r'\1', old)
-                      if new != old:
-                          lines[n] = new
-                          write(f, ''.join(lines))
-                          print(f'v13: removed trailing semicolon at {f}:{n+1}')
-
-          # Safe repair #3: local delimiter imbalance on the reported line.
-          if re.search(r"Expecting ['\"\)\]\}]", log):
-              f = find_kt()
-              loc = re.search(r'\.kt:(\d+):(\d+)\s+Expecting', log)
-              if f and loc:
-                  lines = f.read_text(errors='replace').splitlines(True)
-                  n = int(loc.group(1)) - 1
-                  if 0 <= n < len(lines):
-                      line = lines[n]
-                      for op, cl in [('(', ')'), ('[', ']'), ('{', '}')]:
-                          if line.count(op) - line.count(cl) == 1 and not line.lstrip().startswith(('/', '*')):
-                              lines[n] = line.rstrip('\n') + cl + ('\n' if line.endswith('\n') else '')
-                              write(f, ''.join(lines))
-                              print(f'v13: balanced {op}{cl} at {f}:{n+1}')
-                              break
-
-          print('v13 changed files:', ', '.join(changed) if changed else 'none')
-          PY
-
-          if find . -name '*.apkbuilder-v13-bak' -print -quit | grep -q .; then
-            echo "v13 applied safe source repairs; retrying build"
-            if run_build 2>&1 | tee build-v13-retry.log; then
-              find . -name '*.apkbuilder-v13-bak' -delete
-              echo "::endgroup::"
-              exit 0
-            fi
-            echo "v13 repair retry failed — restoring original source"
-            find . -name '*.apkbuilder-v13-bak' -print0 | while IFS= read -r -d '' b; do
-              original="${b%.apkbuilder-v13-bak}"
-              cp "$b" "$original"
-              rm -f "$b"
-            done
-            cp build-v13-retry.log build.log 2>/dev/null || true
-          else
-            echo "v13 found no safe source repair"
-          fi
-          echo "::endgroup::"
-
-          # Existing Gradle-version self-heal remains as a final fallback.
+          # The "Detect required Gradle version" step (further up) trusts
+          # whatever version the project's own committed
+          # gradle-wrapper.properties declares -- but that file can simply
+          # be stale for the AGP version actually in use, which is exactly
+          # what just happened here. Gradle's own failure message already
+          # states the real minimum ("Minimum supported Gradle version is
+          # X. Current version is Y."), so pull X straight out of the log
+          # and retry once with the wrapper regenerated at that version,
+          # instead of surfacing a failure the log itself already answers.
           REQUIRED=$(grep -oP 'Minimum supported Gradle version is \K[0-9]+(?:\.[0-9]+)*' build.log | head -n1)
           if [ -n "$REQUIRED" ] && [ -x "./gradlew" ]; then
-            echo "Project's committed Gradle wrapper is too old — retrying with Gradle $REQUIRED."
+            echo "Project's committed Gradle wrapper is too old for its own AGP version — it needs Gradle $REQUIRED. Regenerating the wrapper at that version and retrying once."
             gradle wrapper --gradle-version "$REQUIRED" --no-daemon
             chmod +x ./gradlew
             run_build
@@ -273,6 +241,14 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk-${{ github.run_id }}
-          path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/debug/*.apk
+          name: release-apk-${{ github.run_id }}
+          path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/release/*.apk
           if-no-files-found: error
+
+      - name: Upload signing key
+        uses: actions/upload-artifact@v4
+        with:
+          name: signing-key-${{ github.run_id }}
+          path: ~/.android/release-keystore/release.jks
+          if-no-files-found: error
+          retention-days: 90

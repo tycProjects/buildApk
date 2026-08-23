@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <uses-feature android:name="android.hardware.location" android:required="false" />
+    <!-- Needed for local (in-app-triggered) notifications shown via
+         AndroidBridge.showNotification(), independent of whether Firebase
+         push (google-services.json) is configured; always present, not
+         gated behind pushNotificationsEnabled like the FCM bits below. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <application
+        android:allowBackup="true"
+        android:label="Qris"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.GeneratedApp"
+        android:usesCleartextTraffic="true"
+        android:hardwareAccelerated="true"
+        android:enableOnBackInvokedCallback="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Custom-scheme deep link, e.g. qris://open/some/path —
+                 lets a link (or another app) jump straight into this app
+                 instead of only being launchable from the home screen icon.
+                 MainActivity reads the URI in onCreate/onNewIntent and
+                 appends its path/query/fragment onto the bundled page's own
+                 URL, so the web app can route to it the same way it'd
+                 handle any other in-page navigation. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="qris" />
+            </intent-filter>
+
+
+            <!-- Lets this app show up in other apps' share sheet ("Share to
+                 ..."). Shared text/links arrive as EXTRA_TEXT and get
+                 appended to the loaded page's URL as a query parameter
+                 (see handleIncomingIntent in MainActivity) so the web app
+                 can read it via location.search if it wants to do
+                 something with it. -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <!-- Static app shortcuts (long-press the launcher icon) — see
+                 res/xml/shortcuts.xml. -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+    </application>
+
+</manifest>
