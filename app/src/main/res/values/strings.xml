@@ -1,0 +1,6 @@
+<resources>
+    <string name="shortcut_home_short">Home</string>
+    <string name="shortcut_home_long">Open Resseler Am Prem</string>
+    <string name="shortcut_reload_short">Reload</string>
+    <string name="shortcut_reload_long">Reload the app</string>
+</resources>
