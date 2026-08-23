@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 8
+# apk-builder fallback workflow — version: 9
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -138,6 +138,11 @@ jobs:
           # the whole class of failure.
           find . -path '*/res/*' -name '*.xml' -print0 \
             | xargs -0 -r perl -0777 -pi -e 's/<!--.*?-->//gs'
+
+          # Keep Java and Kotlin compiler targets on the same JVM level.
+          # The builder runs JDK 17, so normalize Gradle build files to 17.
+          # This fixes the common 1.8-vs-17 mismatch at :app:compileReleaseKotlin.
+          find .             ( -name 'build.gradle' -o -name 'build.gradle.kts' )             -type f -print0             | xargs -0 -r perl -pi -e 's/JavaVersion.VERSION_1_8/JavaVersion.VERSION_17/g'
 
       - name: Build debug APK
         working-directory: ${{ steps.locate.outputs.dir }}
