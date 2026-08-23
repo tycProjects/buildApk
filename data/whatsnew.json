@@ -1,7 +1,8 @@
 {
-  "version": "2.0",
+  "version": "2.1",
   "title": "What's new",
   "notes": [
+    "web to apk now feel like full native apk😋",
     "added (code editor)",
     "some bug fixed",
     "if you encounter build failed before, try now it might be fixed😋"
