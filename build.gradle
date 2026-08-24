@@ -1,0 +1,11 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.4.0'
+    }
+}
+
+// [auto-fixed by apk-builder] removed allprojects { repositories {...} } -- conflicted with settings.gradle's centralized repositoriesMode(FAIL_ON_PROJECT_REPOS)
