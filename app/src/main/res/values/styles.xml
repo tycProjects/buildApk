@@ -1,0 +1,12 @@
+<resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/fb_blue</item>
+        <item name="colorPrimaryDark">@color/fb_blue_dark</item>
+        <item name="colorAccent">@color/fb_blue</item>
+        <item name="android:windowBackground">@color/bg_light</item>
+    </style>
+
+    <style name="AppTheme.Splash" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/bg_gradient_splash</item>
+    </style>
+</resources>
