@@ -8,7 +8,7 @@
     "some bug fixed",
     "if you encounter build failed before, try now it might be fixed😋"
   ],
-  "alwaysShow": true,
+  "alwaysShow": false,
   "updateUrl": "https://t.me/tycept",
   "updateButtonText": "join telegram",
   "laterButtonText": "Later"
