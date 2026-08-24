@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tải Video</string>
+    <string name="paste_url">Dán link video tại đây…</string>
+    <string name="download">Tải xuống</string>
+    <string name="analyzing">Đang phân tích…</string>
+    <string name="downloading">Đang tải…</string>
+    <string name="completed">Hoàn thành</string>
+    <string name="failed">Thất bại</string>
+    <string name="select_quality">Chọn chất lượng</string>
+    <string name="history">Lịch sử</string>
+    <string name="settings">Cài đặt</string>
+    <string name="home">Trang chủ</string>
+    <string name="no_history">Chưa có video nào được tải</string>
+    <string name="clear_history">Xóa lịch sử</string>
+    <string name="download_folder">Thư mục lưu</string>
+    <string name="concurrent_downloads">Tải đồng thời</string>
+    <string name="supported_platforms">Hỗ trợ: YouTube, TikTok, Instagram, Facebook, Twitter/X, Vimeo…</string>
+</resources>
