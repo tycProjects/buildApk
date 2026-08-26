@@ -1,0 +1,4 @@
+Gradle Wrapper 8.2 included and verified: ./gradlew --version PASS.
+Static checks: XML PASS; Java braces PASS; resource IDs PASS.
+Build reaches Android SDK detection; sandbox has no Android SDK.
+Install Android SDK Platform 34 and configure local.properties/sdk.dir before assembleDebug.

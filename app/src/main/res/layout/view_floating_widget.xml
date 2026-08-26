@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="4dp">
+
+    
+    <ImageButton
+        android:id="@+id/btnWidgetExpand"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_gravity="center"
+        android:background="#E61E3A5F"
+        android:contentDescription="Mở menu điều khiển"
+        android:padding="12dp"
+        android:src="@android:drawable/ic_menu_more"
+        android:tint="#FFFFFF"
+        android:visibility="gone" />
+
+    
+    <LinearLayout
+        android:id="@+id/widgetMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:background="#E61E3A5F"
+        android:elevation="8dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvWidgetStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sẵn sàng"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnWidgetCollapse"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="6dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Ẩn menu"
+                android:src="@android:drawable/ic_menu_revert"
+                android:tint="#FFFFFF" />
+
+            <ImageButton
+                android:id="@+id/btnWidgetClose"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Đóng widget hoàn toàn"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:tint="#FFFFFF" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp">
+
+            <ImageButton
+                android:id="@+id/btnWidgetStart"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Bắt đầu"
+                android:src="@android:drawable/ic_media_play"
+                android:tint="#4CAF50" />
+
+            <ImageButton
+                android:id="@+id/btnWidgetPause"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Tạm dừng hoặc tiếp tục"
+                android:src="@android:drawable/ic_media_pause"
+                android:tint="#FFC107" />
+
+            <ImageButton
+                android:id="@+id/btnWidgetStop"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Dừng"
+                android:src="@android:drawable/ic_media_stop"
+                android:tint="#F44336" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
