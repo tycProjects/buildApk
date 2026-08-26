@@ -149,7 +149,7 @@
                 android:layout_height="54dp"
                 android:background="@drawable/bg_widget_icon_button"
                 android:contentDescription="Dừng"
-                android:src="@android:drawable/ic_media_stop"
+                android:src="@drawable/ic_media_stop"
                 android:tint="#FF7180" />
         </LinearLayout>
 
