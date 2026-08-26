@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/bg_app" android:animateLayoutChanges="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Cài đặt API" android:textSize="26sp" android:textStyle="bold" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="Key được lưu bằng Android Keystore. Không chia sẻ APK đã cấu hình key và không commit key vào Git." />
+        <TextView android:id="@+id/settingsStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" />
+        <EditText android:id="@+id/geminiKeyInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:hint="Gemini API Key" android:inputType="textPassword" android:singleLine="true" />
+        <EditText android:id="@+id/groqKeyInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:hint="Groq API Key" android:inputType="textPassword" android:singleLine="true" />
+        <Button android:id="@+id/saveKeysButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:text="Lưu API key" />
+        <Button android:id="@+id/clearKeysButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Xóa API key" />
+    </LinearLayout>
+</ScrollView>
