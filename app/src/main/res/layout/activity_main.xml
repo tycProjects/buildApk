@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#050507" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="28dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="VIETSUB AI" android:textColor="#F7F7FF" android:textSize="30sp" android:textStyle="bold" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="Dịch phụ đề &amp; lồng tiếng tự động" android:textColor="#96939D" android:textSize="16sp" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+                <View android:layout_width="28dp" android:layout_height="28dp" android:background="@drawable/bg_logo_dot" />
+                <View android:layout_width="28dp" android:layout_height="28dp" android:layout_marginStart="3dp" android:background="@drawable/bg_logo_dot" />
+                <View android:layout_width="28dp" android:layout_height="28dp" android:layout_marginStart="3dp" android:background="@drawable/bg_logo_dot" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="28dp" android:background="#19191D" android:padding="6dp">
+            <Button android:id="@+id/libraryTab" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:background="@drawable/bg_pill" android:text="Thư viện 0" android:textColor="#31235F" android:textSize="16sp" />
+            <Button android:id="@+id/queueButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="2dp" android:layout_weight="1" android:background="@drawable/bg_pill" android:text="Hàng đợi" android:textColor="#B8A8FF" android:textSize="16sp" />
+        </LinearLayout>
+        <TextView android:id="@+id/statusText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="38dp" android:text="Sẵn sàng xử lý video" android:textColor="#D8D4DF" android:textSize="20sp" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:background="#17171B" android:orientation="vertical" android:padding="24dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="▌  THÊM VIDEO MỚI" android:textColor="#C8FF31" android:textSize="21sp" android:textStyle="bold" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="25dp" android:gravity="center" android:orientation="horizontal">
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+                    <Button android:id="@+id/pasteUrlButton" android:layout_width="82dp" android:layout_height="64dp" android:background="@drawable/bg_pill" android:text="↗" android:textColor="#35256C" android:textSize="28sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="Dán URL" android:textColor="#F7F7FF" android:textSize="16sp" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+                    <Button android:id="@+id/selectVideoButton" android:layout_width="82dp" android:layout_height="64dp" android:background="@drawable/bg_pill" android:text="□" android:textColor="#35256C" android:textSize="26sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="Từ máy" android:textColor="#F7F7FF" android:textSize="16sp" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+                    <Button android:id="@+id/clipboardButton" android:layout_width="82dp" android:layout_height="64dp" android:background="@drawable/bg_pill" android:text="⌘" android:textColor="#35256C" android:textSize="25sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="Clipboard" android:textColor="#F7F7FF" android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="25dp" android:text="◉  Bộ nhớ đệm: 0 B   •   Chạm để quản lý" android:textColor="#C8C4CF" android:textSize="16sp" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="34dp" android:text="▌  ĐÃ HOÀN THÀNH" android:textColor="#C8FF31" android:textSize="21sp" android:textStyle="bold" />
+        <Button android:id="@+id/queueButtonSecondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="22dp" android:background="@drawable/bg_pill" android:text="Mở hàng đợi nhiều video" android:textColor="#35256C" />
+        <Button android:id="@+id/historyButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/bg_pill" android:text="Mở lịch sử đầy đủ" android:textColor="#35256C" />
+        <LinearLayout android:id="@+id/processingControls" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="30dp" android:orientation="vertical" android:visibility="gone">
+            <Button android:id="@+id/settingsButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Cài đặt Gemini &amp; Groq API key" />
+            <Spinner android:id="@+id/sourceModeSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <Spinner android:id="@+id/sourceLanguageSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <Spinner android:id="@+id/targetLanguageSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <Button android:id="@+id/translateButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Nhận dạng và dịch" />
+            <ProgressBar android:id="@+id/progressBar" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="100" android:visibility="gone" />
+            <TextView android:id="@+id/previewText" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="180dp" android:textColor="#F7F7FF" />
+            <Button android:id="@+id/exportButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Xuất SRT" android:enabled="false" />
+            <Button android:id="@+id/editButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mở video preview và chỉnh sửa SRT" android:enabled="false" />
+        </LinearLayout>
+        <Button android:id="@+id/fabAdd" android:layout_width="72dp" android:layout_height="72dp" android:layout_gravity="end" android:layout_marginTop="70dp" android:background="@drawable/bg_pill" android:text="+" android:textColor="#F7F7FF" android:textSize="30sp" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="12dp" android:background="@drawable/bg_app" android:animateLayoutChanges="true">
+    <FrameLayout android:layout_width="match_parent" android:layout_height="220dp">
+        <androidx.media3.ui.PlayerView android:id="@+id/playerView" android:layout_width="match_parent" android:layout_height="match_parent" app:show_buffering="when_playing" app:resize_mode="fit" />
+        <TextView android:id="@+id/subtitleOverlay" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="bottom|center_horizontal" android:layout_margin="16dp" android:gravity="center" android:shadowColor="#000000" android:shadowDx="2" android:shadowDy="2" android:shadowRadius="3" android:textColor="#FFFFFF" android:textSize="22sp" />
+    </FrameLayout>
+    <TextView android:id="@+id/editorStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="8dp" android:text="SRT Editor" />
+    <ScrollView android:id="@+id/cueScroll" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"><LinearLayout android:id="@+id/cueContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" /></ScrollView>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Subtitle Styling" android:textStyle="bold" />
+    <Spinner android:id="@+id/fontSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
+    <EditText android:id="@+id/fontSizeInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Cỡ chữ, ví dụ 22" android:inputType="number" android:text="22" />
+    <EditText android:id="@+id/textColorInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Màu chữ HEX, ví dụ #FFFFFF" android:text="#FFFFFF" android:singleLine="true" />
+    <EditText android:id="@+id/outlineColorInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Màu viền HEX, ví dụ #000000" android:text="#000000" android:singleLine="true" />
+    <Spinner android:id="@+id/alignmentSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Chất lượng video đầu ra" android:textStyle="bold" />
+    <Spinner android:id="@+id/bitrateSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
+    <Spinner android:id="@+id/resolutionSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
+    <Spinner android:id="@+id/presetSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
+    <Spinner android:id="@+id/formatSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
+    <ProgressBar android:id="@+id/exportProgress" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="100" android:visibility="gone" />
+    <Button android:id="@+id/exportButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Burn-in và export MP4" />
+</LinearLayout>
