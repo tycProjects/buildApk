@@ -90,7 +90,7 @@
                 android:layout_height="44dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="Dừng"
-                android:src="@android:drawable/ic_media_stop"
+                android:src="@drawable/ic_media_stop"
                 android:tint="#F44336" />
         </LinearLayout>
     </LinearLayout>
