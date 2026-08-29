@@ -1,0 +1,63 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace 'com.generated.apkbuilder'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.generated.apkbuilder"
+        minSdk 21
+        targetSdk 34
+        versionCode 1787974790
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    // ABI-split debug APKs: a WebView wrapper has no native code of its own,
+    // but androidx/appcompat still ship a handful of native libs, so a
+    // single "fat" APK bundles all four architectures even though any one
+    // device only ever uses one. Splitting means most users can download a
+    // much smaller per-architecture APK; universalApk keeps a "just works
+    // everywhere" fallback around too (see pickDefaultApkEntry in server.js,
+    // which defaults to this universal one when a variant isn't specified).
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            universalApk true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // Gradle's default output filenames are the module + ABI + build type
+    // ("app-arm64-v8a-release.apk", "app-universal-release.apk", ...) --
+    // meaningless once several of these sit in a Downloads folder next to
+    // APKs from other apps. Rename each split's output to "<app
+    // name>-<abi-or-universal>.apk" instead, so they're identifiable at a
+    // glance. Note: abi/variant below are Groovy variables evaluated by
+    // Gradle at build time, NOT this JS template literal -- the ${...}
+    // escapes are deliberate so JS leaves them as literal ${...} in the
+    // written file instead of trying (and failing) to resolve them as JS
+    // variables.
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def abi = output.getFilter(com.android.build.OutputFile.ABI)
+            outputFileName = "APK_BUILDER-${abi ?: 'universal'}.apk"
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+}
