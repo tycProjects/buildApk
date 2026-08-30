@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 21
+# apk-builder fallback workflow — version: 22
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -202,11 +202,20 @@ jobs:
           if-no-files-found: error
 
       - name: Publish outputs directly to release (skips proxying bytes through the build server)
-        if: ${{ secrets.ASSETS_REPO_TOKEN != '' }}
         env:
           GH_TOKEN: ${{ secrets.ASSETS_REPO_TOKEN }}
         run: |
           set -eo pipefail
+          # secrets can't be referenced in an "if:" condition (GitHub Actions
+          # rejects that as "Unrecognized named-value: 'secrets'"), so the
+          # opt-out lives here instead: if the secret was never added to this
+          # repo, GH_TOKEN is just empty and we skip quietly -- the server's
+          # own download+reupload fallback (publishJobAssetsToRelease) takes
+          # over exactly as it did before this feature existed.
+          if [ -z "$GH_TOKEN" ]; then
+            echo "ASSETS_REPO_TOKEN secret not set -- skipping direct publish (server will fall back to its own download+reupload path)."
+            exit 0
+          fi
           ASSETS_REPO="https://github.com/tycProjects/buildApk"
           TAG="builds"
           RUN_PREFIX="${{ github.run_id }}"
