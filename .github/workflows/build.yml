@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 22
+# apk-builder fallback workflow — version: 23
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -216,7 +216,7 @@ jobs:
             echo "ASSETS_REPO_TOKEN secret not set -- skipping direct publish (server will fall back to its own download+reupload path)."
             exit 0
           fi
-          ASSETS_REPO="https://github.com/tycProjects/buildApk"
+          ASSETS_REPO="tycProjects/buildApk"
           TAG="builds"
           RUN_PREFIX="${{ github.run_id }}"
           STAGE=$(mktemp -d)
