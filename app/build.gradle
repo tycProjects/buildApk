@@ -1,0 +1,43 @@
+apply plugin: 'com.android.application'
+
+// Forces every configuration to resolve these to one consistent version,
+// instead of letting androidx.appcompat's transitive kotlin-stdlib-1.8.22
+// sit alongside some other dependency's older kotlin-stdlib-jdk7/jdk8
+// 1.6.21 (now-empty pass-through modules pre-1.9.20) -- that mismatch is
+// what was actually causing :app:checkReleaseDuplicateClasses to fail,
+// not Jetifier.
+configurations.all {
+    resolutionStrategy {
+        force 'org.jetbrains.kotlin:kotlin-stdlib:1.9.24'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.24'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.24'
+    }
+}
+
+android {
+    namespace 'com.example.aitest'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.example.aitest"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+}
