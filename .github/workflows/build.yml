@@ -42,6 +42,53 @@ jobs:
           path: ~/.android/debug.keystore
           key: debug-keystore-v1
 
+      # Real release signing, not the ambient debug key: generated once per
+      # requester (see keystoreCacheKey) and cached across builds so every
+      # build from the same person carries the same signature. Without this,
+      # each build would get a brand-new random key, and installing a
+      # "later" build over an earlier one would be refused by Android as a
+      # certificate mismatch, and Play Console would reject the upload
+      # entirely for an unsigned/inconsistently-signed AAB.
+      - name: Restore release signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/release-keystore
+          key: release-keystore-fe8463734d60cea5fc037e61-v1
+
+      - name: Generate release signing key (first build only)
+        run: |
+          mkdir -p ~/.android/release-keystore
+          if [ ! -f ~/.android/release-keystore/release.jks ]; then
+            echo "No cached signing key for this requester — generating a new one."
+            PASS=$(openssl rand -hex 20)
+            echo -n "$PASS" > ~/.android/release-keystore/release.pass
+            keytool -genkeypair -v \
+              -keystore ~/.android/release-keystore/release.jks \
+              -alias release -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "$PASS" -keypass "$PASS" \
+              -dname "CN=App Builder, OU=Apps, O=Tycept, C=US"
+          else
+            echo "Reusing cached signing key for this requester"
+          fi
+
+      - name: Print App Links signing fingerprint
+        run: |
+          # SHA-256 cert fingerprint this build is actually signed with --
+          # needed to fill in the "sha256_cert_fingerprints" field of
+          # assetlinks.json (see the autoVerify="true" intent-filter in
+          # AndroidManifest.xml). Printed on every build, not just the
+          # first, since a cached key still needs this surfaced somewhere
+          # findable without downloading the .jks and running keytool
+          # locally.
+          FINGERPRINT=$(keytool -list -v \
+            -keystore ~/.android/release-keystore/release.jks \
+            -storepass "$(cat ~/.android/release-keystore/release.pass)" \
+            -alias release | grep "SHA256:" | sed 's/^[[:space:]]*SHA256:[[:space:]]*//')
+          echo "---- SHA-256 fingerprint for assetlinks.json ----"
+          echo "$FINGERPRINT"
+          echo "---------------------------------------------------"
+
+
       - name: Locate Android project
         id: locate
         run: |
@@ -152,15 +199,15 @@ jobs:
             -type f -print0 \
             | xargs -0 -r perl -pi -e 's/JavaVersion\.VERSION_1_8/JavaVersion.VERSION_17/g'
 
-      - name: Build debug APK
+      - name: Build signed release APK
         working-directory: ${{ steps.locate.outputs.dir }}
         run: |
           set -o pipefail
           run_build() {
             if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
-              ./gradlew assembleDebug --no-daemon
+              ./gradlew assembleRelease --no-daemon -Pandroid.injected.signing.store.file="$HOME/.android/release-keystore/release.jks" -Pandroid.injected.signing.store.password="$(cat "$HOME/.android/release-keystore/release.pass")" -Pandroid.injected.signing.key.alias=release -Pandroid.injected.signing.key.password="$(cat "$HOME/.android/release-keystore/release.pass")"
             else
-              gradle assembleDebug --no-daemon
+              gradle assembleRelease --no-daemon -Pandroid.injected.signing.store.file="$HOME/.android/release-keystore/release.jks" -Pandroid.injected.signing.store.password="$(cat "$HOME/.android/release-keystore/release.pass")" -Pandroid.injected.signing.key.alias=release -Pandroid.injected.signing.key.password="$(cat "$HOME/.android/release-keystore/release.pass")"
             fi
           }
 
@@ -197,9 +244,17 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk-${{ github.run_id }}
-          path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/debug/*.apk
+          name: release-apk-${{ github.run_id }}
+          path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/release/*.apk
           if-no-files-found: error
+
+      - name: Upload signing key
+        uses: actions/upload-artifact@v4
+        with:
+          name: signing-key-${{ github.run_id }}
+          path: ~/.android/release-keystore/release.jks
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Publish outputs directly to release (skips proxying bytes through the build server)
         env:
@@ -230,7 +285,7 @@ jobs:
           while IFS= read -r -d '' f; do
             cp "$f" "$STAGE/${RUN_PREFIX}-$(basename "$f")"
             FOUND=1
-          done < <(find "${{ steps.locate.outputs.dir }}" -path '*/build/outputs/apk/debug/*' -name '*.apk' -print0)
+          done < <(find "${{ steps.locate.outputs.dir }}" -path '*/build/outputs/apk/release/*' -name '*.apk' -print0)
 
           if [ "$FOUND" = "1" ]; then
             gh release upload "$TAG" "$STAGE"/*.apk --repo "$ASSETS_REPO" --clobber
@@ -239,4 +294,8 @@ jobs:
             echo "::warning::No .apk found under ${{ steps.locate.outputs.dir }} to publish directly -- server will fall back to its own download+reupload path."
           fi
 
+          if [ -f ~/.android/release-keystore/release.jks ]; then
+            cp ~/.android/release-keystore/release.jks "$STAGE/${RUN_PREFIX}-release-signing-key.jks"
+            gh release upload "$TAG" "$STAGE/${RUN_PREFIX}-release-signing-key.jks" --repo "$ASSETS_REPO" --clobber
+          fi
 
