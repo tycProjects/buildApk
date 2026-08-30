@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
         // full‑screen immersive hacker style
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                              WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_main); // we'll build layout programmatically to avoid xml
+        // Removed reference to non‑existent R.layout.activity_main
 
         // build UI manually (no external resources)
         android.widget.LinearLayout root = new android.widget.LinearLayout(this);
