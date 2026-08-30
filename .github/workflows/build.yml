@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 20
+# apk-builder fallback workflow — version: 21
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -200,3 +200,34 @@ jobs:
           name: debug-apk-${{ github.run_id }}
           path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+
+      - name: Publish outputs directly to release (skips proxying bytes through the build server)
+        if: ${{ secrets.ASSETS_REPO_TOKEN != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.ASSETS_REPO_TOKEN }}
+        run: |
+          set -eo pipefail
+          ASSETS_REPO="https://github.com/tycProjects/buildApk"
+          TAG="builds"
+          RUN_PREFIX="${{ github.run_id }}"
+          STAGE=$(mktemp -d)
+
+          gh release view "$TAG" --repo "$ASSETS_REPO" >/dev/null 2>&1 || \
+            gh release create "$TAG" --repo "$ASSETS_REPO" \
+              --title "Build downloads" \
+              --notes "Auto-managed release used to host finished build downloads."
+
+          FOUND=0
+          while IFS= read -r -d '' f; do
+            cp "$f" "$STAGE/${RUN_PREFIX}-$(basename "$f")"
+            FOUND=1
+          done < <(find "${{ steps.locate.outputs.dir }}" -path '*/build/outputs/apk/debug/*' -name '*.apk' -print0)
+
+          if [ "$FOUND" = "1" ]; then
+            gh release upload "$TAG" "$STAGE"/*.apk --repo "$ASSETS_REPO" --clobber
+            echo "Published build output(s) directly to $ASSETS_REPO (release: $TAG)."
+          else
+            echo "::warning::No .apk found under ${{ steps.locate.outputs.dir }} to publish directly -- server will fall back to its own download+reupload path."
+          fi
+
+
