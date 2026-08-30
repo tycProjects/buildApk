@@ -26,4 +26,6 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
+    // Align Kotlin stdlib versions to avoid duplicate class errors
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
 }
