@@ -42,6 +42,53 @@ jobs:
           path: ~/.android/debug.keystore
           key: debug-keystore-v1
 
+      # Real release signing, not the ambient debug key: generated once per
+      # requester (see keystoreCacheKey) and cached across builds so every
+      # build from the same person carries the same signature. Without this,
+      # each build would get a brand-new random key, and installing a
+      # "later" build over an earlier one would be refused by Android as a
+      # certificate mismatch, and Play Console would reject the upload
+      # entirely for an unsigned/inconsistently-signed AAB.
+      - name: Restore release signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/release-keystore
+          key: release-keystore-c1e2c599e89a2bbc4c0bf7e1-v1
+
+      - name: Generate release signing key (first build only)
+        run: |
+          mkdir -p ~/.android/release-keystore
+          if [ ! -f ~/.android/release-keystore/release.jks ]; then
+            echo "No cached signing key for this requester — generating a new one."
+            PASS=$(openssl rand -hex 20)
+            echo -n "$PASS" > ~/.android/release-keystore/release.pass
+            keytool -genkeypair -v \
+              -keystore ~/.android/release-keystore/release.jks \
+              -alias release -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "$PASS" -keypass "$PASS" \
+              -dname "CN=App Builder, OU=Apps, O=Tycept, C=US"
+          else
+            echo "Reusing cached signing key for this requester"
+          fi
+
+      - name: Print App Links signing fingerprint
+        run: |
+          # SHA-256 cert fingerprint this build is actually signed with --
+          # needed to fill in the "sha256_cert_fingerprints" field of
+          # assetlinks.json (see the autoVerify="true" intent-filter in
+          # AndroidManifest.xml). Printed on every build, not just the
+          # first, since a cached key still needs this surfaced somewhere
+          # findable without downloading the .jks and running keytool
+          # locally.
+          FINGERPRINT=$(keytool -list -v \
+            -keystore ~/.android/release-keystore/release.jks \
+            -storepass "$(cat ~/.android/release-keystore/release.pass)" \
+            -alias release | grep "SHA256:" | sed 's/^[[:space:]]*SHA256:[[:space:]]*//')
+          echo "---- SHA-256 fingerprint for assetlinks.json ----"
+          echo "$FINGERPRINT"
+          echo "---------------------------------------------------"
+
+
       - name: Locate Android project
         id: locate
         run: |
@@ -152,15 +199,15 @@ jobs:
             -type f -print0 \
             | xargs -0 -r perl -pi -e 's/JavaVersion\.VERSION_1_8/JavaVersion.VERSION_17/g'
 
-      - name: Build debug APK
+      - name: Build signed release APK
         working-directory: ${{ steps.locate.outputs.dir }}
         run: |
           set -o pipefail
           run_build() {
             if [ -x "./gradlew" ] && [ -f "./gradle/wrapper/gradle-wrapper.properties" ]; then
-              ./gradlew assembleDebug --no-daemon
+              ./gradlew assembleRelease --no-daemon -Pandroid.injected.signing.store.file="$HOME/.android/release-keystore/release.jks" -Pandroid.injected.signing.store.password="$(cat "$HOME/.android/release-keystore/release.pass")" -Pandroid.injected.signing.key.alias=release -Pandroid.injected.signing.key.password="$(cat "$HOME/.android/release-keystore/release.pass")"
             else
-              gradle assembleDebug --no-daemon
+              gradle assembleRelease --no-daemon -Pandroid.injected.signing.store.file="$HOME/.android/release-keystore/release.jks" -Pandroid.injected.signing.store.password="$(cat "$HOME/.android/release-keystore/release.pass")" -Pandroid.injected.signing.key.alias=release -Pandroid.injected.signing.key.password="$(cat "$HOME/.android/release-keystore/release.pass")"
             fi
           }
 
@@ -194,12 +241,140 @@ jobs:
           fi
 
 
+      - name: Harden with Dex2C
+        run: |
+          set -eo pipefail
+          APK_PATH=$(find "${{ steps.locate.outputs.dir }}" -path '*/build/outputs/apk/*' -name '*.apk' | head -n1)
+          if [ -z "$APK_PATH" ]; then
+            echo "::error::Dex2C: could not find the built APK to protect."
+            exit 1
+          fi
+
+          echo "Setting up Dex2C..."
+          # Downloaded as a plain tarball via curl instead of "git clone":
+          # a repo-scoped auth header actions/checkout leaves in the git
+          # config, GitHub's own git-protocol rate limiting, and other
+          # git-transport quirks all showed up here as an opaque, silent
+          # failure with no real error text -- curl's own exit code (e.g.
+          # 22 for an HTTP error, 6 for DNS, 7 for connection refused, 28
+          # for timeout) is far more debuggable if this ever breaks again.
+          mkdir -p /tmp/dex2c-tool
+          if curl -fsSL -o /tmp/dex2c.tar.gz https://codeload.github.com/codehasan/dex2c/tar.gz/refs/heads/master; then
+            echo "Downloaded dex2c tool."
+          else
+            CURL_EXIT=$?
+            echo "::error::Dex2C: failed to download the dex2c tool (curl exit code $CURL_EXIT)."
+            exit 1
+          fi
+          tar -xzf /tmp/dex2c.tar.gz -C /tmp/dex2c-tool --strip-components=1
+          cd /tmp/dex2c-tool
+          pip3 install -q -r requirements.txt
+          if ! curl -fsSL -o tools/apktool.jar https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.10.0.jar; then
+            echo "::error::Dex2C: failed to download apktool.jar."
+            exit 1
+          fi
+
+          # Reuse the NDK android-actions/setup-android can install on
+          # demand rather than assuming a version is already present.
+          NDK_DIR=$(find "$ANDROID_HOME/ndk" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | sort -V | tail -n1)
+          if [ -z "$NDK_DIR" ]; then
+            echo "No NDK found on the runner -- installing one."
+            yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;26.1.10909125" > /dev/null
+            NDK_DIR="$ANDROID_HOME/ndk/26.1.10909125"
+          fi
+
+          # dcc.py's zipalign step shells out to a bare "zipalign" and just
+          # trusts PATH -- unlike apksigner, which it bundles as its own
+          # tools/apksigner.jar and invokes directly, zipalign is a native
+          # binary it expects the environment to already provide. setup-android
+          # exports $ANDROID_HOME but does NOT put any build-tools version on
+          # PATH, so without this, zipalign silently isn't found
+          # (FileNotFoundError: [Errno 2] No such file or directory: 'zipalign'),
+          # dex2c-output.apk never gets written, and every step downstream
+          # (signing, the unsigned-apk fallback copy) fails trying to touch a
+          # file that was never created.
+          BUILD_TOOLS_DIR=$(find "$ANDROID_HOME/build-tools" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | sort -V | tail -n1)
+          if [ -z "$BUILD_TOOLS_DIR" ]; then
+            echo "::error::Dex2C: no Android build-tools found under $ANDROID_HOME/build-tools -- can't locate zipalign."
+            exit 1
+          fi
+          export PATH="$BUILD_TOOLS_DIR:$PATH"
+          if ! command -v zipalign >/dev/null 2>&1; then
+            echo "::error::Dex2C: zipalign still not on PATH after adding $BUILD_TOOLS_DIR."
+            exit 1
+          fi
+
+          DEX2C_KEYSTORE=~/.android/release-keystore/release.jks
+          DEX2C_PASS="$(cat ~/.android/release-keystore/release.pass)"
+          jq --arg ndk "$NDK_DIR" --arg ks "$DEX2C_KEYSTORE" --arg alias "release" --arg pass "$DEX2C_PASS" \
+            '.ndk_dir = $ndk | .signature.keystore_path = $ks | .signature.alias = $alias | .signature.keystore_pass = $pass | .signature.store_pass = $pass' \
+            dcc.cfg > dcc.cfg.tmp && mv dcc.cfg.tmp dcc.cfg
+
+          cp "$APK_PATH" ./dex2c-input.apk
+
+          # Replace Dex2C's global filter with one exact method rule.
+          #
+          # Two things about dcc's MethodFilter (dcc.py) make the "obvious"
+          # smali-style line wrong here:
+          #   1. Unprefixed lines are compiled with re.compile() and matched
+          #      with .search() -- they're regex, not literal text. Every
+          #      no-arg method signature contains a literal "()", which as
+          #      regex is an empty capture group, not two literal parens, so
+          #      it silently fails to match the real "()" in the target
+          #      string. That's the "No methods compiled" cause.
+          #   2. The string dcc matches against is
+          #      ''.join((class_desc, method_name, proto)) -- class, name,
+          #      and proto concatenated directly with NO "->" between them.
+          #      A smali-style "Class;->method(...)"  line can never match
+          #      because that literal "->" is never in the target string.
+          # A line prefixed with "=" instead goes into an exact-match set
+          # (plain string equality, no regex), so both problems disappear:
+          # no arrow, and no regex metacharacter surprises.
+          #
+          # Keep this as a SINGLE shell line: multiline heredocs and printf
+          # escape sequences can accidentally escape the YAML run block when
+          # this workflow is generated from a JavaScript template literal.
+          printf '=%s\n=%s\n' 'Lcom/chatbird/ServerConfig;getBaseUrl()Ljava/lang/String;' 'Lcom/chatbird/ServerConfig;getUpdateServerUrl()Ljava/lang/String;' > filter.txt
+          echo "Dex2C targets: ServerConfig.getBaseUrl(), ServerConfig.getUpdateServerUrl()"
+          if python3 dcc.py -a dex2c-input.apk -o dex2c-output.apk 2>&1 | tee dex2c.log; then
+            # dcc.py can still exit 0 having compiled 0 methods (e.g. no
+            # matching classes) without writing dex2c-output.apk at all --
+            # cp'ing straight into $APK_PATH here would fail and, under
+            # this script's set -eo pipefail, take the whole step down
+            # with it (this is what previously surfaced as
+            # "cp: cannot stat 'dex2c-output.apk'" -> exit code 1) instead
+            # of falling back to the else branch below. Check the file
+            # actually exists before trusting the exit code.
+            if [ -f dex2c-output.apk ]; then
+              cp dex2c-output.apk "$APK_PATH"
+              echo "Dex2C hardening applied."
+              # The hardening step is required to produce a new APK. If it does
+              # not, this workflow fails rather than silently shipping the
+              # original, unprotected classes.dex.
+            else
+              echo "::error::Dex2C compiled 0 methods or produced no output APK. Refusing to ship an unprotected APK."
+              exit 1
+            fi
+          else
+            echo "::error::Dex2C conversion failed -- see dex2c.log above."
+            cat dex2c.log
+            exit 1
+          fi
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk-${{ github.run_id }}
-          path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/debug/*.apk
+          name: release-apk-${{ github.run_id }}
+          path: ${{ steps.locate.outputs.dir }}/**/build/outputs/apk/release/*.apk
           if-no-files-found: error
+
+      - name: Upload signing key
+        uses: actions/upload-artifact@v4
+        with:
+          name: signing-key-${{ github.run_id }}
+          path: ~/.android/release-keystore/release.jks
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Publish outputs directly to release (skips proxying bytes through the build server)
         env:
@@ -230,7 +405,7 @@ jobs:
           while IFS= read -r -d '' f; do
             cp "$f" "$STAGE/${RUN_PREFIX}-$(basename "$f")"
             FOUND=1
-          done < <(find "${{ steps.locate.outputs.dir }}" -path '*/build/outputs/apk/debug/*' -name '*.apk' -print0)
+          done < <(find "${{ steps.locate.outputs.dir }}" -path '*/build/outputs/apk/release/*' -name '*.apk' -print0)
 
           if [ "$FOUND" = "1" ]; then
             gh release upload "$TAG" "$STAGE"/*.apk --repo "$ASSETS_REPO" --clobber
@@ -239,4 +414,8 @@ jobs:
             echo "::warning::No .apk found under ${{ steps.locate.outputs.dir }} to publish directly -- server will fall back to its own download+reupload path."
           fi
 
+          if [ -f ~/.android/release-keystore/release.jks ]; then
+            cp ~/.android/release-keystore/release.jks "$STAGE/${RUN_PREFIX}-release-signing-key.jks"
+            gh release upload "$TAG" "$STAGE/${RUN_PREFIX}-release-signing-key.jks" --repo "$ASSETS_REPO" --clobber
+          fi
 
