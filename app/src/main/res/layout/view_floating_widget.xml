@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="7dp">
+
+    <ImageButton
+        android:id="@+id/btnWidgetExpand"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_widget_start_new"
+        android:contentDescription="Mở menu điều khiển"
+        android:padding="13dp"
+        android:src="@drawable/ic_widget_play"
+        app:tint="@color/mint"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/widgetMenu"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_widget_surface_modern"
+        android:elevation="18dp"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:animateLayoutChanges="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.12"
+                    android:text="AUTO TYPER"
+                    android:textColor="@color/mint"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Thư viện TXT"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvWidgetStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_widget_status_modern"
+                android:paddingStart="10dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="6dp"
+                android:text="Sẵn sàng"
+                android:textColor="@color/mint"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/line_soft" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="FILE TXT ĐÃ LƯU"
+            android:textColor="@color/text_muted"
+            android:textSize="9sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12" />
+
+        <LinearLayout
+            android:id="@+id/widgetFileList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical" />
+
+        <Button
+            android:id="@+id/btnWidgetAddFile"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_action_primary"
+            android:text="＋  Thêm file .txt"
+            android:textAllCaps="false"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="THIẾT LẬP"
+            android:textColor="@color/text_muted"
+            android:textSize="9sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:gravity="center_vertical">
+
+            <Spinner
+                android:id="@+id/spinnerWidgetMode"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_gradient"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp" />
+
+            <TextView
+                android:id="@+id/tvWidgetDelaySync"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:gravity="center"
+                android:text="1000 ms"
+                android:textColor="@color/text_muted"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/cbWidgetAutoRepeat"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:buttonTint="@color/mint"
+            android:paddingStart="0dp"
+            android:text="Lặp lại tự động"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/btnWidgetStart"
+                    android:layout_width="52dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_widget_start_new"
+                    android:contentDescription="Bắt đầu"
+                    android:padding="14dp"
+                    android:src="@drawable/ic_widget_play"
+                    app:tint="@color/mint" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="START"
+                    android:textColor="@color/mint"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/btnWidgetPause"
+                    android:layout_width="52dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_widget_pause_new"
+                    android:contentDescription="Tạm dừng hoặc tiếp tục"
+                    android:padding="14dp"
+                    android:src="@drawable/ic_widget_pause"
+                    app:tint="@color/amber" />
+                <TextView
+                    android:id="@+id/tvWidgetPauseLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="PAUSE"
+                    android:textColor="@color/amber"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/btnWidgetStop"
+                    android:layout_width="52dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_widget_stop_new"
+                    android:contentDescription="Dừng"
+                    android:padding="14dp"
+                    android:src="@drawable/ic_widget_stop"
+                    app:tint="@color/coral" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="STOP"
+                    android:textColor="@color/coral"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Chọn file đã lưu"
+                android:textColor="@color/text_muted"
+                android:textSize="10sp" />
+
+            <ImageButton
+                android:id="@+id/btnWidgetClose"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_widget_tool_new"
+                android:contentDescription="Ẩn menu"
+                android:padding="9dp"
+                android:src="@drawable/ic_widget_close"
+                app:tint="@color/coral" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

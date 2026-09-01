@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">cai loz me</string>
+    <string name="accessibility_service_description">Auto Typer cần quyền Trợ năng để tự động gõ và gửi tin nhắn.</string>
+</resources>

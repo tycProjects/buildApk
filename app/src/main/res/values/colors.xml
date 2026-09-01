@@ -1,0 +1,37 @@
+<resources>
+    <color name="ink_950">#080B16</color>
+    <color name="ink_900">#0D1222</color>
+    <color name="ink_850">#11182B</color>
+    <color name="ink_800">#151F35</color>
+    <color name="ink_750">#1C2943</color>
+    <color name="line_soft">#263552</color>
+    <color name="line_bright">#34476B</color>
+    <color name="text_primary">#F6F8FF</color>
+    <color name="text_secondary">#A8B4CE</color>
+    <color name="text_muted">#70809F</color>
+    <color name="mint">#73E1B1</color>
+    <color name="mint_dark">#2A9B73</color>
+    <color name="mint_wash">#173E37</color>
+    <color name="coral">#FF7184</color>
+    <color name="coral_dark">#B6425A</color>
+    <color name="coral_wash">#442033</color>
+    <color name="amber">#FFD166</color>
+    <color name="amber_wash">#4B3A1B</color>
+    <color name="sky">#73B8FF</color>
+    <color name="sky_dark">#365EA9</color>
+    <color name="sky_wash">#162F55</color>
+    <color name="teal">#4BC7B3</color>
+    <color name="teal_dark">#18756D</color>
+    <color name="teal_light">#86E8D5</color>
+    <color name="purple">#9B8CFF</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#5F6D86</color>
+    <color name="gray_light">#B8C1D4</color>
+    <color name="card_bg">#151F35</color>
+    <color name="input_bg">#11182B</color>
+    <color name="green">#73E1B1</color>
+    <color name="red">#FF7184</color>
+    <color name="success_green">#73E1B1</color>
+    <color name="error_red">#FF7184</color>
+</resources>

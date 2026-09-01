@@ -1,0 +1,14 @@
+<resources>
+    <style name="Theme.YeuEmMoiVuTru" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/mint</item>
+        <item name="colorPrimaryVariant">@color/mint_dark</item>
+        <item name="colorOnPrimary">@color/ink_950</item>
+        <item name="colorSecondary">@color/sky</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:statusBarColor">@color/ink_950</item>
+        <item name="android:navigationBarColor">@color/ink_950</item>
+        <item name="android:windowBackground">@color/ink_950</item>
+        <item name="android:colorAccent">@color/mint</item>
+    </style>
+</resources>
