@@ -1,0 +1,6 @@
+.test-out/
+local.properties
+.gradle/
+build/
+*.apk
+*.jar

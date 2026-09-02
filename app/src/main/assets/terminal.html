@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<!--
+  nhzterm reference UI (§10).
+
+  xterm.js is the renderer (§10.1). It is loaded from assets, never a CDN —
+  the daemon has no web dependency and neither should the client at runtime.
+  Drop xterm.js + xterm.css beside this file in assets/.
+
+  Links are deliberately NOT auto-clickable (§10.2): no addon-web-links. The
+  long-press menu owns that flow instead, matching Termux's interaction model.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="xterm.css">
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%; width: 100%;
+    background: #282a36; overflow: hidden;
+    -webkit-user-select: none; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #term { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+  body.keys-visible #term { bottom: 88px; }
+
+  /* ---- Extra keys, two rows (§10.6) ---- */
+  #extrakeys {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 88px;
+    display: none; flex-direction: column; justify-content: center;
+    background: #21222c; border-top: 1px solid #44475a;
+  }
+  body.keys-visible #extrakeys { display: flex; }
+  .keyrow { display: flex; justify-content: space-around; padding: 3px 2px; }
+  .key {
+    flex: 1; margin: 0 2px; padding: 9px 0;
+    background: #44475a; color: #f8f8f2;
+    border-radius: 5px; text-align: center;
+    font: 13px/1 monospace; min-width: 0;
+  }
+  .key:active, .key.latched { background: #6272a4; }
+  .key.latched { box-shadow: inset 0 0 0 1px #bd93f9; }
+
+  /* ---- Long-press context menu (§10.3) ---- */
+  #menu, #submenu {
+    position: absolute; display: none; z-index: 30;
+    background: #21222c; border: 1px solid #44475a; border-radius: 8px;
+    min-width: 180px; padding: 4px 0;
+    box-shadow: 0 6px 24px rgba(0,0,0,.6);
+  }
+  .mi { padding: 11px 18px; color: #f8f8f2; font: 14px sans-serif; }
+  .mi:active { background: #44475a; }
+  .mi.disabled { color: #6272a4; }
+
+  #overlay {
+    position: absolute; inset: 0; z-index: 20; display: none;
+  }
+  #overlay.on { display: block; }
+
+  /* ---- Style picker (§11) ---- */
+  #styler {
+    position: absolute; inset: 24px; z-index: 40; display: none;
+    background: #21222c; border: 1px solid #44475a; border-radius: 10px;
+    color: #f8f8f2; font: 14px sans-serif; overflow: auto; padding: 14px;
+  }
+  #styler.on { display: block; }
+  #styler h3 { margin: 10px 0 6px; font-size: 13px; color: #bd93f9; }
+  .opt { padding: 9px 8px; border-radius: 6px; }
+  .opt.sel { background: #44475a; }
+  #styler .close { float: right; padding: 4px 10px; background: #44475a; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div id="term"></div>
+<div id="overlay"></div>
+
+<div id="extrakeys">
+  <div class="keyrow">
+    <div class="key" data-k="ESC">ESC</div>
+    <div class="key" data-k="TAB">TAB</div>
+    <div class="key" data-k="CTRL">CTRL</div>
+    <div class="key" data-k="ALT">ALT</div>
+    <div class="key" data-k="HOME">HOME</div>
+    <div class="key" data-k="UP">&#9650;</div>
+    <div class="key" data-k="END">END</div>
+  </div>
+  <div class="keyrow">
+    <div class="key" data-k="SLASH">/</div>
+    <div class="key" data-k="DASH">-</div>
+    <div class="key" data-k="PGUP">PGUP</div>
+    <div class="key" data-k="PGDN">PGDN</div>
+    <div class="key" data-k="LEFT">&#9664;</div>
+    <div class="key" data-k="DOWN">&#9660;</div>
+    <div class="key" data-k="RIGHT">&#9654;</div>
+  </div>
+</div>
+
+<div id="menu">
+  <div class="mi" data-a="copy">Copy</div>
+  <div class="mi" data-a="paste">Paste</div>
+  <div class="mi" data-a="open" id="mi-open">Open</div>
+  <div class="mi" data-a="more">More &#8250;</div>
+</div>
+
+<div id="submenu">
+  <div class="mi" data-a="openurl" id="mi-openurl">Open URL</div>
+  <div class="mi" data-a="share">Share Selected Text</div>
+  <div class="mi" data-a="refresh">Refresh</div>
+  <div class="mi" data-a="kill">Kill Process (PID)</div>
+  <div class="mi" data-a="style">Style</div>
+  <div class="mi" data-a="screenon">Keep Screen On</div>
+  <div class="mi" data-a="help">Help</div>
+  <div class="mi" data-a="settings">Settings</div>
+  <div class="mi" data-a="report">Report Issue</div>
+</div>
+
+<div id="styler">
+  <span class="close" id="styler-close">Done</span>
+  <h3>THEME</h3><div id="theme-list"></div>
+  <h3>FONT</h3><div id="font-list"></div>
+  <h3>SIZE</h3><div id="size-list"></div>
+</div>
+
+<script src="xterm.js"></script>
+<script src="themes.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
