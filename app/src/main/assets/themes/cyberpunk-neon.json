@@ -1,0 +1,25 @@
+{
+  "name": "Cyberpunk Neon",
+  "background": "#000b1e",
+  "foreground": "#0abdc6",
+  "cursor": "#0abdc6",
+  "selection": "#123e7c",
+  "ansi": [
+    "#123e7c",
+    "#ff0000",
+    "#d300c4",
+    "#f57800",
+    "#123e7c",
+    "#711c91",
+    "#0abdc6",
+    "#d7d7d5",
+    "#1c61c2",
+    "#ff0000",
+    "#d300c4",
+    "#f57800",
+    "#00ff00",
+    "#711c91",
+    "#0abdc6",
+    "#d7d7d5"
+  ]
+}

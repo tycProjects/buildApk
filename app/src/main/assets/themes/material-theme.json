@@ -1,0 +1,25 @@
+{
+  "name": "Material Theme",
+  "background": "#263238",
+  "foreground": "#eeffff",
+  "cursor": "#ffcc00",
+  "selection": "#37474f",
+  "ansi": [
+    "#000000",
+    "#ff5370",
+    "#c3e88d",
+    "#ffcb6b",
+    "#82aaff",
+    "#c792ea",
+    "#89ddff",
+    "#ffffff",
+    "#546e7a",
+    "#ff5370",
+    "#c3e88d",
+    "#ffcb6b",
+    "#82aaff",
+    "#c792ea",
+    "#89ddff",
+    "#ffffff"
+  ]
+}

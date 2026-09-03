@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    
+    <permission
+        android:name="com.nhztech.nhzterm.permission.CONTROL"
+        android:protectionLevel="signature" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Nhzterm">
+
+        <activity
+            android:name="com.nhztech.nhzterm.ui.MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode|density|smallestScreenSize"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="com.nhztech.nhzterm.daemon.NhztermdService"
+            android:exported="true"
+            android:foregroundServiceType="specialUse"
+            android:permission="com.nhztech.nhzterm.permission.CONTROL">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Hosts local PTY terminal sessions and a shell daemon for on-device development workflows" />
+        </service>
+    </application>
+
+</manifest>

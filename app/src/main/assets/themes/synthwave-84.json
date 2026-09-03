@@ -1,0 +1,25 @@
+{
+  "name": "Synthwave 84",
+  "background": "#262335",
+  "foreground": "#ff7edb",
+  "cursor": "#fede5d",
+  "selection": "#463465",
+  "ansi": [
+    "#241b2f",
+    "#f97e72",
+    "#72f1b8",
+    "#fede5d",
+    "#6d77b3",
+    "#c792ea",
+    "#36f9f6",
+    "#e0dfea",
+    "#463465",
+    "#f97e72",
+    "#72f1b8",
+    "#fede5d",
+    "#36f9f6",
+    "#c792ea",
+    "#36f9f6",
+    "#e0dfea"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "name": "nhzterm",
+  "id": "com.nhztech.nhzterm",
+  "version": "0.2.0",
+  "versionCode": 2,
+  "entry": "public/index.html",
+  "capabilities": [],
+  "permissions": ["notifications"],
+  "network": { "enabled": false, "allow": [] },
+  "android": { "minSdk": 26, "targetSdk": 34 }
+}

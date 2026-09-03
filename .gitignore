@@ -1,0 +1,19 @@
+# build artifacts
+nhzsh/nhzsh
+nhzsh/src/*.o
+nhzsh/tests/test_lexer
+nhzsh/tests/test_parser
+nhzsh/tests/test_expander
+nhzsh/tests/test_executor
+nhzsh/tests/test_daemon_link
+nhzsh/build-android/
+
+# generated test reports are kept (they're deliverables):
+# nhzsh/tests/phase8_report.md
+
+# Android/Gradle (future)
+.gradle/
+local.properties
+*.apk
+*.aab
+.cxx/

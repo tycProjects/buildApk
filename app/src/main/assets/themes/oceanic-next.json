@@ -1,0 +1,25 @@
+{
+  "name": "Oceanic Next",
+  "background": "#1b2b34",
+  "foreground": "#d8dee9",
+  "cursor": "#c0c5ce",
+  "selection": "#4f5b66",
+  "ansi": [
+    "#29414f",
+    "#ec5f67",
+    "#99c794",
+    "#fac863",
+    "#6699cc",
+    "#c594c5",
+    "#5fb3b3",
+    "#65737e",
+    "#405860",
+    "#ec5f67",
+    "#99c794",
+    "#fac863",
+    "#6699cc",
+    "#c594c5",
+    "#5fb3b3",
+    "#adb5c0"
+  ]
+}
