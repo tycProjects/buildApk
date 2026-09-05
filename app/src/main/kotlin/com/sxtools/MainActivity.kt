@@ -71,7 +71,7 @@ class MainActivity : Activity() {
         }
         val header = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.SPACE_BETWEEN
+            gravity = Gravity.END
             addView(title)
             addView(status)
         }
