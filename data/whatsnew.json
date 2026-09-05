@@ -12,7 +12,7 @@
     "added (code editor)",
     "some bug fixed"
   ],
-  "alwaysShow": true,
+  "alwaysShow": false,
   "updateUrl": "https://t.me/tycept",
   "updateButtonText": "join telegram",
   "laterButtonText": "Later"
