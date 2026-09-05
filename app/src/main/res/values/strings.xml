@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Screen Recorder</string>
+    <string name="start_recording">START</string>
+    <string name="stop_recording">STOP</string>
+    <string name="status_idle">Ready — full resolution, 100 Mbps, 60fps</string>
+    <string name="status_recording">Recording…</string>
+    <string name="quality_note">Native resolution • No downscaling • No dropped frames</string>
+</resources>
