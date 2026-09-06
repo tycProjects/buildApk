@@ -37,7 +37,7 @@ public class ProxyService extends VpnService {
 
             try {
                 vpnInterface = new Builder()
-                        .setAddress("10.0.0.2", 32)
+                        .addAddress("10.0.0.2", 32)
                         .addRoute("0.0.0.0", 0)
                         .setSession("PVN Proxy")
                         .establish();
