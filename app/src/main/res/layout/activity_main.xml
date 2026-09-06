@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="30dp"
+    android:background="#0F172A">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PVN PROXY"
+        android:textSize="28sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="121.14.28.215"
+        android:textSize="18sp"
+        android:textColor="#38BDF8"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chọn cổng:"
+        android:textColor="#94A3B8"
+        android:layout_marginBottom="5dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerPort"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#1E293B"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trạng thái: TẮT"
+        android:textSize="22sp"
+        android:textColor="#EF4444"
+        android:layout_marginBottom="30dp"/>
+
+    <Button
+        android:id="@+id/btnToggle"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="▶ BẬT PROXY"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#22C55E"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cần cấp quyền VPN để dùng"
+        android:textSize="12sp"
+        android:textColor="#64748B"
+        android:layout_marginTop="30dp"/>
+</LinearLayout>
