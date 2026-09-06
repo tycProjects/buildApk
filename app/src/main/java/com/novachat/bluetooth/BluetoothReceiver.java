@@ -1,5 +1,6 @@
 package com.novachat.bluetooth;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.*;
 import java.util.ArrayList;
