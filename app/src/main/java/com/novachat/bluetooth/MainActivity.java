@@ -28,7 +28,7 @@ public class MainActivity extends Activity implements BluetoothReceiver.Listener
     private AudioRecorder recorder;
     private File cacheDir;
     private int logoTaps=0; private long lastTap=0;
-    private final android.content.SharedPreferences prefs;
+    private android.content.SharedPreferences prefs;
 
     public MainActivity(){
         super();
@@ -204,7 +204,7 @@ public class MainActivity extends Activity implements BluetoothReceiver.Listener
         try{MediaPlayer mp=MediaPlayer.create(this,Uri.fromFile(f));mp.setOnCompletionListener(MediaPlayer::release);mp.start();toast("▶ تشغيل الرسالة الصوتية");}
         catch(Exception e){toast("تعذر تشغيل الصوت");}
     }
-    private void scrollBottom(){messages.post(()->{View p=messages.getParent();if(p instanceof ScrollView)((ScrollView)p).fullScroll(View.FOCUS_DOWN);});}
+    private void scrollBottom(){messages.post(()->{ViewParent p=messages.getParent();if(p instanceof ScrollView)((ScrollView)p).fullScroll(View.FOCUS_DOWN);});}
 
     @Override public void onState(String s){runOnUiThread(()->status.setText(s));}
     @Override public void onText(String s,boolean mine){runOnUiThread(()->{addText(s,mine);if(!mine)NotificationHelper.show(this,"NovaChat",s);});}
