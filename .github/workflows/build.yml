@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 23
+# apk-builder fallback workflow — version: 24
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -21,6 +21,26 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      # Flutter apps ship an android/ subfolder with its own settings.gradle.kts,
+      # which "Locate Android project" below happily finds and treats like any
+      # other Gradle project -- but that settings.gradle.kts hardcodes a read of
+      # flutter.sdk from local.properties, so without an actual Flutter SDK on
+      # this runner the build never even gets past Gradle's settings evaluation.
+      # Gated on hashFiles so plain Android/Java/Kotlin uploads (the common
+      # case) never pay for this step.
+      - name: Set up Flutter
+        if: hashFiles('**/pubspec.yaml') != ''
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: flutter pub get
+        if: hashFiles('**/pubspec.yaml') != ''
+        run: |
+          PUBSPEC_DIR=$(dirname "$(find "$GITHUB_WORKSPACE" -maxdepth 4 -name pubspec.yaml -not -path '*/.git/*' | head -n1)")
+          echo "Running flutter pub get in $PUBSPEC_DIR"
+          (cd "$PUBSPEC_DIR" && flutter pub get)
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -60,6 +80,18 @@ jobs:
           PROJECT_DIR=$(dirname "$MATCH")
           echo "Using Gradle project at: $PROJECT_DIR"
           echo "dir=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
+
+      # subosito/flutter-action exports FLUTTER_ROOT for later steps, but the
+      # Flutter Gradle plugin loader (in the located project's
+      # settings.gradle.kts) only ever reads flutter.sdk out of
+      # local.properties -- it doesn't fall back to the env var. So even with
+      # Flutter installed, the build still fails with "flutter.sdk not set in
+      # local.properties" unless something writes that line in. This does.
+      - name: Point Flutter Gradle plugin at the Flutter SDK
+        if: hashFiles('**/pubspec.yaml') != ''
+        working-directory: ${{ steps.locate.outputs.dir }}
+        run: |
+          echo "flutter.sdk=$FLUTTER_ROOT" >> local.properties
 
       # Runs before "Set up Gradle" (and reads the project rather than using
       # one hardcoded version) so this works across whatever AGP/Gradle
