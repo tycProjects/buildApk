@@ -1,0 +1,10 @@
+<resources>
+    <color name="adam_bg">#090B0D</color>
+    <color name="adam_panel">#15181B</color>
+    <color name="adam_panel2">#1D2125</color>
+    <color name="adam_teal">#56E6D1</color>
+    <color name="adam_teal_dark">#173A37</color>
+    <color name="adam_text">#F4F7F8</color>
+    <color name="adam_muted">#899298</color>
+    <color name="adam_red">#FF6B86</color>
+</resources>
