@@ -1,0 +1,62 @@
+# apk-builder Flutter workflow — auto-generated.
+# Edit buildFlutterWorkflowYaml() in flutterBuilder.js, not this file
+# directly.
+name: Build Flutter APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      # A zip that didn't include an android/ folder (e.g. someone only
+      # zipped lib/ + pubspec.yaml, or ran flutter create a long time
+      # before platform folders were regenerable) gets one created fresh
+      # here -- non-destructive, flutter create only fills in what's
+      # missing and never touches an existing lib/.
+      - name: Ensure an android/ platform folder exists
+        run: |
+          if [ ! -d android ]; then
+            echo "No android/ folder in this upload — generating one."
+            flutter create --platforms=android .
+          fi
+
+      - name: flutter pub get
+        run: flutter pub get
+
+      - name: flutter build apk --release
+        run: flutter build apk --release
+
+      - name: Locate built APK
+        id: locate
+        run: |
+          APK_PATH=$(find build/app/outputs/flutter-apk -maxdepth 1 -name '*.apk' | head -n1)
+          if [ -z "$APK_PATH" ]; then
+            echo "::error::flutter build apk reported success but no APK was found under build/app/outputs/flutter-apk"
+            exit 1
+          fi
+          echo "Found $APK_PATH"
+          echo "path=$APK_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk-${{ github.run_id }}
+          path: ${{ steps.locate.outputs.path }}
+          if-no-files-found: error
+          retention-days: 90
