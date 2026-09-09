@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#0b0c0d">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Camera App Pro</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="camera-app">
+  <video id="preview" autoplay playsinline muted></video>
+  <canvas id="canvas" hidden></canvas>
+  <div class="preview-shade"></div>
+  <div id="gridline" class="gridline" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+  <header class="topbar">
+    <button id="flash" class="round-btn" aria-label="Flash">AUTO</button>
+    <div class="camera-status">
+      <span id="lensLabel">1×</span>
+      <span id="statusText">PHOTO</span>
+    </div>
+    <button id="settings" class="round-btn icon-btn" aria-label="Settings"><span class="sliders"></span></button>
+  </header>
+
+  <div id="zoomRail" class="zoom-rail" aria-label="Zoom">
+    <button data-z=".5">0.5</button>
+    <button data-z="1" class="active">1×</button>
+    <button data-z="2">2×</button>
+    <button data-z="3">3×</button>
+    <button data-z="5">5×</button>
+  </div>
+
+  <div class="focus-ring" id="focusRing"></div>
+
+  <section class="bottom-area">
+    <div class="mode-strip">
+      <button data-mode="video">VIDEO</button>
+      <button data-mode="photo" class="selected">PHOTO</button>
+      <button data-mode="50m">50M</button>
+    </div>
+
+    <div class="capture-row">
+      <button id="gallery" class="gallery-btn" aria-label="Gallery">
+        <span id="galleryEmpty">GALLERY</span>
+        <img id="thumb" alt="">
+      </button>
+
+      <button id="capture" class="shutter" aria-label="Capture"><span></span></button>
+
+      <button id="flip" class="round-btn icon-btn" aria-label="Switch camera"><span class="flip-icon"></span></button>
+    </div>
+  </section>
+
+  <div id="panel" class="panel" aria-hidden="true">
+    <div class="panel-card">
+      <div class="panel-head"><h2>Settings</h2><button id="close" class="close-btn">CLOSE</button></div>
+      <div class="setting-list">
+        <label class="setting"><span><b>Grid</b><small>Show composition grid</small></span><input id="grid" type="checkbox"><i></i></label>
+        <label class="setting"><span><b>Shutter sound</b><small>Sound when taking a photo</small></span><input id="sound" type="checkbox" checked><i></i></label>
+        <label class="setting"><span><b>50M mode</b><small>Request the highest camera resolution available</small></span><input id="fiftyM" type="checkbox"><i></i></label>
+        <label class="setting"><span><b>Mirror front camera</b><small>Mirror selfies like the preview</small></span><input id="mirror" type="checkbox" checked><i></i></label>
+        <label class="setting"><span><b>Timer</b><small>Delay before taking a photo</small></span>
+          <select id="timerSelect"><option value="0">Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="10">10 seconds</option></select>
+        </label>
+        <label class="setting"><span><b>Video quality</b><small>Recording resolution target</small></span>
+          <select id="quality"><option value="2160">4K</option><option value="1080" selected>1080p</option><option value="720">720p</option></select>
+        </label>
+        <button id="appInfoBtn" class="info-setting"><span><b>App information</b><small>About Camera App Pro</small></span><span>›</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="infoModal" class="modal hidden">
+    <div class="modal-card">
+      <button id="closeInfo" class="modal-close">×</button>
+      <div class="info-icon">CAM</div>
+      <h2>App information</h2>
+      <div class="info-rows">
+        <div><span>App name</span><b>Camera App Pro</b></div>
+        <div><span>Creator</span><b>ADAM MADINI</b></div>
+        <div><span>Age</span><b>16 years</b></div>
+        <div><span>Residence</span><b>Oran, Algeria — Es Senia District</b></div>
+        <div><span>Version</span><b>1.0.0</b></div>
+        <div><span>Type</span><b>Camera application</b></div>
+        <div><span>Design & development</span><b>ADAM MADINI</b></div>
+        <div><span>Release year</span><b>2026</b></div>
+      </div>
+    </div>
+  </div>
+<div id="galleryModal" class="modal hidden">
+    <div class="gallery-card">
+      <div class="gallery-head"><h2>Gallery</h2><button id="closeGallery" class="close-btn">CLOSE</button></div>
+      <div id="galleryViewer" class="gallery-viewer">
+        <div id="galleryPlaceholder">Your captured photos and videos will appear here.</div>
+        <img id="galleryImage" alt="" hidden>
+        <video id="galleryVideo" controls playsinline hidden></video>
+      </div>
+      <div id="galleryActions" class="gallery-actions" hidden>
+        <button id="deleteMedia" class="danger" aria-label="حذف"><span class="action-icon icon-delete" aria-hidden="true"></span><span>حذف</span></button>
+        <button id="editImage" aria-label="تعديل"><span class="action-icon icon-edit" aria-hidden="true"></span><span>تعديل</span></button>
+        <button id="shareMedia" aria-label="مشاركة"><span class="action-icon icon-share" aria-hidden="true"></span><span>مشاركة</span></button>
+      </div>
+      <label class="import-btn">IMPORT FROM DEVICE<input id="filePicker" type="file" accept="image/*,video/*" hidden></label>
+    </div>
+  </div>
+
+  <div id="editorModal" class="modal hidden">
+    <div class="editor-card">
+      <div class="gallery-head"><h2>Edit photo</h2><button id="closeEditor" class="close-btn">CLOSE</button></div>
+      <div class="editor-preview"><canvas id="editorCanvas"></canvas></div>
+      <div class="edit-controls">
+        <label>Brightness <input id="brightness" type="range" min="50" max="150" value="100"></label>
+        <label>Contrast <input id="contrast" type="range" min="50" max="150" value="100"></label>
+        <label>Saturation <input id="saturation" type="range" min="0" max="200" value="100"></label>
+      </div>
+      <div class="edit-tools">
+        <button id="rotateLeft">ROTATE</button>
+        <button id="flipImage">FLIP</button>
+        <button id="resetEdit">RESET</button>
+        <button id="saveEdit" class="primary">SAVE COPY</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="countdown" class="countdown hidden">3</div>
+  <div id="msg" class="toast"></div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
