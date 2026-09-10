@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     private lateinit var preview: PreviewView
@@ -59,7 +60,7 @@ class MainActivity : ComponentActivity() {
         findViewById<TextView>(R.id.portraitMode).setOnClickListener { mode="PORTRAIT"; updateMode() }
         (findViewById<ViewGroup>(R.id.zoomRow)).let { row -> for(i in 0 until row.childCount) row.getChildAt(i).setOnClickListener { val text=(it as Button).text.toString(); val z=text.replace("×","").toFloat(); camera?.cameraControl?.setZoomRatio(z.coerceAtLeast(camera?.cameraInfo?.zoomState?.value?.minZoomRatio ?: 1f)) } }
         shutter.setOnClickListener { if (mode=="VIDEO") toggleVideo() else takePhoto() }
-        preview.setOnTouchListener { _, e -> if(e.action==MotionEvent.ACTION_UP) { val point=preview.meteringPointFactory.createPoint(e.x,e.y); val action=FocusMeteringAction.Builder(point).setAutoCancel(2500).build(); camera?.cameraControl?.startFocusAndMetering(action); true } else true }
+        preview.setOnTouchListener { _, e -> if(e.action==MotionEvent.ACTION_UP) { val point=preview.meteringPointFactory.createPoint(e.x,e.y); val action=FocusMeteringAction.Builder(point).setAutoCancelDuration(2500, TimeUnit.MILLISECONDS).build(); camera?.cameraControl?.startFocusAndMetering(action); true } else true }
         updateMode()
     }
 
@@ -106,10 +107,12 @@ class MainActivity : ComponentActivity() {
         val vc=videoCapture ?: return
         val active=recording
         if(active!=null){active.stop();recording=null;shutter.text="";Toast.makeText(this,"تم حفظ الفيديو ✓",Toast.LENGTH_SHORT).show();return}
-        val name="VID_${SimpleDateFormat("yyyyMMdd_HHmmss",Locale.US).format(Date())+".mp4"
+        val name="VID_${SimpleDateFormat("yyyyMMdd_HHmmss",Locale.US).format(Date())}.mp4"
         val values=ContentValues().apply{put(MediaStore.Video.Media.DISPLAY_NAME,name);put(MediaStore.Video.Media.MIME_TYPE,"video/mp4");if(Build.VERSION.SDK_INT>=29)put(MediaStore.Video.Media.RELATIVE_PATH,"Movies/CameraPro")}
         val output=MediaStoreOutputOptions.Builder(contentResolver,MediaStore.Video.Media.EXTERNAL_CONTENT_URI).setContentValues(values).build()
-        recording=vc.output.prepareRecording(this,output).apply{if(checkSelfPermission(Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED)withAudioEnabled()}.start(ContextCompat.getMainExecutor(this)){event-> when(event){is VideoRecordEvent.Start->runOnUiThread{shutter.text="■"};is VideoRecordEvent.Finalize->runOnUiThread{shutter.text=""; if(event.hasError())showError("فشل الفيديو: ${event.error}")}}}}
+        var pending=vc.output.prepareRecording(this,output)
+        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED){pending=pending.withAudioEnabled()}
+        recording=pending.start(ContextCompat.getMainExecutor(this)){event-> when(event){is VideoRecordEvent.Start->runOnUiThread{shutter.text="■"};is VideoRecordEvent.Finalize->runOnUiThread{shutter.text=""; if(event.hasError())showError("فشل الفيديو: ${event.error}")}}}
     }
 
     private fun showSettings(){
