@@ -1,0 +1,140 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#0D0D18"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="22dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="FREE FIRE MAX"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:text="com.dts.freefiremax"
+            android:textColor="#77758A"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_marginBottom="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="#171722"
+            android:padding="18dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="⚡  MENU AIMDRAG TRAINER"
+                android:textColor="#20D7FF"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Switch
+                android:id="@+id/autoLock"
+                android:text="🎯  Auto Head Lock"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Switch
+                android:id="@+id/dragMode"
+                android:text="☝  AimDrag Trainer"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Switch
+                android:id="@+id/magicMode"
+                android:text="✨  Hiệu ứng Trainer"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/shizukuButton"
+                android:text="KIỂM TRA SHIZUKU"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/shizukuStatus"
+                android:text="Shizuku: đang kiểm tra..."
+                android:textColor="#AAAAAA"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/score"
+            android:text="Điểm trainer: 0"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/sensitivityText"
+            android:text="Lực kéo: 1.0"
+            android:textColor="#BBBBBB"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <SeekBar
+            android:id="@+id/sensitivity"
+            android:max="200"
+            android:progress="100"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:text="Đã sẵn sàng • Trainer hoạt động offline"
+            android:textColor="#8E8E9D"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/launchGame"
+            android:text="▶  MỞ GAME"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"/>
+
+        <com.example.aimdragtrainer.TrainerView
+            android:id="@+id/trainer"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="360dp"/>
+    </LinearLayout>
+</ScrollView>
