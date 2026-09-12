@@ -1,0 +1,24 @@
+{
+  "attack": {
+    "default_threads": 500,
+    "default_port": 80,
+    "packet_size": 65500,
+    "timeout": 3000,
+    "retry_count": 10,
+    "power_level": 100
+  },
+  "sound": {
+    "enabled": true,
+    "glitch_volume": 0.8,
+    "beep_volume": 0.6
+  },
+  "animation": {
+    "enabled": true,
+    "matrix_rain": true,
+    "intro_animation": true
+  },
+  "targets": {
+    "default_ip": "192.168.1.1",
+    "common_ports": [80, 443, 8080, 22, 21]
+  }
+}
