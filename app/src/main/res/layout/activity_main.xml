@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_width="match_parent" android:layout_height="match_parent">
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+  android:orientation="vertical" android:padding="22dp">
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+   android:text="Render VPN" android:textSize="30sp" android:textStyle="bold"/>
+  <TextView android:id="@+id/status" android:layout_width="wrap_content" android:layout_height="wrap_content"
+   android:layout_marginTop="12dp" android:text="NO PROFILE" android:textSize="16sp"/>
+  <EditText android:id="@+id/name" android:layout_width="match_parent" android:layout_height="wrap_content"
+   android:hint="Tunnel name" android:text="render"/>
+  <Button android:id="@+id/importButton" android:layout_width="match_parent" android:layout_height="wrap_content"
+   android:text="IMPORT .CONF FILE"/>
+  <Button android:id="@+id/parseButton" android:layout_width="match_parent" android:layout_height="wrap_content"
+   android:text="LOAD PROFILE"/>
+  <EditText android:id="@+id/config" android:layout_width="match_parent" android:layout_height="280dp"
+   android:gravity="top|start" android:hint="[Interface]&#10;PrivateKey = ...&#10;Address = ...&#10;&#10;[Peer]&#10;PublicKey = ...&#10;Endpoint = ..." android:inputType="textMultiLine"/>
+  <Button android:id="@+id/connectButton" android:layout_width="match_parent" android:layout_height="wrap_content"
+   android:layout_marginTop="12dp" android:text="CONNECT / DISCONNECT"/>
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+   android:layout_marginTop="20dp"
+   android:text="Keep your WireGuard private key private. This app does not require you to put the key in GitHub."/>
+ </LinearLayout>
+</ScrollView>
