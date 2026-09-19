@@ -1,0 +1,1 @@
+v3: nút giảm đồ họa thật dùng Android Game Mode qua Shizuku: battery/performance/standard. Android 12+ trên thiết bị hỗ trợ mới áp dụng được. Roblox VN: com.roblox.client.vnggames; quốc tế: com.roblox.client. Mở Android Studio, Sync, Build APK. Cần Shizuku đang chạy và cấp quyền cho app.
