@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LeonTeam Overlay</string>
+    <string name="subtitle">Hiển thị PIN • FPS • Giờ trên mọi ứng dụng</string>
+    <string name="preview_line1">🔋 87%   🎮 60 FPS   🕒 10:32:45</string>
+    <string name="preview_line2">by: LeonTeam X AuraVN</string>
+    <string name="btn_start">START OVERLAY</string>
+    <string name="btn_stop">STOP OVERLAY</string>
+    <string name="status_running">Trạng thái: ĐANG CHẠY</string>
+    <string name="status_stopped">Trạng thái: ĐÃ DỪNG</string>
+    <string name="fps_note">FPS = số lần overlay được vẽ thực tế mỗi giây (đo bằng OnDrawListener). Android không cho app thường đọc FPS của app/game khác nên đây là FPS render của chính overlay.</string>
+    <string name="overlay_line2">by: LeonTeam X AuraVN</string>
+
+    <string name="perm_title">Cần cấp quyền</string>
+    <string name="perm_message">Để hiển thị overlay trên các ứng dụng khác, hãy bật “Hiển thị trên các ứng dụng khác” cho LeonTeam Overlay.</string>
+    <string name="perm_grant">Mở cài đặt</string>
+    <string name="perm_later">Để sau</string>
+    <string name="toast_need_permission">Hãy cấp quyền hiển thị trên ứng dụng khác trước</string>
+
+    <string name="notif_channel_name">Overlay đang chạy</string>
+    <string name="notif_text">Overlay đang hiển thị. Vuốt app khỏi Recents hoặc bấm Dừng để tắt.</string>
+    <string name="notif_action_stop">Dừng</string>
+</resources>
