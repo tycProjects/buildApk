@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 25
+# apk-builder fallback workflow — version: 26
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -265,6 +265,60 @@ jobs:
             \( -name 'build.gradle' -o -name 'build.gradle.kts' \) \
             -type f -print0 \
             | xargs -0 -r perl -pi -e 's/JavaVersion\.VERSION_1_8/JavaVersion.VERSION_17/g'
+
+          # Even with the replacement above, a project can still end up with Java and
+          # Kotlin on different JVM targets: the Android Gradle Plugin defaults Java
+          # to 1.8 when compileOptions is not declared, while Kotlin follows the
+          # JDK running Gradle (17). Nothing in the build files says 1.8, so no text
+          # replacement can find it. This Gradle init script (picked up from
+          # init.d by every Gradle run, wrapper or not) aligns Kotlin to the Java
+          # target of the same variant instead, which works for any project.
+          GRADLE_HOME_DIR="$HOME/.gradle"
+          if [ -n "$GRADLE_USER_HOME" ]; then GRADLE_HOME_DIR="$GRADLE_USER_HOME"; fi
+          mkdir -p "$GRADLE_HOME_DIR/init.d"
+          cat > "$GRADLE_HOME_DIR/init.d/align-jvm-target.gradle" <<'GRADLE_INIT_EOF'
+          // Injected by the CI builder. Makes Kotlin's jvmTarget match the Java compile
+          // target of the same variant, for every module, whatever the project does or
+          // does not declare. Fixes "Inconsistent JVM-target compatibility detected for
+          // tasks compileReleaseJavaWithJavac (1.8) and compileReleaseKotlin (17)".
+          // Works with any AGP and Kotlin plugin version and never fails the build.
+          gradle.projectsEvaluated {
+              gradle.allprojects { p ->
+                  try {
+                      p.tasks.matching { t ->
+                          t.class.name.startsWith('org.jetbrains.kotlin.gradle.tasks.KotlinCompile') && t.name.endsWith('Kotlin')
+                      }.all { kt ->
+                          try {
+                              def base = kt.name.substring(0, kt.name.length() - 6)
+                              def jt = p.tasks.findByName(base + 'JavaWithJavac')
+                              if (jt == null) { jt = p.tasks.findByName(base + 'Java') }
+                              if (jt == null || !(jt instanceof org.gradle.api.tasks.compile.JavaCompile)) { return }
+                              def tgt = jt.targetCompatibility
+                              if (tgt == null) { return }
+                              tgt = tgt.toString()
+                              if (tgt.isEmpty()) { return }
+                              try {
+                                  // Kotlin Gradle plugin up to 2.1
+                                  if (kt.kotlinOptions.jvmTarget != tgt) { kt.kotlinOptions.jvmTarget = tgt }
+                              } catch (Throwable oldApi) {
+                                  // Kotlin Gradle plugin 1.8+ compilerOptions API
+                                  def prop = kt.compilerOptions.jvmTarget
+                                  def cur = prop.getOrNull()
+                                  if (cur != null) {
+                                      def match = cur.getDeclaringClass().getEnumConstants().find { e -> e.getTarget() == tgt }
+                                      if (match != null) { prop.set(match) }
+                                  }
+                              }
+                          } catch (Throwable e) {
+                              println 'jvm-target-align: skipped ' + kt.name + ' (' + e.getMessage() + ')'
+                          }
+                      }
+                  } catch (Throwable e) {
+                      println 'jvm-target-align: skipped project ' + p.name + ' (' + e.getMessage() + ')'
+                  }
+              }
+          }
+          GRADLE_INIT_EOF
 
       - name: Build debug APK
         working-directory: ${{ steps.locate.outputs.dir }}
