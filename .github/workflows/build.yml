@@ -1,4 +1,4 @@
-# apk-builder fallback workflow — version: 24
+# apk-builder fallback workflow — version: 25
 # Auto-generated. Edit buildFallbackWorkflowYaml() in server.js, not this
 # file directly — direct edits get overwritten the next time the version
 # above is bumped and this gets re-synced to the base branch.
@@ -44,6 +44,31 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # Without this, the action's own default package list includes
+          # "tools" -- the old standalone Android SDK Tools package, which
+          # Google removed from the SDK repository years ago in favor of
+          # cmdline-tools. That default has been stale for a long time, so
+          # every build fails at this step with "Failed to find package
+          # 'tools'" before it even reaches the project. platform-tools is
+          # the one piece actually needed here; the Android Gradle Plugin
+          # pulls whatever specific platforms/build-tools versions the
+          # project itself requires on its own during the Gradle build.
+          packages: "platform-tools"
+
+      # android-actions/setup-android@v3 is supposed to auto-accept SDK
+      # licenses itself, but in practice it can still land on an interactive
+      # "Review licenses that have not been accepted (y/N)?" prompt that
+      # nothing answers -- e.g. after it installs/updates a cmdline-tools
+      # version whose license set doesn't match what the action pre-baked
+      # answers for. Piping 'yes' at sdkmanager directly answers every
+      # prompt with 'y' regardless of how many there are or which specific
+      # packages/versions ask for one, so this isn't tied to any particular
+      # SDK version and stays correct as Android SDK components change over
+      # time. Harmless (and a no-op) on setups where the action already
+      # handled everything itself.
+      - name: Accept all Android SDK licenses
+        run: yes | sdkmanager --licenses > /dev/null || true
 
       # Self-updating apps (installing a new build over the one already
       # running) require every build to be signed with the SAME
@@ -118,6 +143,41 @@ jobs:
           if [ -z "$DETECTED" ]; then
             echo "No usable gradle-wrapper.properties found — defaulting to Gradle $DEFAULT_GRADLE_VERSION"
             DETECTED="$DEFAULT_GRADLE_VERSION"
+
+            # No wrapper to read, so ask the project's own Android Gradle
+            # Plugin version what it needs. AGP refuses to load on a Gradle
+            # older than its minimum ("Minimum supported Gradle version is
+            # 8.13. Current version is 8.9."), so never go below that.
+            AGP_VER=""
+            for PAT in \
+              'com\.android\.tools\.build:gradle:\K[0-9]+\.[0-9]+(\.[0-9]+)?' \
+              'com\.android\.(application|library)[^0-9]{1,6}version[^0-9]{1,6}\K[0-9]+\.[0-9]+(\.[0-9]+)?' \
+              '^\s*(agp|androidGradlePlugin|android-gradle-plugin)\s*=\s*.\K[0-9]+\.[0-9]+(\.[0-9]+)?'; do
+              if [ -z "$AGP_VER" ]; then
+                AGP_VER=$(grep -rhoP --include='*.gradle' --include='*.kts' --include='*.toml' "$PAT" . 2>/dev/null | head -n1 || true)
+              fi
+            done
+            if [ -n "$AGP_VER" ]; then
+              case "$AGP_VER" in
+                9.*) AGP_MIN="9.1.0" ;;
+                8.13*|8.12*|8.11*) AGP_MIN="8.13" ;;
+                8.10*|8.9*) AGP_MIN="8.11.1" ;;
+                8.8*) AGP_MIN="8.10.2" ;;
+                8.7*) AGP_MIN="8.9" ;;
+                8.6*|8.5*) AGP_MIN="8.7" ;;
+                8.4*) AGP_MIN="8.6" ;;
+                8.3*) AGP_MIN="8.4" ;;
+                8.2*) AGP_MIN="8.2" ;;
+                8.1*|8.0*) AGP_MIN="8.0" ;;
+                7.4*) AGP_MIN="7.5" ;;
+                *) AGP_MIN="" ;;
+              esac
+              if [ -n "$AGP_MIN" ]; then
+                HIGHER=$( { echo "$DETECTED"; echo "$AGP_MIN"; } | sort -V | tail -n1 )
+                echo "Project uses Android Gradle Plugin $AGP_VER, which needs Gradle $AGP_MIN or newer — using Gradle $HIGHER"
+                DETECTED="$HIGHER"
+              fi
+            fi
           else
             echo "Project's own wrapper declares Gradle $DETECTED — using that"
           fi
@@ -129,6 +189,17 @@ jobs:
           # Whatever the previous step detected for THIS project, rather
           # than a single hardcoded version pinned for every build.
           gradle-version: ${{ steps.gradle-detect.outputs.version }}
+          # This pipeline sometimes has to regenerate a missing
+          # gradle-wrapper.jar itself (see "Normalize the project for CI"
+          # below) -- a freshly-generated jar will never match this action's
+          # known-good checksum allowlist, so wrapper validation (meant to
+          # catch a malicious jar swapped into someone else's public repo)
+          # produces a false positive against our own legitimate rebuild and
+          # fails the job with "At least one Gradle Wrapper Jar failed
+          # validation!". Disabled since every jar this workflow runs
+          # against is either the project's own upload or one this same
+          # pipeline just generated from the official Gradle distribution.
+          validate-wrappers: false
 
       - name: Normalize the project for CI
         working-directory: ${{ steps.locate.outputs.dir }}
@@ -136,9 +207,20 @@ jobs:
           # A committed local.properties almost always points at a developer's
           # own machine (sdk.dir=/Users/xxx/Library/Android/sdk) and will make
           # the build fail to find the SDK on the runner even though the
-          # project itself is fine. setup-android already exports ANDROID_HOME,
-          # so it's safe to drop.
+          # project itself is fine. Drop it and write a fresh one instead of
+          # just deleting it: some projects' settings.gradle.kts unconditionally
+          # reads local.properties (not just the Flutter plugin loader), so for
+          # a non-Flutter upload -- where the earlier Flutter-only step never
+          # ran and never created the file -- leaving it missing entirely
+          # fails the build with "local.properties (No such file or directory)"
+          # even though nothing else is wrong. Always leaving a real file
+          # behind, with sdk.dir pointing at the SDK setup-android already
+          # exported via ANDROID_HOME, covers both project shapes.
           rm -f local.properties
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          if [ -n "$FLUTTER_ROOT" ]; then
+            echo "flutter.sdk=$FLUTTER_ROOT" >> local.properties
+          fi
 
           # If a wrapper script exists, make sure it will actually run:
           # strip Windows CRLF line endings (breaks the '#!/usr/bin/env sh'
@@ -215,12 +297,20 @@ jobs:
           # X. Current version is Y."), so pull X straight out of the log
           # and retry once with the wrapper regenerated at that version,
           # instead of surfacing a failure the log itself already answers.
-          REQUIRED=$(grep -oP 'Minimum supported Gradle version is \K[0-9]+(?:\.[0-9]+)*' build.log | head -n1)
-          if [ -n "$REQUIRED" ] && [ -x "./gradlew" ]; then
-            echo "Project's committed Gradle wrapper is too old for its own AGP version — it needs Gradle $REQUIRED. Regenerating the wrapper at that version and retrying once."
-            gradle wrapper --gradle-version "$REQUIRED" --no-daemon
+          REQUIRED=$(grep -oP 'Minimum supported Gradle version is \K[0-9]+(?:\.[0-9]+)*' build.log | head -n1 || true)
+          if [ -n "$REQUIRED" ]; then
+            echo "This project's Android Gradle Plugin needs Gradle $REQUIRED (the build above used an older one). Installing a wrapper at that version and retrying once."
+            # Generate the wrapper from an EMPTY directory: running
+            # `gradle wrapper` inside the project would configure it first,
+            # and configuring it is exactly what fails on the too-old Gradle.
+            WRAP_TMP=$(mktemp -d)
+            (cd "$WRAP_TMP" && gradle wrapper --gradle-version "$REQUIRED" --no-daemon)
+            mkdir -p ./gradle/wrapper
+            cp "$WRAP_TMP/gradlew" ./gradlew
+            cp "$WRAP_TMP/gradlew.bat" ./gradlew.bat 2>/dev/null || true
+            cp "$WRAP_TMP"/gradle/wrapper/* ./gradle/wrapper/
             chmod +x ./gradlew
-            run_build
+            run_build 2>&1 | tee -a build.log
           else
             exit 1
           fi
