@@ -1,0 +1,1 @@
+extern "C" int nivex_engine_ready(){return 1;}

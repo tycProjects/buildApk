@@ -1,0 +1,60 @@
+plugins {
+  id 'com.android.application'
+  id 'org.jetbrains.kotlin.android'
+  id 'com.facebook.react'
+}
+
+react { autolinkLibrariesWithApp() }
+
+android {
+    buildFeatures {
+        buildConfig true
+    }
+
+  namespace 'com.editorpro'
+  compileSdkVersion rootProject.ext.compileSdkVersion
+  buildToolsVersion rootProject.ext.buildToolsVersion
+  ndkVersion rootProject.ext.ndkVersion
+
+  defaultConfig {
+    applicationId 'com.editorpro.ae'
+    minSdkVersion rootProject.ext.minSdkVersion
+    targetSdkVersion rootProject.ext.targetSdkVersion
+    versionCode 10
+    versionName '10.0.0'
+    multiDexEnabled true
+  }
+
+  signingConfigs {
+    debug { }
+  }
+
+  buildTypes {
+    debug { debuggable true }
+    release {
+      minifyEnabled false
+      shrinkResources false
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), file('../../proguard-rules.pro')
+      debuggable false
+    }
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+
+  kotlinOptions { jvmTarget = '17' }
+
+  packagingOptions {
+    resources.excludes += ['META-INF/DEPENDENCIES', 'META-INF/LICENSE', 'META-INF/LICENSE.txt', 'META-INF/NOTICE', 'META-INF/NOTICE.txt']
+  }
+
+  externalNativeBuild {
+    cmake { path file('src/main/cpp/CMakeLists.txt') }
+  }
+}
+
+dependencies {
+  implementation('com.facebook.react:react-android')
+}

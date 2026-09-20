@@ -1,0 +1,47 @@
+buildscript {
+  ext {
+    buildToolsVersion = findProperty('android.buildToolsVersion') ?: '36.0.0'
+    minSdkVersion = Integer.parseInt(findProperty('android.minSdkVersion') ?: '24')
+    compileSdkVersion = Integer.parseInt(findProperty('android.compileSdkVersion') ?: '36')
+    targetSdkVersion = Integer.parseInt(findProperty('android.targetSdkVersion') ?: '36')
+    kotlinVersion = findProperty('android.kotlinVersion') ?: '2.1.20'
+    ndkVersion = findProperty('android.ndkVersion') ?: '27.1.12297006'
+  }
+
+  repositories {
+    google()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath('com.android.tools.build:gradle:8.13.2')
+    classpath('com.facebook.react:react-native-gradle-plugin')
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+  }
+}
+
+def reactNativeAndroidDir = new File(
+  providers.exec {
+    workingDir(rootDir)
+    commandLine("node", "--print", "require.resolve('react-native/package.json')")
+  }.standardOutput.asText.get().trim(),
+  "../android"
+)
+
+allprojects {
+  repositories {
+    maven { url(reactNativeAndroidDir) }
+    google()
+    mavenCentral()
+    maven {
+      url 'https://www.jitpack.io'
+      content {
+        // Keep JitPack from being queried for unrelated dependencies.
+        includeGroupByRegex 'com\\.github\\..*'
+      }
+    }
+  }
+}
+
+apply plugin: 'expo-root-project'
+apply plugin: 'com.facebook.react.rootproject'
