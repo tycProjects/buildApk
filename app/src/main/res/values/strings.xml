@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Treasure Hunter Auto Dig</string>
+    <string name="accessibility_desc">Đọc tọa độ trên màn hình và điều khiển thao tác di chuyển/đào.</string>
+</resources>
